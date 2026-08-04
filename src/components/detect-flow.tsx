@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
+import { SharePrompt } from "@/components/share-prompt";
 import type { DetectRequest, DetectResponse } from "@/lib/schema";
 
 type Phase =
@@ -73,7 +74,11 @@ export function DetectFlow() {
             source={phase.request.source}
             analysis={phase.result.analysis}
             similarCases={phase.result.similarCases}
-          />
+          >
+            {phase.result.sharePrompted && (
+              <SharePrompt reportId={phase.result.reportId} />
+            )}
+          </CaseFile>
           <div className="flex justify-center">
             <button
               type="button"
