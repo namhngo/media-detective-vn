@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Eve compiles a local Nitro/workflow runtime under this directory.
+    // It is generated output, not authored application code.
+    ".eve/**",
   ]),
 ]);
 

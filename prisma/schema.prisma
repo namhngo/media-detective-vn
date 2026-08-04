@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Values intentionally match src/lib/schema.ts. That file remains the shared
+// application contract; Prisma maps the same values onto Neon Postgres.
+enum Source {
+  screenshot
+  text
+  described_call
+}
+
+enum Platform {
+  zalo
+  facebook
+  phone_call
+  email
+  website
+  other
+}
+
+enum Category {
+  deepfake_impersonation
+  timeshare_contract
+  fake_prize
+  investment_scam
+  misinformation
+  other
+}
+
+enum Technique {
+  urgency
+  fear
+  authority
+  scarcity
+  social_proof
+  secrecy
+  emotional_bait
+  decontextualization
+  fabricated_evidence
+  bandwagon
+  character_attack
+}
+
+enum Tier {
+  watch
+  caution
+  warning
+}
+
+enum ConfirmationSource {
+  ai_detected
+  user_reported
+}
+
+model Report {
+  id                     String              @id @default(uuid())
+  createdAt              DateTime            @default(now()) @map("created_at")
+
+  source                 Source
+  platform               Platform
+  category               Category
+
+  claims                 String[]
+  techniques             Technique[]
+
+  tier                   Tier
+  riskScore              Int                 @map("risk_score")
+  explanationEn          String              @map("explanation_en")
+
+  moneyRequested         Boolean             @default(false) @map("money_requested")
+  amountVnd              BigInt?             @map("amount_vnd")
+  location               String?
+
+  isSeed                 Boolean             @default(false) @map("is_seed")
+  isShared               Boolean             @default(false) @map("is_shared")
+  confirmationSource     ConfirmationSource? @map("confirmation_source")
+
+  // Clerk user ID stays backend-only. It is never exposed in the gallery.
+  submittedByClerkId     String?             @map("submitted_by_clerk_id")
+  sourceCitation         String?             @map("source_citation")
+
+  // Prisma does normal CRUD; pgvector writes and searches use typed raw SQL.
+  embedding              Unsupported("vector(1536)")?
+  agentSessionId         String?             @unique @map("agent_session_id")
+
+  @@index([createdAt])
+  @@index([tier])
+  @@index([isShared])
+  @@index([isSeed])
+  @@index([submittedByClerkId])
+  @@map("reports")
+}

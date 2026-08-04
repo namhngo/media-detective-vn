@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, IBM_Plex_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import "./globals.css";
 
@@ -31,11 +32,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${beVietnamPro.variable} ${plexMono.variable}`}>
       <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
-        <MotionProvider>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </MotionProvider>
+        <ClerkProvider>
+          <MotionProvider>
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </MotionProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
