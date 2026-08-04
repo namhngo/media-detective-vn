@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Media Detective Vietnam
 
-## Getting Started
+An AI-powered **Media & Information Literacy (MIL)** tool — built for the **UNESCO Youth Hackathon 2026** (track: *AI and MIL*, theme "Play Your Part: Youth Designing the Future of MIL").
 
-First, run the development server:
+Not a scam detector. Not a social feed. A **dashboard-first literacy tool**: the AI investigates suspicious content and *explains its reasoning* — it doesn't replace human judgment, it strengthens it. Users leave every interaction better at spotting the next one themselves.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**Deadline:** August 16, 2026 · **Deliverables:** proposal doc + 3-minute pitch video (English)
+
+## The problem
+
+Two connected patterns are hitting Vietnam right now — isolation + fabricated trust + manufactured urgency:
+
+- **AI deepfake impersonation** *(hero case)* — scammers scrape photos/audio from social media, generate a face-and-voice clone, and run live video calls impersonating relatives to request urgent money. A convincing deepfake call reportedly takes under a minute to produce. Vietnam's National Cyber Security Association names deepfake sophistication the top emerging risk for 2026.
+- **Hợp đồng kỳ nghỉ (timeshare) fraud** *(supporting case)* — Hanoi's Economic Police opened 21 criminal cases, charged 187 people: 493 confirmed victims, ~181 billion VND stolen in that investigation alone. Playbook: prize call → hotel "seminar" → manufactured urgency → sign and pay same-day.
+
+Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~USD 230M+)** in online fraud losses in the first 11 months of 2025. Targets are overwhelmingly older adults, isolated by the shift from multi-generational to nuclear households.
+
+## The product — three actions, not a feed
+
+| Action | What it does |
+|---|---|
+| **Detect** | Paste a message, describe a call, or upload a screenshot. The AI returns a confidence tier, the manipulation techniques found, and a plain-language explanation. Private by default. At the top tier, the app *actively prompts* the user to share. |
+| **Share** | Publishes only when the AI's top tier **and** the user's explicit opt-in agree. Only the structured summary publishes — never raw screenshots or message text. |
+| **Report** | For people who *already know* they were scammed. Same analysis engine, but publishes on the user's attestation; the AI's independent tier is shown as a transparency badge. Requires sign-in (anonymous auth) so submissions are accountable, not anonymous on the backend. |
+
+### Confidence tiers
+
+Borrowing vocabulary Vietnamese police warnings already use — even the bottom tier never implies "safe," only "nothing flagged yet."
+
+| Tier | Vietnamese | Internal score |
+|---|---|---|
+| Watch | *Theo dõi* (draft) | 0–39 |
+| Caution | *Cẩn thận* | 40–74 |
+| Warning | *Cảnh báo* | 75–100 |
+
+Never "100% accurate" — no classifier can honestly promise that. The `warning` gate (Share) and user attestation (Report) are what earn the trust.
+
+## Architecture
+
+Deliberately simple — three steps, no agent orchestration:
+
+```
+Input (screenshot or text)
+  → 1. Extract + analyze   (ONE structured-output call: claims, techniques, tier, explanation)
+  → 2. Find similar cases  (embedding search over confirmed cases — the "case-file library")
+  → 3. Assemble report
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Raw uploaded content is used transiently for step 1 and **never persisted** — only the structured output is stored. The vector DB retrieves context ("others reported this pattern"); it never votes on the tier.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The AI backend is a single **[eve](https://vercel.com/eve) agent** (`agent/`): markdown instructions + skills, TypeScript tools. No LangChain/CrewAI/subagents.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech stack
 
-## Learn More
+Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · shadcn/ui · recharts · Vercel AI SDK + **gpt-5** · **text-embedding-3-small** · [eve](https://eve.dev) agent framework · Supabase (Postgres + pgvector + Auth, backend phase) · Vercel
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+agent/               eve agent — the AI detective (instructions, skills, tools)
+  instructions.md      persona + standing rules + core technique taxonomy
+  skills/              category playbooks loaded on demand (deepfake, timeshare, ...)
+  tools/               find_similar_cases.ts, save_report.ts
+src/
+  app/               home · detect · report · dashboard · api routes
+  components/        shadcn/ui + feature components
+  lib/
+    schema.ts          shared Zod contract (UI, API routes, and agent all use it)
+    mock.ts            seed-shaped mock data (frontend runs on mocks until backend lands)
+.claude/skills/      dev-side design skills (frontend-design, design-taste-frontend)
+DESIGN.md            design tokens + visual language
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Getting started
 
-## Deploy on Vercel
+```bash
+nvm use              # Node >= 24 required (see .nvmrc) — needed for eve
+npm install
+npm run dev          # http://localhost:3000
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+No API keys needed yet — the frontend runs entirely on typed mock data behind the real API contract. Keys (`OPENAI_API_KEY`, Supabase) only matter when the backend phase lands.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Roadmap (explicitly out of MVP scope)
+
+Vietnamese-first UI toggle (designed Vietnamese-first; demoed in English for judges) · voice/audio deepfake detection · browser extension · mobile app · eve **channels** for Zalo/WhatsApp (the same agent surfaced where scams actually happen) · artifact matching across reports (phone numbers, bank accounts — relational, not semantic) · government/NGO dashboard
+
+---
+
+*Judged on: consistency with theme · clarity · innovation & creativity · feasibility & sustainability · impact & inclusion.*
