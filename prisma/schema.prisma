@@ -57,6 +57,15 @@ enum ConfirmationSource {
   user_reported
 }
 
+// Immutable lifecycle events for one structured report. Event rows never
+// contain raw messages or screenshots; those stay in Eve session handling.
+enum ReportEventType {
+  analysis_created
+  shared
+  user_reported
+  seeded
+}
+
 model Report {
   id                     String              @id @default(uuid())
   createdAt              DateTime            @default(now()) @map("created_at")
@@ -77,6 +86,8 @@ model Report {
   location               String?
 
   isSeed                 Boolean             @default(false) @map("is_seed")
+  // Calibration fixtures for the dashboard. Never shown in the public gallery.
+  isDemo                 Boolean             @default(false) @map("is_demo")
   isShared               Boolean             @default(false) @map("is_shared")
   confirmationSource     ConfirmationSource? @map("confirmation_source")
 
@@ -88,10 +99,29 @@ model Report {
   embedding              Unsupported("vector(1536)")?
   agentSessionId         String?             @unique @map("agent_session_id")
 
+  events                 ReportEvent[]
+
   @@index([createdAt])
   @@index([tier])
   @@index([isShared])
   @@index([isSeed])
+  @@index([isDemo])
   @@index([submittedByClerkId])
   @@map("reports")
+}
+
+model ReportEvent {
+  id                     String          @id @default(uuid())
+  reportId               String          @map("report_id")
+  report                 Report          @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  type                   ReportEventType
+  createdAt              DateTime        @default(now()) @map("created_at")
+
+  // Present only for an authenticated Clerk actor; never exposed publicly.
+  actorClerkId           String?         @map("actor_clerk_id")
+
+  @@unique([reportId, type])
+  @@index([reportId, createdAt])
+  @@index([type, createdAt])
+  @@map("report_events")
 }

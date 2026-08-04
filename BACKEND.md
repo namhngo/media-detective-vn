@@ -27,6 +27,24 @@ extension that adds `vector(1536)` storage and cosine-similarity operators;
 ## Privacy boundary
 
 Raw input may be processed in Eve's durable agent session. It is never written
+to the `reports` table, Neon vector index, dashboard, gallery, or public case
+library. Only structured analysis is persisted in Neon.
+
+## Why one `reports` table is enough
+
+This product deliberately does not mirror Discovery Pipeline's
+`User -> Analysis -> Insight` model. Discovery stores per-user transcripts and
+long-lived insight records; Media Detective must not store raw user content.
+Clerk owns user identity, Eve owns durable agent session state, and Upstash owns
+rate-limit state. `reports` is the single business table for structured analysis
+and publication state. Its internal `is_demo` marker supports Watch/Caution
+calibration rows in development/demo dashboards without placing them in the
+public gallery.
+
+`report_events` is the one supporting table. It is an immutable lifecycle log
+linked to a report (`analysis_created`, `shared`, `user_reported`, or `seeded`)
+and contains only event type, timestamp, and an optional Clerk actor ID. It
+never contains raw content or a duplicate report payload.
 
 ## Local prerequisites
 
