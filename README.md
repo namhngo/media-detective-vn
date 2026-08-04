@@ -77,10 +77,13 @@ DESIGN.md            design tokens + visual language
 ## Getting started
 
 ```bash
-nvm use              # Node >= 24 required (see .nvmrc) — needed for eve
+nvm use              # switch this shell to Node >= 24 (required by eve)
 npm install
 npm run dev          # http://localhost:3000
 ```
+
+If `npm run dev` says Eve is running Node 22 or older, run `nvm use` in the
+same terminal first. The project has a `.nvmrc` file with the required version.
 
 No API keys needed yet — the frontend runs entirely on typed mock data behind the real API contract. Keys (`OPENAI_API_KEY`, Supabase) only matter when the backend phase lands.
 
