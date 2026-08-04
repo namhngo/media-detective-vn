@@ -65,8 +65,8 @@ model Report {
   platform               Platform
   category               Category
 
-  claims                 String[]
-  techniques             Technique[]
+  claims                 String[]            @default([])
+  techniques             Technique[]         @default([])
 
   tier                   Tier
   riskScore              Int                 @map("risk_score")

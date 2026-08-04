@@ -1,7 +1,11 @@
-// Mirrors the Prisma 7 setup used in Discovery Pipeline.
-// Neon credentials are added later; generation works without a live database.
-import "dotenv/config";
+// Mirrors the Prisma 7 setup used in Discovery Pipeline, with Next.js local
+// environment support. Prisma only auto-loads .env, while this app keeps
+// secrets in .env.local.
+import { config } from "dotenv";
 import { defineConfig } from "prisma/config";
+
+config({ path: ".env.local" });
+config();
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

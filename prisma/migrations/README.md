@@ -1,19 +1,18 @@
 # Database migrations
 
-Do not generate the first migration until Neon is configured locally.
+`20260804183146_init_reports` is the reviewed baseline schema. It enables
+pgvector before creating `reports.embedding vector(1536)`, so do not recreate
+or edit it through Prisma after it has been applied to any branch.
 
-When `DIRECT_URL` is available, create the baseline migration with:
+Apply the committed migration to the Neon branch currently selected by
+`DIRECT_URL`:
 
 ```bash
-npm run db:migrate -- --name init_reports
+npm run db:deploy
 ```
 
-Before applying it, edit the generated SQL so `vector` is enabled before the
-`reports.embedding vector(1536)` column is created:
+Use `npm run db:migrate -- --name <change>` only for later schema changes.
 
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-```
-
-The pgvector similarity query and any HNSW index will live in a later,
-reviewed migration. Exact search is sufficient for the 9 initial seed cases.
+Exact vector search is sufficient for the 9 initial seed cases. The HNSW
+similarity index belongs in a later reviewed migration after there is enough
+confirmed data to justify it.
