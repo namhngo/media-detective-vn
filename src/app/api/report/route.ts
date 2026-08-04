@@ -18,12 +18,13 @@ export async function POST(request: Request) {
 
   await sleep(1400);
 
-  const { analysis } = mockDetectResponse(
+  const { analysis, similarCases } = mockDetectResponse(
     parsed.data.text ?? parsed.data.imageBase64 ?? "",
   );
   const response = {
     reportId: `mock-${Date.now()}`,
     analysis,
+    similarCases,
     published: true,
   };
   return Response.json(reportResponseSchema.parse(response));

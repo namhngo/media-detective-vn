@@ -26,12 +26,15 @@ export function CaseFile({
   source,
   analysis,
   similarCases,
+  attestation,
   children,
 }: {
   reportId: string;
   source: Source;
   analysis: AnalysisResult;
   similarCases: SimilarCase[];
+  /** Report flow: "Reported by user · AI signal: X" transparency strip. */
+  attestation?: React.ReactNode;
   /** Slot for the Share prompt (rendered only at warning tier by the caller). */
   children?: React.ReactNode;
 }) {
@@ -47,6 +50,8 @@ export function CaseFile({
           Score {analysis.riskScore}/100
         </p>
       </header>
+
+      {attestation}
 
       {/* Verdict */}
       <div className="border-b px-5 py-5 sm:px-6">

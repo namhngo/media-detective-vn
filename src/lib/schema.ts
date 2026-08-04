@@ -118,6 +118,7 @@ export const reportRequestSchema = detectRequestSchema.and(
 export const reportResponseSchema = z.object({
   reportId: z.string(),
   analysis: analysisResultSchema,
+  similarCases: z.array(similarCaseSchema),
   published: z.boolean(),
 });
 
