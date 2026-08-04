@@ -1,7 +1,11 @@
+"use client";
+
 import { Puzzle, Quote, Users } from "lucide-react";
+import { motion } from "motion/react";
 
 import { TierIcon } from "@/components/tier-icon";
 import { formatCaseDate, formatVnd, shortCaseRef } from "@/lib/format";
+import { fadeUp } from "@/lib/motion";
 import { categoryLabels, platformLabels, techniqueLabels, tierMeta } from "@/lib/tier";
 import type { AnalysisResult, SimilarCase, Source } from "@/lib/schema";
 import { cn } from "@/lib/utils";
@@ -63,7 +67,10 @@ export function CaseFile({
   const meta = tierMeta[analysis.tier];
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+    <motion.article
+      {...fadeUp}
+      className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm"
+    >
       {/* Reference tag — present for traceability, deliberately quiet */}
       <div className="flex items-center justify-between gap-2 px-5 pt-4 sm:px-6">
         <p className="text-xs text-muted-foreground">
@@ -194,7 +201,15 @@ export function CaseFile({
         </p>
       </div>
 
-      {children}
-    </article>
+      {children && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+        >
+          {children}
+        </motion.div>
+      )}
+    </motion.article>
   );
 }

@@ -35,7 +35,7 @@ export function TrendChart({
   data: DashboardResponse["trend"];
 }) {
   return (
-    <ChartContainer config={trendConfig} className="h-64 w-full">
+    <ChartContainer config={trendConfig} className="aspect-auto h-64 w-full">
       <AreaChart data={data} margin={{ left: 0, right: 8, top: 8 }}>
         <CartesianGrid vertical={false} strokeDasharray="3 3" />
         <XAxis
@@ -87,7 +87,7 @@ export function TechniqueChart({
 }) {
   const top = data.slice(0, 6);
   return (
-    <ChartContainer config={techniqueConfig} className="h-64 w-full">
+    <ChartContainer config={techniqueConfig} className="aspect-auto h-64 w-full">
       <BarChart data={top} layout="vertical" margin={{ left: 8, right: 16 }}>
         <CartesianGrid horizontal={false} strokeDasharray="3 3" />
         <XAxis type="number" tickLine={false} axisLine={false} allowDecimals={false} />
@@ -125,7 +125,7 @@ export function ConfirmationSplit({
 
   return (
     <div className="flex h-64 items-center justify-center">
-      <ChartContainer config={splitConfig} className="h-full w-full">
+      <ChartContainer config={splitConfig} className="aspect-auto h-full w-full">
         <PieChart>
           <ChartTooltip content={<ChartTooltipContent hideLabel />} />
           <Pie

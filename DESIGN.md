@@ -93,5 +93,51 @@ Brand mark `ScanSearch` · Watch `Eye` · Caution `TriangleAlert` · Warning
 
 ## Motion & copy
 
-Unchanged — near-none, plain and calm. Still never "100% accurate," still
-never "safe," across both playbooks.
+Near-none by default, but no longer zero — see the v3 addendum below for
+where motion earned its place. Copy is unchanged: plain and calm, still
+never "100% accurate," still never "safe," across both playbooks.
+
+---
+
+## v3 addendum — structural pass, not a reskin
+
+v2 changed tokens (fonts, colors, radii, icons) but kept v1's exact layout
+skeleton underneath — every page was still a uniform stack of full-width
+sections. That's a reskin, not a redesign. v3 researched current (2026)
+practice and made three *structural* decisions, each backed by a specific
+finding rather than taste alone:
+
+1. **Bento grid — dashboard only.** Current research on bento layouts is
+   explicit that the pattern helps data-dense, non-sequential content
+   ("features at a glance") and *hurts* simple 2-3 item propositions and
+   sequential flows. So: the dashboard is now a real bento — the trend
+   chart is a hero cell (`lg:col-span-3`) beside a stacked stat column —
+   but the home page's two action cards and the linear Detect/Report flow
+   deliberately stay as plain, non-grid layouts. Using bento everywhere
+   would have been the same mistake as v1's mono-everywhere habit: a
+   pattern applied because it's current, not because the content calls
+   for it.
+2. **Micro-interactions that direct attention, not decorate.** Real
+   numbers (checks run, confirmed cases) count up once on arrival — a
+   signal that the data is live, not a static mock. The verdict callout
+   animates in as a unit when analysis completes (marks "the investigation
+   is done"); the Share prompt arrives ~150ms after it (verdict is read
+   before the ask). No hover gimmicks, no scrolljacking, no cursor
+   libraries — 2026 sources are consistent that those read as dated now.
+3. **Performance/restraint as the premium signal, not animation richness.**
+   Deliberately did *not* add a custom hero illustration or scene — current
+   guidance is that "a static hero with one subtle motion cue" now reads as
+   higher-end than an animated illustration, which reads as a template.
+   The hero gets exactly one entrance cue (`fadeUp`, ~350ms); nothing else
+   on the page moves on load.
+
+Implementation: `motion` (motion.dev). `MotionConfig reducedMotion="user"`
+wraps the whole app once in the root layout — reduced-motion is handled
+globally, not per-component. `src/lib/motion.ts` holds the one shared
+entrance variant so choreography stays consistent instead of ad hoc.
+
+One real bug this pass caught, worth remembering: shadcn's `ChartContainer`
+bakes in `aspect-video`. Inside a CSS grid item, that can force a chart to
+compute its width from its height instead of filling the container —
+override with `aspect-auto` on any chart placed in a grid/flex context, and
+add `min-w-0` to the grid item itself as a second line of defense.

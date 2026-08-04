@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro, IBM_Plex_Mono } from "next/font/google";
 
 import "./globals.css";
 
+import { MotionProvider } from "@/components/motion-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -30,9 +31,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${beVietnamPro.variable} ${plexMono.variable}`}>
       <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+        <MotionProvider>
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+        </MotionProvider>
       </body>
     </html>
   );

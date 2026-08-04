@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Lock, ScanSearch, ShieldQuestion } from "lucide-react";
+import { Lock, MessageSquareText, ScanSearch, Search, ShieldQuestion } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { TierBadge } from "@/components/tier-badge";
 import { RedactedLine } from "@/components/redacted-line";
+import { HeroIntro } from "@/components/hero-intro";
 import { HomeStats } from "@/components/home-stats";
 import { tierMeta } from "@/lib/tier";
 import type { Tier } from "@/lib/schema";
@@ -13,29 +14,36 @@ const tiers: Tier[] = ["watch", "caution", "warning"];
 export default function Home() {
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6">
-      {/* Hero — the two actions are the thesis */}
+      {/* Hero — the two actions are the thesis. One motion cue, nothing else moves. */}
       <section className="py-16 sm:py-24">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">
-          <ScanSearch className="size-3.5" />
-          Media literacy, one case at a time
-        </span>
-        <h1 className="mt-4 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
-          Check it before you trust it.
-        </h1>
-        <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-          Media Detective investigates suspicious messages, calls, posts, and
-          screenshots — and explains the manipulation techniques it finds in
-          plain language, across scams, deepfakes, and fake news, so you spot
-          the next one yourself.{" "}
-          <span className="text-foreground">AI assists, you decide.</span>
-        </p>
-        <HomeStats />
+        <HeroIntro>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">
+            <ScanSearch className="size-3.5" />
+            Media literacy, one case at a time
+          </span>
+          <h1 className="mt-4 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+            Check it before you trust it.
+          </h1>
+          <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+            Media Detective investigates suspicious messages, calls, posts, and
+            screenshots — and explains the manipulation techniques it finds in
+            plain language, across scams, deepfakes, and fake news, so you spot
+            the next one yourself.{" "}
+            <span className="text-foreground">AI assists, you decide.</span>
+          </p>
+          <HomeStats />
+        </HeroIntro>
       </section>
 
-      {/* The two entry actions */}
+      {/* The two entry actions — a simple 2-way choice reads best as a plain
+          pair, not a grid: research on bento layouts is explicit that forcing
+          a hierarchy grid onto a 2-3 item proposition hurts comprehension. */}
       <section className="grid gap-4 pb-16 sm:grid-cols-2">
-        <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
+        <div className="group rounded-2xl border border-border/70 bg-card p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+          <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <Search className="size-5" />
+          </span>
+          <p className="mt-4 text-sm font-medium text-muted-foreground">
             When you&rsquo;re unsure
           </p>
           <h2 className="mt-1 text-xl font-semibold">Check content</h2>
@@ -55,8 +63,11 @@ export default function Home() {
           </Button>
         </div>
 
-        <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
+        <div className="group rounded-2xl border border-border/70 bg-card p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+          <span className="flex size-11 items-center justify-center rounded-2xl bg-confirmed-user/10 text-confirmed-user">
+            <MessageSquareText className="size-5" />
+          </span>
+          <p className="mt-4 text-sm font-medium text-muted-foreground">
             When you already know
           </p>
           <h2 className="mt-1 text-xl font-semibold">Report a case</h2>

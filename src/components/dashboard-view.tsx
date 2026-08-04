@@ -10,6 +10,7 @@ import {
   FileSearch,
 } from "lucide-react";
 
+import { CountUp } from "@/components/count-up";
 import {
   ConfirmationSplit,
   TechniqueChart,
@@ -28,11 +29,11 @@ function StatCard({
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
-  value: string;
+  value: React.ReactNode;
   sub?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-border/70 bg-card px-5 py-4 shadow-sm">
+    <div className="flex flex-col justify-center rounded-2xl border border-border/70 bg-card px-5 py-4 shadow-sm">
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" />
         {label}
@@ -82,69 +83,78 @@ export function DashboardView() {
   if (!data) {
     return (
       <div className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-24 rounded-2xl" />
-          ))}
+        <div className="grid gap-4 lg:grid-cols-4">
+          <Skeleton className="h-72 rounded-2xl lg:col-span-3" />
+          <div className="grid grid-cols-3 gap-4 lg:grid-cols-1">
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} className="h-24 rounded-2xl" />
+            ))}
+          </div>
         </div>
-        <Skeleton className="h-72 rounded-2xl" />
+        <Skeleton className="h-64 rounded-2xl" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-10">
-      {/* Stat cards */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard
-          icon={Activity}
-          label="Checks run"
-          value={String(data.stats.totalChecks)}
-        />
-        <StatCard
-          icon={CheckCircle2}
-          label="Confirmed cases"
-          value={String(data.stats.confirmedCases)}
-          sub="Seed + shared + reported"
-        />
-        <StatCard
-          icon={TrendingUp}
-          label="Top category this week"
-          value={
-            data.stats.topCategoryThisWeek
-              ? categoryLabels[data.stats.topCategoryThisWeek]
-              : "—"
-          }
-        />
+    <div className="space-y-4">
+      {/* Bento row: the trend is the hero cell — data-dense, non-sequential
+          content is exactly where a real hierarchy grid earns its keep. */}
+      <div className="grid gap-4 lg:grid-cols-4">
+        <section className="flex min-w-0 flex-col rounded-2xl border border-border/70 bg-card p-5 shadow-sm lg:col-span-3 sm:p-6">
+          <SectionHeading icon={Activity}>
+            Check volume over time, by tier
+          </SectionHeading>
+          <div className="mt-4 flex-1">
+            <TrendChart data={data.trend} />
+          </div>
+          <div className="mt-2 flex justify-center gap-6 text-xs text-muted-foreground">
+            <p>
+              <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-watch" />
+              Watch
+            </p>
+            <p>
+              <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-caution" />
+              Caution
+            </p>
+            <p>
+              <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-warning" />
+              Warning
+            </p>
+          </div>
+        </section>
+
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
+          <StatCard
+            icon={Activity}
+            label="Checks run"
+            value={<CountUp value={data.stats.totalChecks} />}
+          />
+          <StatCard
+            icon={CheckCircle2}
+            label="Confirmed"
+            value={<CountUp value={data.stats.confirmedCases} />}
+            sub="Seed + shared + reported"
+          />
+          <div className="col-span-2 lg:col-span-1">
+            <StatCard
+              icon={TrendingUp}
+              label="Top this week"
+              value={
+                <span className="text-lg">
+                  {data.stats.topCategoryThisWeek
+                    ? categoryLabels[data.stats.topCategoryThisWeek]
+                    : "—"}
+                </span>
+              }
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Trend */}
-      <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
-        <SectionHeading icon={Activity}>
-          Check volume over time, by tier
-        </SectionHeading>
-        <div className="mt-4">
-          <TrendChart data={data.trend} />
-        </div>
-        <div className="mt-2 flex justify-center gap-6 text-xs text-muted-foreground">
-          <p>
-            <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-watch" />
-            Watch
-          </p>
-          <p>
-            <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-caution" />
-            Caution
-          </p>
-          <p>
-            <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-warning" />
-            Warning
-          </p>
-        </div>
-      </section>
-
-      {/* Techniques + split */}
+      {/* Techniques + split — matched-width pair, same bento discipline */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
           <SectionHeading icon={Puzzle}>
             Top manipulation techniques
           </SectionHeading>
@@ -152,7 +162,7 @@ export function DashboardView() {
             <TechniqueChart data={data.techniqueCounts} />
           </div>
         </section>
-        <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
           <SectionHeading icon={Users2}>
             Confirmed by AI + user, vs. self-reported
           </SectionHeading>
@@ -172,8 +182,9 @@ export function DashboardView() {
         </section>
       </div>
 
-      {/* Gallery */}
-      <section>
+      {/* Gallery — a list, deliberately not a grid: sequential content reads
+          better as a stack than forced into cells. */}
+      <section className="pt-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <SectionHeading icon={FileSearch}>
             Confirmed case library
