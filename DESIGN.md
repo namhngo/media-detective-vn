@@ -33,7 +33,7 @@ Light-first. Tier colors are the **only saturated hues** in the product — ever
 | `accent` | `#1D4ED8` | blue-700 — primary actions only (civic blue, no gradients) |
 | `accent-hover` | `#1E40AF` | blue-800 |
 | `tier-watch` | `#64748B` | slate-500 — "Theo dõi" |
-| `tier-caution` | `#D97706` | amber-600 — "Cẩn thận" |
+| `tier-caution` | `#B45309` | amber-700 (white-text contrast) — "Cẩn thận" |
 | `tier-warning` | `#DC2626` | red-600 — "Cảnh báo" |
 | `confirmed-user` | `#0F766E` | teal-700 — user-reported confirmation marks |
 
