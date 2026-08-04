@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Activity, CheckCircle2, TrendingUp } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 
 import { CountUp } from "@/components/count-up";
 import { categoryLabels } from "@/lib/tier";
@@ -14,15 +15,18 @@ import type { Category, DashboardResponse } from "@/lib/schema";
  */
 export function HomeStats() {
   const [stats, setStats] = useState<DashboardResponse["stats"] | null>(null);
+  const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
+    if (!isSignedIn) return;
+
     fetch("/api/dashboard")
       .then((r) => (r.ok ? r.json() : null))
       .then((d: DashboardResponse | null) => d && setStats(d.stats))
       .catch(() => {});
-  }, []);
+  }, [isSignedIn]);
 
-  if (!stats) return null;
+  if (!isLoaded || !isSignedIn || !stats) return null;
 
   return (
     <div className="mt-8 grid max-w-lg grid-cols-3 gap-3">

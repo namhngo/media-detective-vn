@@ -24,6 +24,8 @@ Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~
 | **Share** | Publishes only when the AI's top tier **and** the user's explicit opt-in agree. Only the structured summary publishes — never raw screenshots or message text. |
 | **Report** | For people who *already know* — a scam, or a viral lie that targeted them. Same analysis engine, but publishes on the user's attestation; the AI's independent tier is shown as a transparency badge. Requires sign-in (anonymous auth) so submissions are accountable, not anonymous on the backend. |
 
+Detect, Share, Report, and the dashboard require Clerk sign-in. The public home page explains the product and provides the sign-in entry point.
+
 ### Confidence tiers
 
 Borrowing vocabulary Vietnamese police warnings already use — even the bottom tier never implies "safe," only "nothing flagged yet."
