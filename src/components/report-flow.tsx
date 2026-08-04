@@ -7,6 +7,7 @@ import { Check, Lock, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
+import { InvestigationGuide } from "@/components/investigation-guide";
 import { RedactedLine } from "@/components/redacted-line";
 import { tierMeta } from "@/lib/tier";
 import type { DetectRequest, ReportResponse } from "@/lib/schema";
@@ -64,11 +65,14 @@ export function ReportFlow() {
     <div className="space-y-6">
       {(phase.status === "idle" || analyzing || phase.status === "error") && (
         <>
-          <ContentInput
-            busy={analyzing}
-            submitLabel="Structure my report"
-            onSubmit={analyze}
-          />
+          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
+            <ContentInput
+              busy={analyzing}
+              submitLabel="Structure my report"
+              onSubmit={analyze}
+            />
+            <InvestigationGuide mode="report" />
+          </div>
           {analyzing && (
             <div className="rounded-2xl border border-border/70 bg-card px-5 py-8 shadow-sm sm:px-6">
               <div className="flex items-center gap-3">
@@ -100,19 +104,21 @@ export function ReportFlow() {
 
       {(phase.status === "preview" || phase.status === "publishing") && (
         <>
-          <CaseFile
-            reportId={phase.result.reportId}
-            source={phase.request.source}
-            analysis={phase.result.analysis}
-            similarCases={phase.result.similarCases}
-            attestation={
-              <div className="mx-5 mt-4 flex items-center gap-2 rounded-full bg-confirmed-user/10 px-3.5 py-2 text-sm font-medium text-confirmed-user sm:mx-6">
-                <MessageSquareText className="size-4" />
-                Reported by you · AI signal: {tierMeta[phase.result.analysis.tier].label}
-              </div>
-            }
-          />
-          <div className="rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
+          <div className="mx-auto max-w-3xl">
+            <CaseFile
+              reportId={phase.result.reportId}
+              source={phase.request.source}
+              analysis={phase.result.analysis}
+              similarCases={phase.result.similarCases}
+              attestation={
+                <div className="mx-5 mt-4 flex items-center gap-2 rounded-full bg-confirmed-user/10 px-3.5 py-2 text-sm font-medium text-confirmed-user sm:mx-6">
+                  <MessageSquareText className="size-4" />
+                  Reported by you · AI signal: {tierMeta[phase.result.analysis.tier].label}
+                </div>
+              }
+            />
+          </div>
+          <div className="mx-auto max-w-3xl rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
             <p className="text-sm leading-relaxed">
               Publishing adds this case file to the public library. Your
               account is the trust signal here — the AI&rsquo;s independent

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
+import { InvestigationGuide } from "@/components/investigation-guide";
 import { SharePrompt } from "@/components/share-prompt";
 import type { DetectRequest, DetectResponse } from "@/lib/schema";
 
@@ -39,7 +40,10 @@ export function DetectFlow() {
 
   return (
     <div className="space-y-6">
-      <ContentInput busy={analyzing} submitLabel="Investigate" onSubmit={analyze} />
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
+        <ContentInput busy={analyzing} submitLabel="Investigate" onSubmit={analyze} />
+        <InvestigationGuide mode="detect" />
+      </div>
 
       {analyzing && (
         <div className="rounded-2xl border border-border/70 bg-card px-5 py-8 shadow-sm sm:px-6">
@@ -69,16 +73,18 @@ export function DetectFlow() {
 
       {phase.status === "done" && (
         <>
-          <CaseFile
-            reportId={phase.result.reportId}
-            source={phase.request.source}
-            analysis={phase.result.analysis}
-            similarCases={phase.result.similarCases}
-          >
-            {phase.result.sharePrompted && (
-              <SharePrompt reportId={phase.result.reportId} />
-            )}
-          </CaseFile>
+          <div className="mx-auto max-w-3xl">
+            <CaseFile
+              reportId={phase.result.reportId}
+              source={phase.request.source}
+              analysis={phase.result.analysis}
+              similarCases={phase.result.similarCases}
+            >
+              {phase.result.sharePrompted && (
+                <SharePrompt reportId={phase.result.reportId} />
+              )}
+            </CaseFile>
+          </div>
           <div className="flex justify-center">
             <button
               type="button"

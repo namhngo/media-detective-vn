@@ -141,3 +141,34 @@ bakes in `aspect-video`. Inside a CSS grid item, that can force a chart to
 compute its width from its height instead of filling the container —
 override with `aspect-auto` on any chart placed in a grid/flex context, and
 add `min-w-0` to the grid item itself as a second line of defense.
+
+---
+
+## v4 addendum — guided investigation, not a prettier dashboard
+
+v3 gave the dashboard a real information architecture, but the highest-value
+surfaces still began as a headline above a form. That meant the product was
+visually cleaner but still did not *teach before it evaluated*. This pass
+changes the entry architecture:
+
+1. **Home is now an asymmetric product moment.** The hero's right side is a
+   static, self-contained preview: urgent message → signals (`Urgency`,
+   `Secrecy`) → calm next step. It is not a decorative illustration; it
+   explains the product without requiring anyone to read the feature copy.
+   The deep navy is used once, as a focused canvas for this preview — not as
+   a system-wide "cyber" theme.
+2. **Detect and Report are workspaces.** Desktop layout is now input on the
+   left and a sticky companion rail on the right. The Detect rail teaches a
+   30-second verification habit (known channel, slow urgency, virality is
+   not proof) before an answer appears. The Report rail explains the user's
+   attestation, privacy boundary, and review step. On mobile, the rail becomes
+   the next readable section instead of being compressed beside the form.
+3. **Results stay narrow and sequential.** After analysis, the result is
+   constrained to `max-w-3xl` below the workspace. This protects readable
+   line length and preserves the natural order: read verdict → evidence →
+   similar cases → decide to share. A wide, bento-style result would make a
+   serious explanation harder to follow.
+
+The home hero still gets only one entrance animation. The new preview is
+static by design: the page should make its point before JavaScript has to do
+anything.
