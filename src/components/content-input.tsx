@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, Lock, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -71,7 +71,7 @@ export function ContentInput({
   }
 
   return (
-    <div className="rounded-lg border bg-card p-5 sm:p-6">
+    <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
       <Tabs
         value={source}
         onValueChange={(v) => {
@@ -126,7 +126,8 @@ export function ContentInput({
               <span className="text-sm">
                 Drop a screenshot here, or click to browse
               </span>
-              <span className="font-mono text-[11px] uppercase tracking-wide">
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Lock className="size-3" />
                 Analyzed in the moment — never stored
               </span>
             </button>
@@ -155,10 +156,11 @@ export function ContentInput({
       )}
 
       <div className="mt-4 flex items-center justify-between gap-4">
-        <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Lock className="size-3" />
           Raw content is never stored
         </p>
-        <Button onClick={submit} disabled={!canSubmit} size="lg">
+        <Button onClick={submit} disabled={!canSubmit} size="lg" className="rounded-full">
           {busy ? "Analyzing…" : submitLabel}
         </Button>
       </div>

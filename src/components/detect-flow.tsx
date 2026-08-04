@@ -42,7 +42,7 @@ export function DetectFlow() {
       <ContentInput busy={analyzing} submitLabel="Investigate" onSubmit={analyze} />
 
       {analyzing && (
-        <div className="rounded-lg border bg-card px-5 py-8 sm:px-6">
+        <div className="rounded-2xl border border-border/70 bg-card px-5 py-8 shadow-sm sm:px-6">
           <div className="flex items-center gap-3">
             <span className="size-2 animate-pulse rounded-full bg-primary" />
             <p className="text-sm text-muted-foreground">
@@ -57,7 +57,7 @@ export function DetectFlow() {
       )}
 
       {phase.status === "error" && (
-        <div className="rounded-lg border border-destructive/40 bg-card px-5 py-4 sm:px-6" role="alert">
+        <div className="rounded-2xl border border-destructive/40 bg-card px-5 py-4 sm:px-6" role="alert">
           <p className="text-sm">
             The analysis didn&rsquo;t complete: {phase.message}
           </p>

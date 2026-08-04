@@ -1,6 +1,7 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Lock, Quote, Puzzle } from "lucide-react";
 
 import { TierBadge } from "@/components/tier-badge";
+import { RedactedLine } from "@/components/redacted-line";
 import { formatCaseDate, formatVnd, shortCaseRef } from "@/lib/format";
 import { categoryLabels, platformLabels, techniqueLabels } from "@/lib/tier";
 import type { GalleryEntry } from "@/lib/schema";
@@ -8,20 +9,20 @@ import type { GalleryEntry } from "@/lib/schema";
 function confirmationMark(entry: GalleryEntry) {
   if (entry.isSeed) {
     return (
-      <span className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+      <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
         Seed case
       </span>
     );
   }
   if (entry.confirmationSource === "ai_detected") {
     return (
-      <span className="font-mono text-[10px] tracking-[0.12em] text-primary uppercase">
+      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
         AI + user confirmed
       </span>
     );
   }
   return (
-    <span className="font-mono text-[10px] tracking-[0.12em] text-confirmed-user uppercase">
+    <span className="rounded-full bg-confirmed-user/10 px-2 py-0.5 text-xs font-medium text-confirmed-user">
       Reported by user
     </span>
   );
@@ -33,10 +34,10 @@ function confirmationMark(entry: GalleryEntry) {
  */
 export function GalleryCard({ entry }: { entry: GalleryEntry }) {
   return (
-    <details className="group rounded-lg border bg-card">
+    <details className="group rounded-2xl border border-border/70 bg-card shadow-sm">
       <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 px-5 py-4 [&::-webkit-details-marker]:hidden">
-        <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-          Case {shortCaseRef(entry.id)} · {formatCaseDate(entry.createdAt)} ·{" "}
+        <p className="text-xs text-muted-foreground">
+          {shortCaseRef(entry.id)} · {formatCaseDate(entry.createdAt)} ·{" "}
           {platformLabels[entry.platform]}
         </p>
         <span className="text-sm font-medium">
@@ -49,10 +50,11 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
         </span>
       </summary>
 
-      <div className="border-t px-5 py-4">
+      <div className="border-t border-border/70 px-5 py-4">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
+            <p className="flex items-center gap-1.5 text-sm font-medium">
+              <Quote className="size-3.5 text-muted-foreground" />
               Claims
             </p>
             <ul className="mt-2 space-y-1.5 text-sm">
@@ -65,7 +67,8 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
             </ul>
           </div>
           <div>
-            <p className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
+            <p className="flex items-center gap-1.5 text-sm font-medium">
+              <Puzzle className="size-3.5 text-muted-foreground" />
               Techniques
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -73,7 +76,7 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
                 entry.techniques.map((t) => (
                   <span
                     key={t}
-                    className="rounded-md border px-2 py-0.5 text-xs font-medium"
+                    className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium"
                   >
                     {techniqueLabels[t]}
                   </span>
@@ -97,20 +100,21 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
           {entry.explanationEn}
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t pt-3">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/70 pt-3">
           {entry.sourceCitation ? (
-            <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
+            <p className="text-xs text-muted-foreground">
               Source: {entry.sourceCitation}
             </p>
           ) : (
             <span />
           )}
-          <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-            Raw content:{" "}
-            <span className="text-redacted" aria-hidden="true">
-              ████████
-            </span>{" "}
-            never stored
+          <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5 whitespace-nowrap">
+              <Lock className="size-3 shrink-0" />
+              Raw content:
+            </span>
+            <RedactedLine />
+            <span>never stored</span>
           </p>
         </div>
       </div>

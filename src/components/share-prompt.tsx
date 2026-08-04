@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Lock, Megaphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { RedactedLine } from "@/components/redacted-line";
 
 type ShareState = "prompt" | "sharing" | "shared" | "dismissed";
 
@@ -32,7 +33,7 @@ export function SharePrompt({ reportId }: { reportId: string }) {
 
   if (state === "shared") {
     return (
-      <div className="border-t px-5 py-4 sm:px-6">
+      <div className="border-t border-border/70 px-5 py-4 sm:px-6">
         <p className="flex items-center gap-2 text-sm">
           <Check className="size-4 text-confirmed-user" />
           Shared. This case file is now in the library — it may surface the next
@@ -44,7 +45,7 @@ export function SharePrompt({ reportId }: { reportId: string }) {
 
   if (state === "dismissed") {
     return (
-      <div className="border-t px-5 py-4 sm:px-6">
+      <div className="border-t border-border/70 px-5 py-4 sm:px-6">
         <p className="text-sm text-muted-foreground">
           Kept private — nothing was published.
         </p>
@@ -53,33 +54,36 @@ export function SharePrompt({ reportId }: { reportId: string }) {
   }
 
   return (
-    <div className="border-t border-tier-warning/30 bg-tier-warning/5 px-5 py-5 sm:px-6">
-      <p className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
-        Share this case?
+    <div className="m-5 mt-0 rounded-2xl bg-tier-warning/8 p-5 sm:m-6 sm:mt-0">
+      <p className="flex items-center gap-2 text-sm font-medium">
+        <Megaphone className="size-4 text-tier-warning" />
+        Share this to help others?
       </p>
       <p className="mt-2 text-sm leading-relaxed">
         This matches known manipulation patterns. Sharing the structured case
         file helps others spot the same playbook sooner — that decision is
         yours, not ours.
       </p>
-      <div className="mt-3 space-y-1 font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
-        <p>Shared: category · techniques · tier · explanation</p>
-        <p>
-          Never shared:{" "}
-          <span className="text-redacted" aria-hidden="true">
-            ████ ███████ █████
-          </span>{" "}
-          raw content, names, numbers
+      <div className="mt-3 flex flex-col gap-1.5 text-xs text-muted-foreground">
+        <p>Shared: category, techniques, tier, and explanation.</p>
+        <p className="flex flex-wrap items-center gap-2">
+          <span className="flex items-center gap-1.5 whitespace-nowrap">
+            <Lock className="size-3 shrink-0" />
+            Never shared:
+          </span>
+          <RedactedLine />
+          <span>raw content, names, numbers.</span>
         </p>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Button onClick={share} disabled={state === "sharing"}>
+        <Button onClick={share} disabled={state === "sharing"} className="rounded-full">
           {state === "sharing" ? "Sharing…" : "Share anonymously"}
         </Button>
         <Button
           variant="ghost"
           onClick={() => setState("dismissed")}
           disabled={state === "sharing"}
+          className="rounded-full"
         >
           Keep private
         </Button>

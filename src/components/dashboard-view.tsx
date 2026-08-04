@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  Activity,
+  CheckCircle2,
+  TrendingUp,
+  Puzzle,
+  Users2,
+  FileSearch,
+} from "lucide-react";
 
 import {
   ConfirmationSplit,
@@ -13,17 +21,20 @@ import { categoryLabels } from "@/lib/tier";
 import type { DashboardResponse } from "@/lib/schema";
 
 function StatCard({
+  icon: Icon,
   label,
   value,
   sub,
 }: {
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string;
   sub?: string;
 }) {
   return (
-    <div className="rounded-lg border bg-card px-5 py-4">
-      <p className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
+    <div className="rounded-2xl border border-border/70 bg-card px-5 py-4 shadow-sm">
+      <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+        <Icon className="size-4" />
         {label}
       </p>
       <p className="mt-1.5 font-mono text-3xl font-medium tracking-tight">
@@ -31,6 +42,21 @@ function StatCard({
       </p>
       {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
     </div>
+  );
+}
+
+function SectionHeading({
+  icon: Icon,
+  children,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+}) {
+  return (
+    <h2 className="flex items-center gap-2 text-sm font-medium">
+      <Icon className="size-4 text-muted-foreground" />
+      {children}
+    </h2>
   );
 }
 
@@ -58,10 +84,10 @@ export function DashboardView() {
       <div className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-3">
           {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-24 rounded-lg" />
+            <Skeleton key={i} className="h-24 rounded-2xl" />
           ))}
         </div>
-        <Skeleton className="h-72 rounded-lg" />
+        <Skeleton className="h-72 rounded-2xl" />
       </div>
     );
   }
@@ -70,13 +96,19 @@ export function DashboardView() {
     <div className="space-y-10">
       {/* Stat cards */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Checks run" value={String(data.stats.totalChecks)} />
         <StatCard
+          icon={Activity}
+          label="Checks run"
+          value={String(data.stats.totalChecks)}
+        />
+        <StatCard
+          icon={CheckCircle2}
           label="Confirmed cases"
           value={String(data.stats.confirmedCases)}
           sub="Seed + shared + reported"
         />
         <StatCard
+          icon={TrendingUp}
           label="Top category this week"
           value={
             data.stats.topCategoryThisWeek
@@ -87,10 +119,10 @@ export function DashboardView() {
       </div>
 
       {/* Trend */}
-      <section className="rounded-lg border bg-card p-5 sm:p-6">
-        <h2 className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
-          Check volume over time · by tier
-        </h2>
+      <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <SectionHeading icon={Activity}>
+          Check volume over time, by tier
+        </SectionHeading>
         <div className="mt-4">
           <TrendChart data={data.trend} />
         </div>
@@ -112,18 +144,18 @@ export function DashboardView() {
 
       {/* Techniques + split */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-lg border bg-card p-5 sm:p-6">
-          <h2 className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
+        <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <SectionHeading icon={Puzzle}>
             Top manipulation techniques
-          </h2>
+          </SectionHeading>
           <div className="mt-4">
             <TechniqueChart data={data.techniqueCounts} />
           </div>
         </section>
-        <section className="rounded-lg border bg-card p-5 sm:p-6">
-          <h2 className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
-            Confirmed by AI + user · vs · self-reported
-          </h2>
+        <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <SectionHeading icon={Users2}>
+            Confirmed by AI + user, vs. self-reported
+          </SectionHeading>
           <div className="mt-4">
             <ConfirmationSplit data={data.confirmationSplit} />
           </div>
@@ -142,10 +174,10 @@ export function DashboardView() {
 
       {/* Gallery */}
       <section>
-        <div className="flex items-baseline justify-between gap-4">
-          <h2 className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <SectionHeading icon={FileSearch}>
             Confirmed case library
-          </h2>
+          </SectionHeading>
           <p className="text-xs text-muted-foreground">
             Structured summaries only — raw content never exists here
           </p>

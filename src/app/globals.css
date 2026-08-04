@@ -69,8 +69,8 @@
   --accent: #eff4ff;
   --accent-foreground: #1d4ed8;
   --destructive: #dc2626;
-  --border: #e7e5e0;
-  --input: #e7e5e0;
+  --border: #edebe6;
+  --input: #edebe6;
   --ring: #1d4ed8;
   --chart-1: #64748b;
   --chart-2: #b45309;
@@ -81,7 +81,7 @@
   --tier-caution: #b45309;
   --tier-warning: #dc2626;
   --confirmed-user: #0f766e;
-  --radius: 0.625rem;
+  --radius: 0.85rem;
   --sidebar: #fafaf8;
   --sidebar-foreground: #1c1917;
   --sidebar-primary: #1d4ed8;
@@ -106,11 +106,4 @@
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
   }
-}
-
-@utility text-redacted {
-  font-family: var(--font-plex-mono), ui-monospace, monospace;
-  letter-spacing: -0.05em;
-  color: var(--muted-foreground);
-  user-select: none;
 }

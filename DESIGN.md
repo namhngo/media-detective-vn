@@ -1,66 +1,97 @@
 ---
 name: Media Detective Vietnam
-description: A media-literacy "case-file" tool — calm civic-tech, not cyber-security theater. Light-first, high-trust, legible to older adults and hackathon judges alike.
+description: A warm, friendly literacy companion — not an audit console. Approachable for everyday users, including older adults, in both Vietnamese and English.
 ---
 
-# Design language
+# Design language — v2 "Warm companion"
 
-**Design read:** public-interest web app for Vietnamese users (incl. older adults) and English-speaking judges, with a calm civic-tech language — GOV.UK legibility crossed with modern fintech polish — plus one distinctive motif: **the case file**.
+**Why this revision:** v1 ("case-file / calm civic-tech") leaned on the same
+structural habit as an unrelated audit-tool project — heavy monospace for
+every label, uppercase tracking-wide eyebrows everywhere, bordered
+"evidence" framing. Different colors, same cold template. This product is a
+*literacy companion*, not an investigator's console, and a meaningful share
+of its real users are older adults who need warmth and plain language more
+than they need a dossier aesthetic.
 
-## The case-file motif (the one real aesthetic risk)
+**Design read:** a friendly, trustworthy companion that explains what it
+found in plain language — closer to a knowledgeable friend than a case
+file. Calm, never alarmist; warm, never twee.
 
-Analysis results and gallery entries render like a detective's evidence card:
+## What changed from v1
 
-- Mono-spaced metadata header: `CASE #0042 · SEED · ZALO · 2026-01-18`
-- Structured fields with small mono uppercase labels (`CLAIMS`, `TECHNIQUES`, `ASSESSMENT`)
-- **Redaction bars** (`██████`) wherever raw content would appear — the privacy rule ("we never store raw content") rendered as a visual feature, not a footnote
-- Tier presented like a stamped verdict: solid filled badge, uppercase, letterspaced
-
-The motif stays disciplined: one card per result, no novelty overflowing into forms or dashboards. Everything else is quiet.
+- Monospace (IBM Plex Mono) is now used sparingly — only for numerals
+  (stat cards, small reference tags) — not for section headings, eyebrows,
+  or nav labels. Those are all Be Vietnam Pro now.
+- Every section gets a small **icon + label** instead of an uppercase mono
+  eyebrow. The icon carries the "structure" cue instead of tracked capitals.
+- Cards are rounder (radius bumped) and rely more on soft shadow than hard
+  borders — lifted and friendly, not boxed and official.
+- The verdict is a foregrounded, icon-led, tier-tinted callout — not a small
+  stamp buried under a mono meta row.
+- The redaction motif becomes rounded pill blocks, not literal
+  block-character "censored document" bars.
 
 ## Color
 
-Light-first. Tier colors are the **only saturated hues** in the product — everything else is warm-neutral, so a red/amber badge carries real weight.
+Unchanged hues, warmer application. Tier colors are still the only
+saturated hues used as solid fills — but they now also appear as **soft
+10% tints** behind the verdict callout, so the emotional read is instant.
 
 | Token | Value | Use |
 |---|---|---|
-| `bg` | `#FAFAF8` | page background (warm paper) |
+| `bg` | `#FAFAF8` | page background |
 | `surface` | `#FFFFFF` | cards |
-| `border` | `#E7E5E0` | card/hairline borders |
+| `border` | `#EDEBE6` | soft hairlines (lighter than v1) |
 | `text` | `#1C1917` | stone-900 |
 | `text-secondary` | `#57534E` | stone-600 |
 | `text-muted` | `#A8A29E` | stone-400 |
-| `accent` | `#1D4ED8` | blue-700 — primary actions only (civic blue, no gradients) |
-| `accent-hover` | `#1E40AF` | blue-800 |
+| `accent` | `#1D4ED8` | blue-700 — primary actions |
 | `tier-watch` | `#64748B` | slate-500 — "Theo dõi" |
 | `tier-caution` | `#B45309` | amber-700 (white-text contrast) — "Cẩn thận" |
 | `tier-warning` | `#DC2626` | red-600 — "Cảnh báo" |
-| `confirmed-user` | `#0F766E` | teal-700 — user-reported confirmation marks |
+| `confirmed-user` | `#0F766E` | teal-700 |
 
-Chart palette = tier palette. Never introduce a fourth saturated color.
-
-**Banned:** purple/blue gradients, glassmorphism, dark "hacker console" theme, neon. This is a literacy tool, not a SOC dashboard.
+Banned, still: purple/blue gradients, glassmorphism, dark "hacker console"
+theme, neon, and — new — literal redaction-bar typography as decoration.
 
 ## Typography
 
-- **UI / body:** Be Vietnam Pro (weights 400/500/600/700) — chosen for flawless Vietnamese diacritics when the vi toggle lands; clean grotesque in English
-- **Evidence / metadata:** IBM Plex Mono (400/500) — case-file labels, reference numbers, redaction bars, stat card numerals
+- **Everything**: Be Vietnam Pro (400/500/600/700) — display, body, labels,
+  nav. One typeface, used with a clear scale, carries the whole product.
+- **Numerals only**: IBM Plex Mono — stat cards and small reference tags.
+  Never for section headings or eyebrows.
 
-Scale: base 16px minimum (older-adult legibility). Display (page titles) 28–32px/600. Mono labels 11–12px, uppercase, tracking-wide. Never set body text below 14px.
+Base 16px minimum. Section labels are `text-sm font-medium` with an icon,
+sentence case — not uppercase mono.
+
+## Signature element
+
+The **verdict callout**: a rounded, tier-tinted card with a colored icon
+circle (Eye / TriangleAlert / OctagonAlert), the tier name as real heading
+type (not just a small stamp), one human sentence, then the explanation as
+a friendly paragraph. This is the one place the product is allowed to feel
+emotionally direct — everywhere else stays quiet.
+
+## Icons (lucide-react)
+
+Brand mark `ScanSearch` · Watch `Eye` · Caution `TriangleAlert` · Warning
+`OctagonAlert` · Claims `Quote` · Techniques `Puzzle` · Similar cases
+`Users` · Privacy `Lock` · Share `Megaphone` · Attestation `MessageSquareText`
+· Footer `HeartHandshake` · Stats: `Activity` / `CheckCircle2` / `TrendingUp`
 
 ## Layout & components
 
-- Max content width 1120px; generous whitespace; single-column flows for Detect/Report (max 640px centered) — one thing per screen
-- Cards: white, 1px `border`, radius 10px, **no shadows** except the result card (single soft shadow for emphasis)
-- Buttons: solid `accent` fill for primary; outline for secondary; minimum 44px touch targets
-- TierBadge: solid tier color, white uppercase text, letterspacing, radius 6px — reads like a stamp
-- Technique chips: neutral outline chips — never color-coded (tier colors stay exclusive to tiers)
-- Stat numerals: IBM Plex Mono, large; labels mono uppercase small
+- Radius bumped: `--radius: 0.85rem` — friendlier corners flow through
+  cards, buttons, inputs automatically via the existing token chain.
+- Cards: white, soft border, `shadow-sm` (not just a hairline) — lifted.
+- Primary buttons: same rounded-lg as before but slightly larger padding;
+  reserve pill shape (`rounded-full`) for the single most important CTA per
+  page (hero actions), not every button — a friendly accent, not a pattern.
+- Tier badges: pill-shaped, icon + label, larger than v1's small stamp.
+- Redaction motif: a short row of rounded pill blocks (muted, varied
+  width) — a visual footnote, not a censored-document effect.
 
-## Motion
+## Motion & copy
 
-Near-none. Result card fades/slides in once (200ms, ease-out). Loading = a quiet "Analyzing…" with an indeterminate bar or pulsing dot — **no** fake progress percentages, no typewriter theatrics. Honesty in motion matches honesty in copy.
-
-## Copy tone
-
-Plain, calm, declarative. Sentence case except mono labels. Never fear-mongering, never "100% accurate," never "safe" — the bottom tier says "nothing flagged yet," always with what-to-do-next guidance ("verify by calling your relative back on their usual number").
+Unchanged — near-none, plain and calm. Still never "100% accurate," still
+never "safe," across both playbooks.

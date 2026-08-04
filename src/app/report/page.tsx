@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MessageSquareText } from "lucide-react";
 
 import { ReportFlow } from "@/components/report-flow";
 
@@ -9,10 +10,11 @@ export const metadata: Metadata = {
 export default function ReportPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
-      <p className="font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
-        Report · your account is the warning
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">
+        <MessageSquareText className="size-3.5" />
+        Your account is the warning
+      </span>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight">
         Report a case
       </h1>
       <p className="mt-2 text-muted-foreground">

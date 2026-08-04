@@ -1,11 +1,21 @@
-import { TierBadge } from "@/components/tier-badge";
+import { Puzzle, Quote, Users } from "lucide-react";
+
+import { TierIcon } from "@/components/tier-icon";
 import { formatCaseDate, formatVnd, shortCaseRef } from "@/lib/format";
 import { categoryLabels, platformLabels, techniqueLabels, tierMeta } from "@/lib/tier";
 import type { AnalysisResult, SimilarCase, Source } from "@/lib/schema";
+import { cn } from "@/lib/utils";
 
-function MonoLabel({ children }: { children: React.ReactNode }) {
+function SectionHeading({
+  icon: Icon,
+  children,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+}) {
   return (
-    <p className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
+    <p className="flex items-center gap-2 text-sm font-medium">
+      <Icon className="size-4 text-muted-foreground" />
       {children}
     </p>
   );
@@ -17,9 +27,21 @@ const sourceLabels: Record<Source, string> = {
   screenshot: "Screenshot",
 };
 
+const tierTint: Record<AnalysisResult["tier"], string> = {
+  watch: "bg-tier-watch/8",
+  caution: "bg-tier-caution/8",
+  warning: "bg-tier-warning/8",
+};
+
+const tierIconBg: Record<AnalysisResult["tier"], string> = {
+  watch: "bg-tier-watch",
+  caution: "bg-tier-caution",
+  warning: "bg-tier-warning",
+};
+
 /**
- * The case file — the product's signature card. Structured fields, mono
- * evidence labels, tier stamp. The explanation is the centerpiece.
+ * The result card — a warm, icon-led verdict callout up top (the product's
+ * signature moment), then the supporting evidence in plain, quiet sections.
  */
 export function CaseFile({
   reportId,
@@ -38,37 +60,52 @@ export function CaseFile({
   /** Slot for the Share prompt (rendered only at warning tier by the caller). */
   children?: React.ReactNode;
 }) {
+  const meta = tierMeta[analysis.tier];
+
   return (
-    <article className="rounded-lg border bg-card shadow-sm">
-      {/* Meta header */}
-      <header className="flex flex-wrap items-center justify-between gap-2 border-b px-5 py-3 sm:px-6">
-        <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
-          Case {shortCaseRef(reportId)} · {sourceLabels[source]} ·{" "}
-          {formatCaseDate(new Date().toISOString())}
+    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+      {/* Reference tag — present for traceability, deliberately quiet */}
+      <div className="flex items-center justify-between gap-2 px-5 pt-4 sm:px-6">
+        <p className="text-xs text-muted-foreground">
+          Reference #{shortCaseRef(reportId).replace("#", "")} ·{" "}
+          {sourceLabels[source]} · {formatCaseDate(new Date().toISOString())}
         </p>
-        <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground">
-          Score {analysis.riskScore}/100
+        <p className="text-xs text-muted-foreground">
+          Model confidence: {analysis.riskScore}/100
         </p>
-      </header>
+      </div>
 
       {attestation}
 
-      {/* Verdict */}
-      <div className="border-b px-5 py-5 sm:px-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <TierBadge tier={analysis.tier} />
-          <p className="text-sm text-muted-foreground">
-            {tierMeta[analysis.tier].guidance}
-          </p>
+      {/* Verdict callout — the signature moment */}
+      <div className={cn("mx-5 mt-4 rounded-2xl p-5 sm:mx-6 sm:p-6", tierTint[analysis.tier])}>
+        <div className="flex items-start gap-3.5">
+          <span
+            className={cn(
+              "flex size-10 shrink-0 items-center justify-center rounded-full text-white",
+              tierIconBg[analysis.tier],
+            )}
+          >
+            <TierIcon tier={analysis.tier} className="size-5" />
+          </span>
+          <div>
+            <p className="text-lg font-semibold">
+              {meta.label}{" "}
+              <span className="text-base font-normal text-muted-foreground">
+                · {meta.vi}
+              </span>
+            </p>
+            <p className="text-sm text-muted-foreground">{meta.guidance}</p>
+          </div>
         </div>
         <p className="mt-4 leading-relaxed">{analysis.explanationEn}</p>
       </div>
 
       {/* Evidence */}
-      <div className="grid gap-6 px-5 py-5 sm:grid-cols-2 sm:px-6">
+      <div className="grid gap-6 px-5 py-6 sm:grid-cols-2 sm:px-6">
         <div>
-          <MonoLabel>Claims made</MonoLabel>
-          <ul className="mt-2 space-y-1.5 text-sm">
+          <SectionHeading icon={Quote}>What it claims</SectionHeading>
+          <ul className="mt-2.5 space-y-1.5 text-sm">
             {analysis.claims.map((claim, i) => (
               <li key={i} className="flex gap-2">
                 <span className="shrink-0 text-muted-foreground">—</span>
@@ -78,13 +115,13 @@ export function CaseFile({
           </ul>
         </div>
         <div>
-          <MonoLabel>Manipulation techniques</MonoLabel>
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <SectionHeading icon={Puzzle}>Manipulation techniques</SectionHeading>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
             {analysis.techniques.length > 0 ? (
               analysis.techniques.map((t) => (
                 <span
                   key={t}
-                  className="rounded-md border px-2 py-0.5 text-xs font-medium"
+                  className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium"
                 >
                   {techniqueLabels[t]}
                 </span>
@@ -122,20 +159,22 @@ export function CaseFile({
       </div>
 
       {/* Similar cases */}
-      <div className="border-t px-5 py-5 sm:px-6">
-        <MonoLabel>Similar cases from the library</MonoLabel>
+      <div className="border-t border-border/70 px-5 py-6 sm:px-6">
+        <SectionHeading icon={Users}>
+          Others have seen this before
+        </SectionHeading>
         {similarCases.length > 0 ? (
           <ul className="mt-3 space-y-3">
             {similarCases.map((c) => (
-              <li key={c.id} className="rounded-md border bg-background p-3.5">
+              <li key={c.id} className="rounded-xl bg-secondary/60 p-3.5">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-                    Case {shortCaseRef(c.id)}
+                  <p className="text-xs text-muted-foreground">
+                    {shortCaseRef(c.id)}
                     {c.sourceCitation ? ` · ${c.sourceCitation}` : ""}
                   </p>
-                  <p className="shrink-0 font-mono text-[10px] whitespace-nowrap text-muted-foreground">
+                  <span className="shrink-0 rounded-full bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">
                     {Math.round(c.similarity * 100)}% match
-                  </p>
+                  </span>
                 </div>
                 <p className="mt-1.5 text-sm text-muted-foreground">
                   {c.explanationEn}
