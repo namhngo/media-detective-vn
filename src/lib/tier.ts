@@ -12,12 +12,13 @@ export const tierMeta: Record<
   caution: {
     label: "Caution",
     vi: "Cẩn thận",
-    guidance: "Some manipulation signals — verify before acting.",
+    guidance: "Some manipulation signals — verify before acting or sharing.",
   },
   warning: {
     label: "Warning",
     vi: "Cảnh báo",
-    guidance: "Strong scam signals — do not send money, sign, or share codes.",
+    guidance:
+      "Strong manipulation signals — do not send money, sign, or share this.",
   },
 };
 
@@ -29,6 +30,11 @@ export const techniqueLabels: Record<string, string> = {
   scarcity: "Scarcity",
   social_proof: "Social proof",
   secrecy: "Secrecy",
+  emotional_bait: "Emotional bait",
+  decontextualization: "Decontextualization",
+  fabricated_evidence: "Fabricated evidence",
+  bandwagon: "Bandwagon",
+  character_attack: "Character attack",
 };
 
 export const categoryLabels: Record<string, string> = {
@@ -36,6 +42,7 @@ export const categoryLabels: Record<string, string> = {
   timeshare_contract: "Timeshare contract",
   fake_prize: "Fake prize",
   investment_scam: "Investment scam",
+  misinformation: "Misinformation",
   other: "Other",
 };
 

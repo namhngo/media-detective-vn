@@ -24,16 +24,24 @@ export const categorySchema = z.enum([
   "timeshare_contract",
   "fake_prize",
   "investment_scam",
+  "misinformation",
   "other",
 ]);
 
 export const techniqueSchema = z.enum([
+  // Scam playbook
   "urgency",
   "fear",
   "authority",
   "scarcity",
   "social_proof",
   "secrecy",
+  // Misinformation playbook
+  "emotional_bait",
+  "decontextualization",
+  "fabricated_evidence",
+  "bandwagon",
+  "character_attack",
 ]);
 
 export const tierSchema = z.enum(["watch", "caution", "warning"]);

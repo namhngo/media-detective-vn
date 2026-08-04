@@ -85,9 +85,10 @@ export function TechniqueChart({
 }: {
   data: DashboardResponse["techniqueCounts"];
 }) {
+  const top = data.slice(0, 6);
   return (
     <ChartContainer config={techniqueConfig} className="h-64 w-full">
-      <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16 }}>
+      <BarChart data={top} layout="vertical" margin={{ left: 8, right: 16 }}>
         <CartesianGrid horizontal={false} strokeDasharray="3 3" />
         <XAxis type="number" tickLine={false} axisLine={false} allowDecimals={false} />
         <YAxis
@@ -95,7 +96,7 @@ export function TechniqueChart({
           dataKey="technique"
           tickLine={false}
           axisLine={false}
-          width={92}
+          width={132}
           tickFormatter={(t: string) => techniqueLabels[t] ?? t}
         />
         <ChartTooltip content={<ChartTooltipContent hideLabel />} />

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ReportFlow } from "@/components/report-flow";
 
 export const metadata: Metadata = {
-  title: "Report a scam — Media Detective Vietnam",
+  title: "Report a case — Media Detective Vietnam",
 };
 
 export default function ReportPage() {
@@ -13,13 +13,14 @@ export default function ReportPage() {
         Report · your account is the warning
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-        Report a scam
+        Report a case
       </h1>
       <p className="mt-2 text-muted-foreground">
-        It already happened to you — no need to pretend otherwise. Describe
-        what happened and the same engine structures it into a case file.
-        Publishing depends on your word, not the AI&rsquo;s tier; the AI&rsquo;s
-        independent signal stays attached for transparency.
+        It already happened to you — a scam, a deepfake, or a viral lie that
+        targeted you or someone you know. No need to pretend otherwise.
+        Describe what happened and the same engine structures it into a case
+        file. Publishing depends on your word, not the AI&rsquo;s tier; the
+        AI&rsquo;s independent signal stays attached for transparency.
       </p>
       <div className="mt-8">
         <ReportFlow />

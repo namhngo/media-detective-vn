@@ -8,12 +8,13 @@ Not a scam detector. Not a social feed. A **dashboard-first literacy tool**: the
 
 ## The problem
 
-Two connected patterns are hitting Vietnam right now — isolation + fabricated trust + manufactured urgency:
+Three connected patterns are hitting Vietnam right now — isolation + fabricated trust + manufactured urgency:
 
 - **AI deepfake impersonation** *(hero case)* — scammers scrape photos/audio from social media, generate a face-and-voice clone, and run live video calls impersonating relatives to request urgent money. A convincing deepfake call reportedly takes under a minute to produce. Vietnam's National Cyber Security Association names deepfake sophistication the top emerging risk for 2026.
 - **Hợp đồng kỳ nghỉ (timeshare) fraud** *(supporting case)* — Hanoi's Economic Police opened 21 criminal cases, charged 187 people: 493 confirmed victims, ~181 billion VND stolen in that investigation alone. Playbook: prize call → hotel "seminar" → manufactured urgency → sign and pay same-day.
+- **Viral misinformation targeting individuals** — fabricated "evidence" and emotional bait turn an unverified accusation into a pile-on before anyone checks the facts. In 2026, a false cheating accusation against a Vietnamese student went viral and the harm proved irreversible. The same trust-calibration skills — check the source, don't share before verifying, virality is not evidence — apply here as much as to financial scams.
 
-Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~USD 230M+)** in online fraud losses in the first 11 months of 2025. Targets are overwhelmingly older adults, isolated by the shift from multi-generational to nuclear households.
+Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~USD 230M+)** in online fraud losses in the first 11 months of 2025. Targets are overwhelmingly older adults, isolated by the shift from multi-generational to nuclear households — and, for misinformation, anyone who can be turned into a viral villain overnight.
 
 ## The product — three actions, not a feed
 
@@ -21,7 +22,7 @@ Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~
 |---|---|
 | **Detect** | Paste a message, describe a call, or upload a screenshot. The AI returns a confidence tier, the manipulation techniques found, and a plain-language explanation. Private by default. At the top tier, the app *actively prompts* the user to share. |
 | **Share** | Publishes only when the AI's top tier **and** the user's explicit opt-in agree. Only the structured summary publishes — never raw screenshots or message text. |
-| **Report** | For people who *already know* they were scammed. Same analysis engine, but publishes on the user's attestation; the AI's independent tier is shown as a transparency badge. Requires sign-in (anonymous auth) so submissions are accountable, not anonymous on the backend. |
+| **Report** | For people who *already know* — a scam, or a viral lie that targeted them. Same analysis engine, but publishes on the user's attestation; the AI's independent tier is shown as a transparency badge. Requires sign-in (anonymous auth) so submissions are accountable, not anonymous on the backend. |
 
 ### Confidence tiers
 
@@ -47,6 +48,8 @@ Input (screenshot or text)
 ```
 
 Raw uploaded content is used transiently for step 1 and **never persisted** — only the structured output is stored. The vector DB retrieves context ("others reported this pattern"); it never votes on the tier.
+
+The technique taxonomy spans two playbooks — scam (`urgency`, `fear`, `authority`, `scarcity`, `social_proof`, `secrecy`) and misinformation (`emotional_bait`, `decontextualization`, `fabricated_evidence`, `bandwagon`, `character_attack`) — because both are ultimately the same skill: calibrating trust before acting. When content targets an identifiable private person, the agent never repeats identifying details — it describes the pattern, not the person.
 
 The AI backend is a single **[eve](https://vercel.com/eve) agent** (`agent/`): markdown instructions + skills, TypeScript tools. No LangChain/CrewAI/subagents.
 

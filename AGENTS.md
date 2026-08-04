@@ -26,6 +26,7 @@ UNESCO Youth Hackathon 2026 (AI and MIL track). Full context: `README.md`. Desig
 - **Tier rule**: the model outputs the tier directly; the UI displays it and the Share gate reads the same value. `risk_score` is for sorting/aggregates. Never claim "100% accurate" in any copy.
 - **Vector search rule**: retrieval for context only — it never influences the tier. Enforce a similarity floor; returning zero similar cases is correct when nothing clears it.
 - **Contract rule**: `src/lib/schema.ts` is the single source of truth shared by UI, API routes, and the agent (`outputSchema`). Change it in one place.
+- **Sensitive-content rule**: the taxonomy covers scams *and* misinformation targeting individuals (viral false accusations, fabricated "evidence"). Seed data and mocks describe patterns only — never a real victim's name, school, or other identifying detail, even when the source event is real and public. Explanations may state harms honestly (including that they can be irreversible) without naming anyone.
 
 ## Repo map
 

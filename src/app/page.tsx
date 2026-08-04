@@ -20,9 +20,10 @@ export default function Home() {
           Check it before you trust it.
         </h1>
         <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-          Media Detective investigates suspicious messages, calls, and
+          Media Detective investigates suspicious messages, calls, posts, and
           screenshots — and explains the manipulation techniques it finds in
-          plain language, so you spot the next one yourself.{" "}
+          plain language, across scams, deepfakes, and fake news, so you spot
+          the next one yourself.{" "}
           <span className="text-foreground">AI assists, you decide.</span>
         </p>
         <HomeStats />
@@ -36,10 +37,11 @@ export default function Home() {
           </p>
           <h2 className="mt-2 text-xl font-semibold">Check content</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Paste a message, describe a call, or upload a screenshot. You get a
-            confidence tier, the manipulation techniques found, and a
-            plain-language explanation. Private by default — shared only if you
-            choose to.
+            Paste a message, describe a call, or upload a screenshot — a scam
+            attempt, a deepfake, or a viral claim you&rsquo;re not sure about.
+            You get a confidence tier, the manipulation techniques found, and a
+            plain-language explanation. Private by default — shared only if
+            you choose to.
           </p>
           <Button render={<Link href="/detect" />} className="mt-5">
             Check content
@@ -50,14 +52,15 @@ export default function Home() {
           <p className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
             Action · when you already know
           </p>
-          <h2 className="mt-2 text-xl font-semibold">Report a scam</h2>
+          <h2 className="mt-2 text-xl font-semibold">Report a case</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            It already happened to you? Your account is the warning. Publish a
-            structured case file — never the raw content — so others recognize
-            the same playbook sooner.
+            It already happened to you — a scam, or a viral lie that targeted
+            you? Your account is the warning. Publish a structured case file —
+            never the raw content — so others recognize the same playbook
+            sooner.
           </p>
           <Button render={<Link href="/report" />} variant="outline" className="mt-5">
-            Report a scam
+            Report a case
           </Button>
         </div>
       </section>

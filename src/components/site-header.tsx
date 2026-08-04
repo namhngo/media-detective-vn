@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const nav = [
   { href: "/detect", label: "Check content", short: "Check" },
-  { href: "/report", label: "Report a scam", short: "Report" },
+  { href: "/report", label: "Report a case", short: "Report" },
   { href: "/dashboard", label: "Dashboard", short: "Dashboard" },
 ];
 

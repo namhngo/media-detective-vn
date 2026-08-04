@@ -21,7 +21,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Media Detective Vietnam — AI-assisted media literacy",
   description:
-    "Check suspicious content, learn the manipulation techniques behind scams, and help others spot them. AI assists, you decide.",
+    "Check suspicious content, learn the manipulation techniques behind scams and fake news, and help others spot them. AI assists, you decide.",
 };
 
 export default function RootLayout({

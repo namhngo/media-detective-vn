@@ -58,9 +58,9 @@ export function SharePrompt({ reportId }: { reportId: string }) {
         Share this case?
       </p>
       <p className="mt-2 text-sm leading-relaxed">
-        This matches known scam patterns. Sharing the structured case file
-        helps others spot the same playbook sooner — that decision is yours,
-        not ours.
+        This matches known manipulation patterns. Sharing the structured case
+        file helps others spot the same playbook sooner — that decision is
+        yours, not ours.
       </p>
       <div className="mt-3 space-y-1 font-mono text-[11px] tracking-wide text-muted-foreground uppercase">
         <p>Shared: category · techniques · tier · explanation</p>

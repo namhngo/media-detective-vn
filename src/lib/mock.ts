@@ -170,6 +170,56 @@ export const seedGallery: GalleryEntry[] = [
     sourceCitation:
       "Vietnam Ministry of Public Security / National Cyber Security Association",
   },
+  {
+    id: "seed-008",
+    createdAt: "2026-07-28T09:00:00.000Z",
+    source: "text",
+    platform: "facebook",
+    category: "misinformation",
+    claims: [
+      "A student was publicly accused of cheating, with a photo circulated as alleged proof",
+      "The accusation went viral before any school or official statement",
+      "The accusation was later found to be baseless",
+    ],
+    techniques: [
+      "fabricated_evidence",
+      "emotional_bait",
+      "bandwagon",
+      "character_attack",
+    ],
+    tier: "warning",
+    explanationEn:
+      "A false accusation against a student spread faster than any verification could. By the time the claim collapsed, the harm was irreversible — a reminder that viral reach is not evidence, and that sharing an unverified accusation makes you part of the pile-on. Verify first; when a private individual is targeted, not sharing is the default.",
+    moneyRequested: false,
+    amountVnd: null,
+    location: null,
+    isSeed: true,
+    confirmationSource: null,
+    sourceCitation:
+      "Vietnamese news reporting on viral false accusations, 2026",
+  },
+  {
+    id: "seed-009",
+    createdAt: "2026-06-30T09:00:00.000Z",
+    source: "screenshot",
+    platform: "zalo",
+    category: "misinformation",
+    claims: [
+      "A screenshot claims to show an official announcement of a new policy",
+      "Formatting and wording do not match any government channel",
+      "No matching announcement exists on the official portal",
+    ],
+    techniques: ["fabricated_evidence", "authority", "emotional_bait"],
+    tier: "warning",
+    explanationEn:
+      "Fabricated screenshots of 'official announcements' are a staple of Vietnamese misinformation: they borrow authority, trigger outrage or fear, and spread through family group chats. The check is always the same — find the announcement on the official portal. If it isn't there, the screenshot is the story, not the policy.",
+    moneyRequested: false,
+    amountVnd: null,
+    location: null,
+    isSeed: true,
+    confirmationSource: null,
+    sourceCitation: "Vietnamese news reporting, 2026",
+  },
 ];
 
 /* ------------------------- Canned analyses (detect) ---------------------- */
@@ -217,6 +267,28 @@ const benignAnalysis: AnalysisResult = {
   riskScore: 22,
   explanationEn:
     "Nothing here raises a clear flag yet: no time pressure, no request for money or personal details, no borrowed authority. That said, 'no flag' is not a guarantee — if any message ever asks you to transfer money, share a code, or keep a secret from family, verify it through a channel you already trust before acting.",
+  moneyRequested: false,
+  amountVnd: null,
+};
+
+const misinformationAnalysis: AnalysisResult = {
+  claims: [
+    "Post accuses a named student of cheating, with a photo offered as proof",
+    "Urges readers to share widely before any official statement",
+    "Comment sections are already targeting the accused person",
+  ],
+  techniques: [
+    "fabricated_evidence",
+    "emotional_bait",
+    "bandwagon",
+    "character_attack",
+  ],
+  category: "misinformation",
+  platform: "facebook",
+  tier: "warning",
+  riskScore: 79,
+  explanationEn:
+    "This asks you to judge and share before any verification: a private individual is named and shamed, the 'proof' is a photo that proves nothing by itself, and the push to share now is the engine of the harm. This year in Vietnam, a false accusation exactly like this went viral and the consequences were irreversible. Before sharing: check whether any credible outlet or official statement confirms it, look for the original source of the photo, and remember that virality is not evidence. When a private person is targeted, not sharing is the default.",
   moneyRequested: false,
   amountVnd: null,
 };
@@ -273,9 +345,44 @@ const timeshareSimilar: SimilarCase[] = [
   },
 ];
 
+const misinformationSimilar: SimilarCase[] = [
+  {
+    id: "seed-008",
+    category: "misinformation",
+    techniques: [
+      "fabricated_evidence",
+      "emotional_bait",
+      "bandwagon",
+      "character_attack",
+    ],
+    tier: "warning",
+    explanationEn:
+      "A false accusation against a student went viral before verification; the claim later collapsed, but the harm was irreversible.",
+    similarity: 0.9,
+    confirmationSource: null,
+    sourceCitation:
+      "Vietnamese news reporting on viral false accusations, 2026",
+  },
+  {
+    id: "seed-009",
+    category: "misinformation",
+    techniques: ["fabricated_evidence", "authority", "emotional_bait"],
+    tier: "warning",
+    explanationEn:
+      "Fabricated screenshot of an 'official announcement' circulating in family group chats.",
+    similarity: 0.81,
+    confirmationSource: null,
+    sourceCitation: "Vietnamese news reporting, 2026",
+  },
+];
+
 /** Keyword router so different demo inputs produce meaningfully different results. */
 export function mockDetectResponse(input: string): DetectResponse {
   const t = input.toLowerCase();
+  const isMisinformation =
+    /cheat|viral|hoax|rumou?r|fake news|accused|shaming|pile.?on|forwarded|everyone is posting|share this/.test(
+      t,
+    );
   const isDeepfake =
     /video call|voice|face|relative|nephew|uncle|aunt|son|daughter|mom|dad|mother|father|family/.test(
       t,
@@ -283,6 +390,14 @@ export function mockDetectResponse(input: string): DetectResponse {
   const isTimeshare =
     /vacation|seminar|prize|timeshare|voucher|hotel|free trip|holiday/.test(t);
 
+  if (isMisinformation) {
+    return {
+      reportId: `mock-${Date.now()}`,
+      analysis: misinformationAnalysis,
+      similarCases: misinformationSimilar,
+      sharePrompted: true,
+    };
+  }
   if (isDeepfake) {
     return {
       reportId: `mock-${Date.now()}`,
@@ -311,8 +426,8 @@ export function mockDetectResponse(input: string): DetectResponse {
 
 export const mockDashboard: DashboardResponse = {
   stats: {
-    totalChecks: 132,
-    confirmedCases: 19,
+    totalChecks: 147,
+    confirmedCases: 21,
     topCategoryThisWeek: "deepfake_impersonation",
   },
   trend: [
@@ -335,8 +450,13 @@ export const mockDashboard: DashboardResponse = {
     { technique: "authority", count: 27 },
     { technique: "social_proof", count: 22 },
     { technique: "secrecy", count: 18 },
+    { technique: "emotional_bait", count: 16 },
     { technique: "scarcity", count: 15 },
     { technique: "fear", count: 12 },
+    { technique: "bandwagon", count: 11 },
+    { technique: "fabricated_evidence", count: 9 },
+    { technique: "character_attack", count: 7 },
+    { technique: "decontextualization", count: 6 },
   ],
   confirmationSplit: {
     aiDetected: 7,
