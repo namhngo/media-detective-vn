@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const nav = [
   { href: "/detect", label: "Check content", short: "Check" },
   { href: "/report", label: "Report a case", short: "Report" },
-  { href: "/dashboard", label: "Dashboard", short: "Dashboard" },
+  { href: "/dashboard", label: "Dashboard", short: "Dashboard", mobileHidden: true },
 ];
 
 export function SiteHeader() {
@@ -45,6 +45,7 @@ export function SiteHeader() {
                   href={item.href}
                   className={cn(
                     "rounded-full px-2.5 py-1.5 text-[13px] whitespace-nowrap transition-colors sm:px-4 sm:text-sm",
+                    item.mobileHidden && "hidden sm:inline-flex",
                     active
                       ? "bg-secondary font-medium text-foreground"
                       : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
