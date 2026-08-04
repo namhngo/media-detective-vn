@@ -154,7 +154,11 @@ export function ReportFlow() {
             who checks a similar pattern will see it.
           </p>
           <div className="mt-5 flex justify-center gap-2">
-            <Button render={<Link href="/dashboard" />} variant="outline">
+            <Button
+              render={<Link href="/dashboard" />}
+              nativeButton={false}
+              variant="outline"
+            >
               View dashboard
             </Button>
             <Button

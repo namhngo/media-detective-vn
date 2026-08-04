@@ -43,7 +43,7 @@ export default function Home() {
             plain-language explanation. Private by default — shared only if
             you choose to.
           </p>
-          <Button render={<Link href="/detect" />} className="mt-5">
+          <Button render={<Link href="/detect" />} nativeButton={false} className="mt-5">
             Check content
           </Button>
         </div>
@@ -59,7 +59,12 @@ export default function Home() {
             never the raw content — so others recognize the same playbook
             sooner.
           </p>
-          <Button render={<Link href="/report" />} variant="outline" className="mt-5">
+          <Button
+            render={<Link href="/report" />}
+            nativeButton={false}
+            variant="outline"
+            className="mt-5"
+          >
             Report a case
           </Button>
         </div>
