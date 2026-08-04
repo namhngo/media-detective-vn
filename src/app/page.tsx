@@ -38,7 +38,7 @@ export default function Home() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button
-              render={<Link href="/detect" />}
+              render={<Link href="/detect" prefetch={false} />}
               nativeButton={false}
               size="lg"
               className="rounded-full"
@@ -47,7 +47,7 @@ export default function Home() {
               <ArrowRight data-icon="inline-end" />
             </Button>
             <Button
-              render={<Link href="/report" />}
+              render={<Link href="/report" prefetch={false} />}
               nativeButton={false}
               variant="outline"
               size="lg"

@@ -1,5 +1,6 @@
 import { mockDetectResponse, sleep } from "@/lib/mock";
 import { detectRequestSchema, detectResponseSchema } from "@/lib/schema";
+import { auth } from "@clerk/nextjs/server";
 
 /**
  * MOCK STUB — backend phase will replace the internals with the eve agent run
@@ -7,6 +8,7 @@ import { detectRequestSchema, detectResponseSchema } from "@/lib/schema";
  * contract here is final; only the internals change.
  */
 export async function POST(request: Request) {
+  await auth.protect();
   const parsed = detectRequestSchema.safeParse(await request.json());
   if (!parsed.success) {
     return Response.json(

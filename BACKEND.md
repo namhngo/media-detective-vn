@@ -18,7 +18,7 @@ extension that adds `vector(1536)` storage and cosine-similarity operators;
 | Layer | Owns |
 |---|---|
 | Eve agent | Reads raw input, loads skills, calls deterministic tools, returns structured output |
-| Next.js | Share and Report publication gates, Clerk auth, public API responses |
+| Next.js | Share and Report publication gates, Clerk auth, authenticated API responses |
 | Prisma | Standard report CRUD and ordinary dashboard queries |
 | pgvector raw SQL | Embedding writes and similarity retrieval |
 | Neon | One managed Postgres database |
@@ -45,6 +45,14 @@ public gallery.
 linked to a report (`analysis_created`, `shared`, `user_reported`, or `seeded`)
 and contains only event type, timestamp, and an optional Clerk actor ID. It
 never contains raw content or a duplicate report payload.
+
+## Access policy
+
+The landing page is public. Detect, Dashboard, Report, and their Next.js API
+routes call `auth.protect()` at the resource itself. This keeps raw input and
+private dashboard activity behind an authenticated application boundary without
+relying on deprecated path-matcher middleware. Eve session auth will be wired
+through its authored channel when the live agent UI replaces the mock routes.
 
 ## Local prerequisites
 

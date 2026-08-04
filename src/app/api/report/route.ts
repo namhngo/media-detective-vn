@@ -1,5 +1,6 @@
 import { mockDetectResponse, sleep } from "@/lib/mock";
 import { reportRequestSchema, reportResponseSchema } from "@/lib/schema";
+import { auth } from "@clerk/nextjs/server";
 
 /**
  * MOCK STUB — backend phase: require a signed-in session (anonymous auth),
@@ -8,6 +9,7 @@ import { reportRequestSchema, reportResponseSchema } from "@/lib/schema";
  * The AI's independent tier is returned for the transparency badge.
  */
 export async function POST(request: Request) {
+  await auth.protect();
   const parsed = reportRequestSchema.safeParse(await request.json());
   if (!parsed.success) {
     return Response.json(

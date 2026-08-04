@@ -1,5 +1,6 @@
 import { sleep } from "@/lib/mock";
 import { shareRequestSchema, shareResponseSchema } from "@/lib/schema";
+import { auth } from "@clerk/nextjs/server";
 
 /**
  * MOCK STUB — backend phase: verify the row's tier is "warning" SERVER-SIDE
@@ -7,6 +8,7 @@ import { shareRequestSchema, shareResponseSchema } from "@/lib/schema";
  * confirmation_source="ai_detected", and generate the case embedding.
  */
 export async function POST(request: Request) {
+  await auth.protect();
   const parsed = shareRequestSchema.safeParse(await request.json());
   if (!parsed.success) {
     return Response.json(

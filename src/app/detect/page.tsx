@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Lock } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
 
 import { DetectFlow } from "@/components/detect-flow";
 
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
   title: "Check content — Media Detective Vietnam",
 };
 
-export default function DetectPage() {
+export default async function DetectPage() {
+  await auth.protect();
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">

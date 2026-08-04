@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Activity } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
 
 import { DashboardView } from "@/components/dashboard-view";
 
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
   title: "Dashboard — Media Detective Vietnam",
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  await auth.protect();
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">

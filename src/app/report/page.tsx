@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MessageSquareText } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
 
 import { ReportFlow } from "@/components/report-flow";
 
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
   title: "Report a case — Media Detective Vietnam",
 };
 
-export default function ReportPage() {
+export default async function ReportPage() {
+  await auth.protect();
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">

@@ -1,15 +1,8 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher([
-  "/report(.*)",
-  "/api/report(.*)",
-]);
-
-export default clerkMiddleware(async (auth, request) => {
-  if (isProtectedRoute(request)) {
-    await auth.protect();
-  }
-});
+// Resource-level auth lives in each protected page and route handler. This
+// middleware remains required for Clerk's App Router integration and tokens.
+export default clerkMiddleware();
 
 export const config = {
   matcher: [
