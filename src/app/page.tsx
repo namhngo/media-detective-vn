@@ -88,7 +88,7 @@ export default function Home() {
         <p className="font-mono text-[11px] tracking-[0.15em] text-muted-foreground uppercase">
           Privacy by design
         </p>
-        <p className="text-redacted mt-4 text-lg" aria-hidden="true">
+        <p className="text-redacted mt-4 text-sm break-all sm:text-lg" aria-hidden="true">
           ████████████ ███ ████████ █████ ████████████████
         </p>
         <p className="mt-3 max-w-xl text-sm text-muted-foreground">
