@@ -1,8 +1,8 @@
 ---
-description: Use when the content involves a prize or free-vacation phone call, an invitation to a hotel seminar, or pressure to sign a holiday membership contract (hợp đồng kỳ nghỉ / timeshare).
+description: Use when the content involves a prize or free-vacation phone call, an invitation to a hotel seminar, or pressure to sign a timeshare contract.
 ---
 
-# Timeshare (hợp đồng kỳ nghỉ) playbook
+# Timeshare playbook
 
 TODO (backend phase): full reference — the funnel (prize/free-vacation call →
 high-pressure hotel seminar → manufactured urgency and fake social proof →

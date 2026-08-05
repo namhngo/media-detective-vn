@@ -11,5 +11,5 @@ relatives requesting urgent money), the urgency+secrecy signature, and the
 verification advice to give (hang up, call back on the known number, ask
 something only the real person would know).
 
-Source anchors: Vĩnh Long police public warning 2026; Ministry of Information
+Source anchors: Vinh Long police public warning 2026; Ministry of Information
 and Communications consumer-safety advisory 2026.

@@ -46,9 +46,9 @@ saturated hues used as solid fills — but they now also appear as **soft
 | `text-secondary` | `#57534E` | stone-600 |
 | `text-muted` | `#A8A29E` | stone-400 |
 | `accent` | `#1D4ED8` | blue-700 — primary actions |
-| `tier-watch` | `#64748B` | slate-500 — "Theo dõi" |
-| `tier-caution` | `#B45309` | amber-700 (white-text contrast) — "Cẩn thận" |
-| `tier-warning` | `#DC2626` | red-600 — "Cảnh báo" |
+| `tier-watch` | `#64748B` | slate-500 — "Watch" |
+| `tier-caution` | `#B45309` | amber-700 (white-text contrast) — "Caution" |
+| `tier-warning` | `#DC2626` | red-600 — "Warning" |
 | `confirmed-user` | `#0F766E` | teal-700 |
 
 Banned, still: purple/blue gradients, glassmorphism, dark "hacker console"

@@ -32,9 +32,9 @@ Borrowing vocabulary Vietnamese police warnings already use — even the bottom 
 
 | Tier | Vietnamese | Internal score |
 |---|---|---|
-| Watch | *Theo dõi* (draft) | 0–39 |
-| Caution | *Cẩn thận* | 40–74 |
-| Warning | *Cảnh báo* | 75–100 |
+| Watch | Nothing flagged yet | 0–39 |
+| Caution | Verify before acting | 40–74 |
+| Warning | Strong manipulation signals | 75–100 |
 
 Never "100% accurate" — no classifier can honestly promise that. The `warning` gate (Share) and user attestation (Report) are what earn the trust.
 
