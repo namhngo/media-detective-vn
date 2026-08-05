@@ -4,19 +4,42 @@ description: Use when the content is a viral news claim, a public accusation aga
 
 # Misinformation playbook
 
-TODO (backend phase): full reference. Pattern outline:
+## Identify the claim and the harm
 
-1. Viral false accusation — fabricated or decontextualized "proof" targets a
-   private individual; emotional bait drives sharing; bandwagon effect
-   substitutes reach for verification. Harm can be irreversible even after the
-   claim collapses. Signature: fabricated_evidence + emotional_bait +
-   bandwagon + character_attack.
-2. Fabricated official announcement — doctored screenshot borrowing
-   authority, spread through family group chats. Verification: the official
-   portal or it didn't happen.
-3. Verification advice to give: check for confirmation by credible outlets or
-   official statements; find the original source of any image (reverse image
-   search); treat "everyone is sharing it" as a warning sign, not evidence;
-   never name or amplify a targeted private individual.
+Separate the post's factual claim from its call to action. Identify whether it
+uses a private person's identity, a fabricated official notice, an old or cropped
+image, an alarming health or safety rumour, or a demand to forward immediately.
 
-Source anchor: Vietnamese news reporting on viral false accusations, 2026.
+Do not assume misinformation requires malicious intent. Focus on what the
+submitted material supports, what is missing, and the foreseeable harm from
+amplification.
+
+## Common patterns
+
+| Pattern | Signals | Safer next step |
+| --- | --- | --- |
+| Private-person accusation | alleged proof, outrage, comments targeting a person | do not share; preserve privacy; seek responsible reporting |
+| Fabricated announcement | official-looking logo, screenshot, missing source URL | compare with the issuing body's official channel |
+| Recontextualized media | old image/video, wrong date or place, cropped caption | find the original appearance and full context |
+| Viral rumour | "everyone is sharing", urgency to forward, no named source | pause and seek a primary source or credible reporting |
+
+## Technique selection
+
+Use `fabricated_evidence` only when there are meaningful signs of invented or
+doctored evidence, not merely because a screenshot lacks a link. Use
+`decontextualization` when genuine material appears to be placed in a misleading
+time, place, or narrative. Use `bandwagon` when reach is offered as proof.
+
+For a private person, also load private-person-harm and remove identifying details
+from the structured claims. Never amplify the allegation while explaining it.
+
+## Tool and source discipline
+
+Use `search_fact_checks` only with redacted, checkable claims. Treat its results
+as leads to read, not a substitute for the original source. If no reliable source
+is available, say so and recommend not sharing until verification is possible.
+
+## Reference principles
+
+- Google Fact Check Explorer: <https://toolbox.google.com/factcheck/explorer>
+- UNESCO MIL: <https://www.unesco.org/en/media-information-literacy>

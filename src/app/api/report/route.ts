@@ -1,5 +1,4 @@
 import { mockDetectResponse, sleep } from "@/lib/mock";
-import { collectExternalEvidence } from "@/lib/external-evidence";
 import { reportRequestSchema, reportResponseSchema } from "@/lib/schema";
 import { auth } from "@clerk/nextjs/server";
 
@@ -21,17 +20,13 @@ export async function POST(request: Request) {
 
   await sleep(1400);
 
-  const mockResponse = mockDetectResponse(
+  const { analysis, similarCases } = mockDetectResponse(
     parsed.data.text ?? parsed.data.imageBase64 ?? "",
   );
-  const externalEvidence = await collectExternalEvidence({
-    analysis: mockResponse.analysis,
-    rawText: parsed.data.text,
-    enabled: parsed.data.externalEvidence,
-  });
   const response = {
-    ...mockResponse,
-    externalEvidence,
+    reportId: `mock-${Date.now()}`,
+    analysis,
+    similarCases,
     published: true,
   };
   return Response.json(reportResponseSchema.parse(response));

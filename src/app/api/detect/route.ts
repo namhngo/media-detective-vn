@@ -1,5 +1,4 @@
 import { mockDetectResponse, sleep } from "@/lib/mock";
-import { collectExternalEvidence } from "@/lib/external-evidence";
 import { detectRequestSchema, detectResponseSchema } from "@/lib/schema";
 import { auth } from "@clerk/nextjs/server";
 
@@ -20,15 +19,9 @@ export async function POST(request: Request) {
 
   await sleep(1400); // simulate analysis latency for realistic UI states
 
-  const mockResponse = mockDetectResponse(
+  const response = mockDetectResponse(
     parsed.data.text ?? parsed.data.imageBase64 ?? "",
   );
-  const externalEvidence = await collectExternalEvidence({
-    analysis: mockResponse.analysis,
-    rawText: parsed.data.text,
-    enabled: parsed.data.externalEvidence,
-  });
-  const response = { ...mockResponse, externalEvidence };
   // Parse on the way out so a drifting mock fails loudly in development.
   return Response.json(detectResponseSchema.parse(response));
 }

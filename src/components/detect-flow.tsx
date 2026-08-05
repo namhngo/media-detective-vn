@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
-import { EvidencePanel } from "@/components/evidence-panel";
 import { InvestigationGuide } from "@/components/investigation-guide";
 import { SharePrompt } from "@/components/share-prompt";
 import type { DetectRequest, DetectResponse } from "@/lib/schema";
@@ -85,12 +84,6 @@ export function DetectFlow() {
                 <SharePrompt reportId={phase.result.reportId} />
               )}
             </CaseFile>
-            <div className="mt-6">
-              <EvidencePanel
-                analysis={phase.result.analysis}
-                evidence={phase.result.externalEvidence}
-              />
-            </div>
           </div>
           <div className="flex justify-center">
             <button

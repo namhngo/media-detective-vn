@@ -87,44 +87,6 @@ export const similarCaseSchema = z.object({
   sourceCitation: z.string().nullable(),
 });
 
-const externalEvidenceStatusSchema = z.enum([
-  "not_requested",
-  "not_configured",
-  "not_applicable",
-  "available",
-  "unavailable",
-]);
-
-export const publishedFactCheckSchema = z.object({
-  claim: z.string(),
-  publisher: z.string(),
-  title: z.string(),
-  url: z.string().url(),
-  verdict: z.string().nullable(),
-  reviewDate: z.string().nullable(),
-});
-
-export const urlSafetySchema = z.object({
-  url: z.string().url(),
-  maliciousCount: z.number().int().min(0),
-  suspiciousCount: z.number().int().min(0),
-});
-
-/**
- * Optional third-party evidence assembled after the tier is determined. It is
- * transient, user-requested, and never changes the model's analysis or tier.
- */
-export const externalEvidenceSchema = z.object({
-  factChecks: z.object({
-    status: externalEvidenceStatusSchema,
-    results: z.array(publishedFactCheckSchema),
-  }),
-  urlSafety: z.object({
-    status: externalEvidenceStatusSchema,
-    result: urlSafetySchema.nullable(),
-  }),
-});
-
 /* ------------------------------- API shapes ------------------------------ */
 
 export const detectRequestSchema = z
@@ -134,8 +96,6 @@ export const detectRequestSchema = z
     text: z.string().min(1).optional(),
     /** Base64 data URL for screenshots. Transient — never persisted. */
     imageBase64: z.string().optional(),
-    /** Explicit consent to search derived claims and public links externally. */
-    externalEvidence: z.boolean().default(false),
   })
   .refine((v) => v.text || v.imageBase64, {
     message: "Either text or imageBase64 is required",
@@ -146,7 +106,6 @@ export const detectResponseSchema = z.object({
   analysis: analysisResultSchema,
   /** May legitimately be empty — the similarity floor forces honesty. */
   similarCases: z.array(similarCaseSchema),
-  externalEvidence: externalEvidenceSchema,
   /** True when analysis.tier === "warning" — the UI must visibly prompt Share. */
   sharePrompted: z.boolean(),
 });
@@ -168,7 +127,6 @@ export const reportResponseSchema = z.object({
   reportId: z.string(),
   analysis: analysisResultSchema,
   similarCases: z.array(similarCaseSchema),
-  externalEvidence: externalEvidenceSchema,
   published: z.boolean(),
 });
 
@@ -226,7 +184,6 @@ export type Tier = z.infer<typeof tierSchema>;
 export type ConfirmationSource = z.infer<typeof confirmationSourceSchema>;
 export type AnalysisResult = z.infer<typeof analysisResultSchema>;
 export type SimilarCase = z.infer<typeof similarCaseSchema>;
-export type ExternalEvidence = z.infer<typeof externalEvidenceSchema>;
 export type DetectRequest = z.infer<typeof detectRequestSchema>;
 export type DetectResponse = z.infer<typeof detectResponseSchema>;
 export type ShareRequest = z.infer<typeof shareRequestSchema>;

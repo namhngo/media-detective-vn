@@ -395,10 +395,6 @@ export function mockDetectResponse(input: string): DetectResponse {
       reportId: `mock-${Date.now()}`,
       analysis: misinformationAnalysis,
       similarCases: misinformationSimilar,
-      externalEvidence: {
-        factChecks: { status: "not_requested", results: [] },
-        urlSafety: { status: "not_requested", result: null },
-      },
       sharePrompted: true,
     };
   }
@@ -407,10 +403,6 @@ export function mockDetectResponse(input: string): DetectResponse {
       reportId: `mock-${Date.now()}`,
       analysis: deepfakeAnalysis,
       similarCases: deepfakeSimilar,
-      externalEvidence: {
-        factChecks: { status: "not_requested", results: [] },
-        urlSafety: { status: "not_requested", result: null },
-      },
       sharePrompted: true,
     };
   }
@@ -419,10 +411,6 @@ export function mockDetectResponse(input: string): DetectResponse {
       reportId: `mock-${Date.now()}`,
       analysis: timeshareAnalysis,
       similarCases: timeshareSimilar,
-      externalEvidence: {
-        factChecks: { status: "not_requested", results: [] },
-        urlSafety: { status: "not_requested", result: null },
-      },
       sharePrompted: true,
     };
   }
@@ -430,10 +418,6 @@ export function mockDetectResponse(input: string): DetectResponse {
     reportId: `mock-${Date.now()}`,
     analysis: benignAnalysis,
     similarCases: [], // similarity floor: nothing cleared it — correct and honest
-    externalEvidence: {
-      factChecks: { status: "not_requested", results: [] },
-      urlSafety: { status: "not_requested", result: null },
-    },
     sharePrompted: false,
   };
 }

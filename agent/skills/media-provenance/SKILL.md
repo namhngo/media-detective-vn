@@ -4,13 +4,32 @@ description: Use when a user asks whether an image, video, audio clip, watermark
 
 # Media provenance
 
-1. Explain that provenance records can show signed information about an asset's
-   origin or edit history when they validate.
-2. Explain that metadata can be removed by copying, compression, screenshots,
-   and platform uploads. Missing metadata is not proof of manipulation.
-3. Do not claim an AI detector can reliably determine whether every image,
-   voice, or video is synthetic.
-4. Focus on practical checks: original upload, source account, full context,
-   independent coverage, and a known-channel confirmation for identity claims.
-5. For an alleged deepfake emergency, tell the user to stop, use a known contact
-   channel, and verify before sending money or sharing.
+## What provenance can establish
+
+1. Explain that Content Credentials can bind a signed record to a specific asset
+   and may record the signer, creation information, edit actions, and ingredients.
+2. When a real validator result is available, describe its exact status: whether
+   the asset-manifest binding and signature validate, who signed it, and which
+   recorded actions are relevant.
+3. Explain that a valid record is provenance evidence, not proof that the scene,
+   caption, or real-world claim is true. A signed record can be incomplete.
+
+## What provenance cannot establish
+
+- Metadata and provenance may disappear after screenshots, re-encoding, copying,
+  or platform uploads. Absence does not prove manipulation or AI generation.
+- Do not make a binary "real" or "AI-generated" conclusion from visual artifacts,
+  a watermark, or a detector score alone.
+- Do not claim to validate a Content Credential unless a validator result exists.
+
+## Practical advice
+
+Direct the user to the original upload, source account, full context, independent
+coverage, and a known-channel identity check. For alleged deepfake emergencies,
+stop before acting and verify through a contact path obtained independently of the
+suspicious message.
+
+## Reference principles
+
+- C2PA explainer: <https://spec.c2pa.org/specifications/specifications/2.4/explainer/Explainer.html>
+- C2PA technical specification: <https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html>

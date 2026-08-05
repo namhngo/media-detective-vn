@@ -20,7 +20,7 @@ Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~
 
 | Action | What it does |
 |---|---|
-| **Detect** | Paste a message or upload a screenshot. The AI returns a confidence tier, the manipulation techniques found, and a plain-language explanation. Private by default. Users can also opt in to search published fact checks and check a public link without changing the tier. At the top tier, the app *actively prompts* the user to share. |
+| **Detect** | Paste a message or upload a screenshot. The AI returns a confidence tier, the manipulation techniques found, and a plain-language explanation. Private by default. At the top tier, the app *actively prompts* the user to share. |
 | **Share** | Publishes only when the AI's top tier **and** the user's explicit opt-in agree. Only the structured summary publishes — never raw screenshots or message text. |
 | **Report** | For people who *already know* — a scam, or a viral lie that targeted them. Same analysis engine, but publishes on the user's attestation; the AI's independent tier is shown as a transparency badge. Requires sign-in (anonymous auth) so submissions are accountable, not anonymous on the backend. |
 
@@ -46,7 +46,7 @@ Deliberately simple — three steps, no agent orchestration:
 Input (screenshot or text)
   → 1. Extract + analyze   (ONE structured-output call: claims, techniques, tier, explanation)
   → 2. Find similar cases  (embedding search over confirmed cases — the "case-file library")
-  → 3. Assemble report   (optional external evidence cards; never changes the tier)
+  → 3. Assemble report
 ```
 
 Raw uploaded content is used transiently for step 1 and **never persisted** — only the structured output is stored. The vector DB retrieves context ("others reported this pattern"); it never votes on the tier.
@@ -87,7 +87,7 @@ npm run dev          # http://localhost:3000
 If `npm run dev` says Eve is running Node 22 or older, run `nvm use` in the
 same terminal first. The project has a `.nvmrc` file with the required version.
 
-No API keys are needed for the core mock-backed flow. `GOOGLE_FACT_CHECK_API_KEY` and `VIRUSTOTAL_API_KEY` are optional: the user must explicitly opt in before the app sends derived claims or a public link to those services. Neither integration affects the tier or persists raw content.
+No API keys are needed for the core mock-backed flow. `GOOGLE_FACT_CHECK_API_KEY` and `VIRUSTOTAL_API_KEY` are optional Eve-agent tool credentials. These tools receive only structured, redacted claims or a public URL without query parameters; they never receive raw content, and their results are not persisted.
 
 ## Roadmap (explicitly out of MVP scope)
 
