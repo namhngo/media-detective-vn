@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   categorySchema,
   platformSchema,
+  sourceSchema,
   techniqueSchema,
   tierSchema,
 } from "../../src/lib/schema";
@@ -12,7 +13,7 @@ export default defineTool({
   description:
     "Persist the structured assessment as a reports row (is_shared = false). Raw user content (original text or screenshot) is never stored — pass only the structured fields from the analysis.",
   inputSchema: z.object({
-    source: z.enum(["screenshot", "text", "described_call"]),
+    source: sourceSchema,
     platform: platformSchema,
     category: categorySchema,
     claims: z.array(z.string()),

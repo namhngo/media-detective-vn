@@ -32,10 +32,10 @@ export const seedGallery: GalleryEntry[] = [
       "A live video call that looks and sounds like a family member can now be faked from a few scraped photos and seconds of audio. The call creates pressure to send money immediately and discourages checking with anyone else. Always hang up and call the person back on their usual number before acting.",
     moneyRequested: true,
     amountVnd: null,
-    location: "Vĩnh Long",
+    location: "Vinh Long",
     isSeed: true,
     confirmationSource: null,
-    sourceCitation: "Vĩnh Long police public warning, 2026",
+    sourceCitation: "Vinh Long police public warning, 2026",
   },
   {
     id: "seed-002",
@@ -106,7 +106,7 @@ export const seedGallery: GalleryEntry[] = [
   {
     id: "seed-005",
     createdAt: "2026-05-19T09:00:00.000Z",
-    source: "described_call",
+    source: "text",
     platform: "phone_call",
     category: "timeshare_contract",
     claims: [
@@ -140,10 +140,10 @@ export const seedGallery: GalleryEntry[] = [
     techniques: [],
     tier: "warning",
     explanationEn:
-      "A single fraud case broken up in Tuyên Quang province in January 2026 involved 106 defendants, roughly 200 billion VND stolen, and more than 4,000 victims — many of them elderly people living away from their families. Isolation is the vulnerability these schemes exploit most.",
+      "A single fraud case broken up in Tuyen Quang province in January 2026 involved 106 defendants, roughly 200 billion VND stolen, and more than 4,000 victims — many of them elderly people living away from their families. Isolation is the vulnerability these schemes exploit most.",
     moneyRequested: true,
     amountVnd: 200_000_000_000,
-    location: "Tuyên Quang",
+    location: "Tuyen Quang",
     isSeed: true,
     confirmationSource: null,
     sourceCitation: "Local police, January 2026",
@@ -253,7 +253,7 @@ const timeshareAnalysis: AnalysisResult = {
   tier: "warning",
   riskScore: 81,
   explanationEn:
-    "This follows the timeshare (hợp đồng kỳ nghỉ) funnel that Vietnamese police have warned about: a prize call, a polished hotel seminar, then pressure to sign and pay on the same day. Hanoi's Economic Police alone charged 187 people over this scheme, with 493 confirmed victims. A prize that requires attending a sales presentation is bait, and any contract that cannot wait 24 hours should not be signed.",
+    "This follows the timeshare funnel that Vietnamese police have warned about: a prize call, a polished hotel seminar, then pressure to sign and pay on the same day. Hanoi's Economic Police alone charged 187 people over this scheme, with 493 confirmed victims. A prize that requires attending a sales presentation is bait, and any contract that cannot wait 24 hours should not be signed.",
   moneyRequested: true,
   amountVnd: null,
 };
@@ -303,7 +303,7 @@ const deepfakeSimilar: SimilarCase[] = [
       "AI face-and-voice clone used in a live video call to impersonate a relative and request urgent money.",
     similarity: 0.91,
     confirmationSource: null,
-    sourceCitation: "Vĩnh Long police public warning, 2026",
+    sourceCitation: "Vinh Long police public warning, 2026",
   },
   {
     id: "seed-002",

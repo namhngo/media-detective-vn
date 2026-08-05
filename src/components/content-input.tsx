@@ -12,13 +12,11 @@ const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // stays under the serverless body limi
 
 const placeholders: Record<Source, string> = {
   text: "Paste the message here — from Zalo, Facebook, SMS, anywhere…",
-  described_call:
-    "Who called? What did they say? What did they ask you to do? Describe it in your own words…",
   screenshot: "",
 };
 
 /**
- * The shared input UI for Detect and Report — tabs for the three sources.
+ * The shared input UI for Detect and Report — tabs for text and screenshots.
  * Raw content lives here only; it is sent for analysis and never stored.
  */
 export function ContentInput({
@@ -82,9 +80,6 @@ export function ContentInput({
         <TabsList className="w-full">
           <TabsTrigger value="text" className="flex-1">
             Paste text
-          </TabsTrigger>
-          <TabsTrigger value="described_call" className="flex-1">
-            Describe a call
           </TabsTrigger>
           <TabsTrigger value="screenshot" className="flex-1">
             Screenshot

@@ -27,7 +27,6 @@ function SectionHeading({
 
 const sourceLabels: Record<Source, string> = {
   text: "Pasted text",
-  described_call: "Described call",
   screenshot: "Screenshot",
 };
 
@@ -96,12 +95,7 @@ export function CaseFile({
             <TierIcon tier={analysis.tier} className="size-5" />
           </span>
           <div>
-            <p className="text-lg font-semibold">
-              {meta.label}{" "}
-              <span className="text-base font-normal text-muted-foreground">
-                · {meta.vi}
-              </span>
-            </p>
+            <p className="text-lg font-semibold">{meta.label}</p>
             <p className="text-sm text-muted-foreground">{meta.guidance}</p>
           </div>
         </div>

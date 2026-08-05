@@ -12,11 +12,9 @@ const tierClass: Record<Tier, string> = {
 /** The tier pill — icon + label, the friendliest a stamp can look while still being unmistakable. */
 export function TierBadge({
   tier,
-  showVi = true,
   className,
 }: {
   tier: Tier;
-  showVi?: boolean;
   className?: string;
 }) {
   const meta = tierMeta[tier];
@@ -30,9 +28,6 @@ export function TierBadge({
     >
       <TierIcon tier={tier} className="size-3.5" />
       {meta.label}
-      {showVi && (
-        <span className="font-normal opacity-80">· {meta.vi}</span>
-      )}
     </span>
   );
 }

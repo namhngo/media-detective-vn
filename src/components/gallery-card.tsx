@@ -45,7 +45,7 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
         </span>
         <span className="ml-auto flex items-center gap-3">
           {confirmationMark(entry)}
-          <TierBadge tier={entry.tier} showVi={false} />
+          <TierBadge tier={entry.tier} />
           <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" />
         </span>
       </summary>

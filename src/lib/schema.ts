@@ -8,7 +8,7 @@ import { z } from "zod";
  * to the snake_case columns from the project brief.
  */
 
-export const sourceSchema = z.enum(["screenshot", "text", "described_call"]);
+export const sourceSchema = z.enum(["screenshot", "text"]);
 
 export const platformSchema = z.enum([
   "zalo",
@@ -92,7 +92,7 @@ export const similarCaseSchema = z.object({
 export const detectRequestSchema = z
   .object({
     source: sourceSchema,
-    /** Raw text or call description. Transient — never persisted. */
+    /** Raw pasted text. Transient — never persisted. */
     text: z.string().min(1).optional(),
     /** Base64 data URL for screenshots. Transient — never persisted. */
     imageBase64: z.string().optional(),

@@ -2,21 +2,18 @@ import type { Tier } from "@/lib/schema";
 
 export const tierMeta: Record<
   Tier,
-  { label: string; vi: string; guidance: string }
+  { label: string; guidance: string }
 > = {
   watch: {
     label: "Watch",
-    vi: "Theo dõi",
     guidance: "Nothing flagged yet — keep the verification habit.",
   },
   caution: {
     label: "Caution",
-    vi: "Cẩn thận",
     guidance: "Some manipulation signals — verify before acting or sharing.",
   },
   warning: {
     label: "Warning",
-    vi: "Cảnh báo",
     guidance:
       "Strong manipulation signals — do not send money, sign, or share this.",
   },

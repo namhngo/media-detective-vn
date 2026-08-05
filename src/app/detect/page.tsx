@@ -21,9 +21,8 @@ export default async function DetectPage() {
         What made you pause?
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
-        Paste a message, describe a call, or upload a screenshot. The raw
-        content is analyzed in the moment and never stored — only the
-        structured assessment counts.
+        Paste a message or upload a screenshot. The raw content is analyzed in
+        the moment and never stored — only the structured assessment counts.
       </p>
       <div className="mt-8">
         <DetectFlow />

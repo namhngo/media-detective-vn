@@ -20,7 +20,7 @@ import { createStructuredSummary } from "../src/lib/structured-summary";
 type CalibrationRow = {
   id: string;
   createdAt: string;
-  source: "text" | "described_call" | "screenshot";
+  source: "text" | "screenshot";
   platform: "zalo" | "facebook" | "phone_call" | "email" | "website" | "other";
   category:
     | "deepfake_impersonation"
