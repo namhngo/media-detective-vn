@@ -6,8 +6,8 @@ import {
   Eye,
   LockKeyhole,
   MessageSquareText,
-  PhoneCall,
   Share2,
+  ShieldCheck,
 } from "lucide-react";
 
 type GuideMode = "detect" | "report";
@@ -18,9 +18,9 @@ const guide = {
     lead: "The model can help, but these checks are yours.",
     items: [
       {
-        icon: PhoneCall,
-        title: "Use a known channel",
-        body: "If it is a call, hang up and call the person back on their usual number.",
+        icon: ShieldCheck,
+        title: "Use an official channel",
+        body: "Open the organisation's known website or app instead of following an unexpected link.",
       },
       {
         icon: Clock3,

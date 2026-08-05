@@ -2,7 +2,7 @@
 description: Use when content contains factual claims that could be checked against a source, including dates, numbers, events, quotes, policies, or alleged evidence.
 ---
 
-# Claim verification
+# Check claims
 
 ## Procedure
 

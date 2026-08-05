@@ -2,7 +2,7 @@
 description: Use when the content involves a prize or free-vacation phone call, an invitation to a hotel seminar, or pressure to sign a timeshare contract.
 ---
 
-# Timeshare playbook
+# Timeshare
 
 ## Recognize the funnel
 

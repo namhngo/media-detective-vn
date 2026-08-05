@@ -42,7 +42,7 @@ const toolSelectionEvals = [
       });
       t.succeeded();
       turn.outputMatches(analysisResultSchema);
-      t.loadedSkill("private-person-harm").soft();
+      t.loadedSkill("private-accusations").soft();
       t.notCalledTool("search_fact_checks").soft();
     },
   }),

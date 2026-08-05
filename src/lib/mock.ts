@@ -224,36 +224,18 @@ export const seedGallery: GalleryEntry[] = [
 
 /* ------------------------- Canned analyses (detect) ---------------------- */
 
-const deepfakeAnalysis: AnalysisResult = {
-  claims: [
-    "Caller claims to be a close relative on a video call",
-    "Requests an urgent money transfer for an emergency",
-    "Asks the victim not to tell other family members",
-  ],
-  techniques: ["urgency", "secrecy", "authority"],
-  category: "deepfake_impersonation",
-  platform: "phone_call",
-  tier: "warning",
-  riskScore: 88,
-  explanationEn:
-    "This matches the deepfake impersonation playbook now widespread in Vietnam: a familiar face and voice on a video call, an emergency that needs money immediately, and a request to keep it secret. Face and voice are no longer proof of identity — a convincing fake can reportedly be made in under a minute. Hang up and call your relative back on their usual number before doing anything. Never transfer money under time pressure, and never keep the request secret from family.",
-  moneyRequested: true,
-  amountVnd: null,
-};
-
 const timeshareAnalysis: AnalysisResult = {
   claims: [
-    "Caller announces a prize or free vacation",
-    "Invitation to a hotel presentation to claim it",
+    "A prize or free vacation offer invites the recipient to a hotel presentation",
     "Offer is framed as available today only",
   ],
   techniques: ["scarcity", "urgency", "social_proof"],
   category: "timeshare_contract",
-  platform: "phone_call",
+  platform: "other",
   tier: "warning",
   riskScore: 81,
   explanationEn:
-    "This follows the timeshare funnel that Vietnamese police have warned about: a prize call, a polished hotel seminar, then pressure to sign and pay on the same day. Hanoi's Economic Police alone charged 187 people over this scheme, with 493 confirmed victims. A prize that requires attending a sales presentation is bait, and any contract that cannot wait 24 hours should not be signed.",
+    "This follows the timeshare funnel that Vietnamese police have warned about: a prize offer, a polished hotel seminar, then pressure to sign and pay on the same day. Hanoi's Economic Police alone charged 187 people over this scheme, with 493 confirmed victims. A prize that requires attending a sales presentation is bait, and any contract that cannot wait 24 hours should not be signed.",
   moneyRequested: true,
   amountVnd: null,
 };
@@ -292,32 +274,6 @@ const misinformationAnalysis: AnalysisResult = {
   moneyRequested: false,
   amountVnd: null,
 };
-
-const deepfakeSimilar: SimilarCase[] = [
-  {
-    id: "seed-001",
-    category: "deepfake_impersonation",
-    techniques: ["urgency", "authority", "secrecy"],
-    tier: "warning",
-    explanationEn:
-      "AI face-and-voice clone used in a live video call to impersonate a relative and request urgent money.",
-    similarity: 0.91,
-    confirmationSource: null,
-    sourceCitation: "Vinh Long police public warning, 2026",
-  },
-  {
-    id: "seed-002",
-    category: "deepfake_impersonation",
-    techniques: [],
-    tier: "warning",
-    explanationEn:
-      "A convincing deepfake video call can reportedly be produced in under a minute.",
-    similarity: 0.83,
-    confirmationSource: null,
-    sourceCitation:
-      "Vietnam Ministry of Information and Communications consumer-safety advisory, 2026",
-  },
-];
 
 const timeshareSimilar: SimilarCase[] = [
   {
@@ -383,10 +339,6 @@ export function mockDetectResponse(input: string): DetectResponse {
     /cheat|viral|hoax|rumou?r|fake news|accused|shaming|pile.?on|forwarded|everyone is posting|share this/.test(
       t,
     );
-  const isDeepfake =
-    /video call|voice|face|relative|nephew|uncle|aunt|son|daughter|mom|dad|mother|father|family/.test(
-      t,
-    );
   const isTimeshare =
     /vacation|seminar|prize|timeshare|voucher|hotel|free trip|holiday/.test(t);
 
@@ -395,14 +347,6 @@ export function mockDetectResponse(input: string): DetectResponse {
       reportId: `mock-${Date.now()}`,
       analysis: misinformationAnalysis,
       similarCases: misinformationSimilar,
-      sharePrompted: true,
-    };
-  }
-  if (isDeepfake) {
-    return {
-      reportId: `mock-${Date.now()}`,
-      analysis: deepfakeAnalysis,
-      similarCases: deepfakeSimilar,
       sharePrompted: true,
     };
   }

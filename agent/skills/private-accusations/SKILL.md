@@ -2,7 +2,7 @@
 description: Use when content accuses, shames, identifies, or invites action against a private individual, including students, workers, neighbours, or family members.
 ---
 
-# Private-person harm
+# Private accusations
 
 ## Immediate safeguards
 

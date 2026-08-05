@@ -102,8 +102,7 @@ Review these questions:
 
 - Does the description identify the input pattern and the action to take?
 - Would it activate for a simple case that needs no special procedure?
-- Does it overlap with `misinformation-playbook`, `source-and-context`, or
-  `claim-verification`?
+- Does it overlap with `misinformation`, `check-context`, or `check-claims`?
 - Does it introduce a claim, tool, or evidence source that the app does not
   actually support?
 

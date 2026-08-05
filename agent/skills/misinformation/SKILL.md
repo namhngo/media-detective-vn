@@ -2,7 +2,7 @@
 description: Use when the content is a viral news claim, a public accusation against a private individual, or a screenshot of an alleged official announcement that may be fabricated.
 ---
 
-# Misinformation playbook
+# Misinformation
 
 ## Identify the claim and the harm
 
@@ -30,7 +30,7 @@ doctored evidence, not merely because a screenshot lacks a link. Use
 `decontextualization` when genuine material appears to be placed in a misleading
 time, place, or narrative. Use `bandwagon` when reach is offered as proof.
 
-For a private person, also load private-person-harm and remove identifying details
+For a private person, also load private-accusations and remove identifying details
 from the structured claims. Never amplify the allegation while explaining it.
 
 ## Tool and source discipline

@@ -2,7 +2,6 @@ import {
   CircleAlert,
   LockKeyhole,
   MessageCircle,
-  PhoneCall,
   ScanSearch,
 } from "lucide-react";
 
@@ -34,8 +33,8 @@ export function HomeSignalPreview() {
               <MessageCircle className="size-4" />
             </span>
             <div>
-              <p className="text-sm font-semibold">A familiar face calls</p>
-              <p className="text-xs text-muted-foreground">Video call · 2 min ago</p>
+              <p className="text-sm font-semibold">An urgent message arrives</p>
+              <p className="text-xs text-muted-foreground">Message · 2 min ago</p>
             </div>
           </div>
           <p className="mt-4 rounded-2xl rounded-tl-sm bg-secondary px-3.5 py-3 text-sm leading-relaxed">
@@ -59,8 +58,7 @@ export function HomeSignalPreview() {
             </span>
           </div>
           <div className="mt-4 flex items-center gap-2 rounded-xl bg-primary/8 px-3 py-2.5 text-sm font-medium text-primary">
-            <PhoneCall className="size-4" />
-            Pause. Call them back on their usual number.
+            Pause. Verify through a contact method you already know.
           </div>
         </div>
 
