@@ -1,0 +1,119 @@
+[
+  {
+    "skill": "claim-verification",
+    "shouldTrigger": [
+      "A post says a new law starts tomorrow and quotes a document number. Can you check what it actually claims?",
+      "This chart says food prices doubled in one week. What evidence would confirm that number?",
+      "A quote card says a minister announced a policy, but it has no link. Help me verify the quote."
+    ],
+    "nearMisses": [
+      "My friend says this restaurant is too expensive.",
+      "Write a slogan about checking sources.",
+      "I feel worried after reading the news."
+    ]
+  },
+  {
+    "skill": "source-and-context",
+    "shouldTrigger": [
+      "This flood image is being reposted as if it happened today. How do I check the original context?",
+      "A screenshot claims to be an official announcement but does not show a source URL.",
+      "This video clip is captioned as a recent protest. What should I verify first?"
+    ],
+    "nearMisses": [
+      "This message asks me to send an OTP code.",
+      "A hotel says I won a free holiday if I sign today.",
+      "Can you make this paragraph shorter?"
+    ]
+  },
+  {
+    "skill": "private-person-harm",
+    "shouldTrigger": [
+      "People are sharing a screenshot accusing a student of cheating. Should I repost it?",
+      "A group chat names an employee and asks everyone to expose them.",
+      "This viral post has a person's photo and says they committed a crime."
+    ],
+    "nearMisses": [
+      "A company published its annual financial report.",
+      "An unknown caller says my bank account is frozen.",
+      "An ad uses a celebrity to sell a supplement."
+    ]
+  },
+  {
+    "skill": "media-provenance",
+    "shouldTrigger": [
+      "Does missing metadata prove this image was made by AI?",
+      "This photo has Content Credentials. What can they tell me?",
+      "Can an AI detector prove that this voice recording is fake?"
+    ],
+    "nearMisses": [
+      "This message has a suspicious payment link.",
+      "A post says a public holiday was cancelled.",
+      "Someone offered me a timeshare at a hotel."
+    ]
+  },
+  {
+    "skill": "misinformation-playbook",
+    "shouldTrigger": [
+      "Everyone is forwarding this urgent rumour and says it must be true because it is viral.",
+      "A screenshot with a government logo says a new rule starts tonight.",
+      "This post uses an old video to claim there is a current emergency."
+    ],
+    "nearMisses": [
+      "My uncle asks for money on an unexpected video call.",
+      "A prize caller invited me to a hotel presentation.",
+      "An ad promises a supplement will cure every illness."
+    ]
+  },
+  {
+    "skill": "deepfake-impersonation",
+    "shouldTrigger": [
+      "My cousin called on video asking for money immediately and told me not to tell anyone.",
+      "A caller who sounds like my bank wants my one-time code to unlock my account.",
+      "A voice note from my mother says she is in an emergency and needs a transfer now."
+    ],
+    "nearMisses": [
+      "A viral screenshot claims a policy changed.",
+      "I won a holiday voucher and need to attend a seminar.",
+      "A student is being accused in a group chat."
+    ]
+  },
+  {
+    "skill": "celebrity-ads",
+    "shouldTrigger": [
+      "A famous doctor appears in a video promoting a miracle supplement with a link to buy today.",
+      "This investment ad uses a celebrity voice to guarantee profits.",
+      "A public figure appears to endorse a get-rich-quick course."
+    ],
+    "nearMisses": [
+      "An official website published a policy update.",
+      "My relative asks for money on a video call.",
+      "A hotel is pressuring me to sign a holiday contract."
+    ]
+  },
+  {
+    "skill": "timeshare-playbook",
+    "shouldTrigger": [
+      "I won a free vacation but must attend a hotel sales event today to claim it.",
+      "A holiday club wants me to sign before I leave the presentation.",
+      "The salesperson says only two membership packages remain and everyone is buying now."
+    ],
+    "nearMisses": [
+      "A stranger wants my bank code by phone.",
+      "A viral post accuses a private person.",
+      "A public figure promotes an investment course in a video."
+    ]
+  },
+  {
+    "skill": "explanation-style",
+    "shouldTrigger": [
+      "Explain why this suspicious message is risky in language my grandmother can act on.",
+      "Turn the analysis into a calm, short explanation with a next step.",
+      "Write the final user-facing explanation without sounding certain or technical."
+    ],
+    "nearMisses": [
+      "Find the original source of this image.",
+      "Is this caller using a deepfake voice?",
+      "A prize seminar wants me to sign today."
+    ]
+  }
+]

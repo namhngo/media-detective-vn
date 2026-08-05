@@ -17,9 +17,10 @@ description: Use when content contains factual claims that could be checked agai
 4. Prefer the relevant primary record: an original statement, official document,
    complete interview, public data, or the source's original media. Explain when
    the original source cannot be located.
-5. Use `search_fact_checks` for concise, redacted claims when it could surface a
-   published investigation. Read the linked publisher and its sources before
-   treating a match as useful context.
+5. Use `search_fact_checks` once for a concise, redacted public claim before
+   finalizing. Read the linked publisher and its sources before treating a match
+   as useful context. Never use it for a claim that could reidentify a private
+   person.
 6. Keep three categories distinct in the explanation: what is supported by a
    named source, what is an inference, and what remains unverified.
 

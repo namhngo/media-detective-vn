@@ -15,6 +15,8 @@ description: Use when content accuses, shames, identifies, or invites action aga
    proof. Keep the structured claim anonymous and minimal.
 4. Never recommend contacting, confronting, exposing, or investigating the
    targeted person. Privacy and harm reduction come before curiosity.
+5. Never call an external lookup with a claim that names or could reidentify the
+   targeted person. Do not attempt to reconstruct a name from contextual clues.
 
 ## Analysis and next action
 
