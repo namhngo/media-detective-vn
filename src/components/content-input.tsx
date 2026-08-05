@@ -33,6 +33,7 @@ export function ContentInput({
   const [image, setImage] = useState<{ dataUrl: string; name: string } | null>(
     null,
   );
+  const [externalEvidence, setExternalEvidence] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -60,11 +61,15 @@ export function ContentInput({
     setError(null);
     if (source === "screenshot") {
       if (!image) return;
-      onSubmit({ source: "screenshot", imageBase64: image.dataUrl });
+      onSubmit({
+        source: "screenshot",
+        imageBase64: image.dataUrl,
+        externalEvidence,
+      });
     } else {
       const trimmed = text.trim();
       if (!trimmed) return;
-      onSubmit({ source, text: trimmed });
+      onSubmit({ source, text: trimmed, externalEvidence });
     }
   }
 
@@ -149,6 +154,20 @@ export function ContentInput({
           {error}
         </p>
       )}
+
+      <label className="mt-4 flex cursor-pointer items-start gap-2.5 rounded-xl bg-secondary/60 p-3 text-xs leading-relaxed text-muted-foreground">
+        <input
+          type="checkbox"
+          checked={externalEvidence}
+          onChange={(event) => setExternalEvidence(event.target.checked)}
+          className="mt-0.5 size-3.5 accent-primary"
+        />
+        <span>
+          Search published fact checks and check any public link. We send only
+          derived claims and a link without its query parameters to external
+          services; your original content is never stored.
+        </span>
+      </label>
 
       <div className="mt-4 flex items-center justify-between gap-4">
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
