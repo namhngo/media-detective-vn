@@ -7,6 +7,7 @@ import { Check, Lock, MessageSquareText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
+import { EvidencePanel } from "@/components/evidence-panel";
 import { InvestigationGuide } from "@/components/investigation-guide";
 import { RedactedLine } from "@/components/redacted-line";
 import { tierMeta } from "@/lib/tier";
@@ -117,6 +118,12 @@ export function ReportFlow() {
                 </div>
               }
             />
+            <div className="mt-6">
+              <EvidencePanel
+                analysis={phase.result.analysis}
+                evidence={phase.result.externalEvidence}
+              />
+            </div>
           </div>
           <div className="mx-auto max-w-3xl rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
             <p className="text-sm leading-relaxed">

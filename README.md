@@ -11,7 +11,7 @@ Not a scam detector. Not a social feed. A **dashboard-first literacy tool**: the
 Three connected patterns are hitting Vietnam right now — isolation + fabricated trust + manufactured urgency:
 
 - **AI deepfake impersonation** *(hero case)* — scammers scrape photos/audio from social media, generate a face-and-voice clone, and run live video calls impersonating relatives to request urgent money. A convincing deepfake call reportedly takes under a minute to produce. Vietnam's National Cyber Security Association names deepfake sophistication the top emerging risk for 2026.
-- **Hợp đồng kỳ nghỉ (timeshare) fraud** *(supporting case)* — Hanoi's Economic Police opened 21 criminal cases, charged 187 people: 493 confirmed victims, ~181 billion VND stolen in that investigation alone. Playbook: prize call → hotel "seminar" → manufactured urgency → sign and pay same-day.
+- **Timeshare fraud** *(supporting case)* — Hanoi's Economic Police opened 21 criminal cases, charged 187 people: 493 confirmed victims, ~181 billion VND stolen in that investigation alone. Playbook: prize call → hotel "seminar" → manufactured urgency → sign and pay same-day.
 - **Viral misinformation targeting individuals** — fabricated "evidence" and emotional bait turn an unverified accusation into a pile-on before anyone checks the facts. In 2026, a false cheating accusation against a Vietnamese student went viral and the harm proved irreversible. The same trust-calibration skills — check the source, don't share before verifying, virality is not evidence — apply here as much as to financial scams.
 
 Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~USD 230M+)** in online fraud losses in the first 11 months of 2025. Targets are overwhelmingly older adults, isolated by the shift from multi-generational to nuclear households — and, for misinformation, anyone who can be turned into a viral villain overnight.
@@ -20,7 +20,7 @@ Nationally, Vietnam's Ministry of Public Security logged **6,000+ billion VND (~
 
 | Action | What it does |
 |---|---|
-| **Detect** | Paste a message, describe a call, or upload a screenshot. The AI returns a confidence tier, the manipulation techniques found, and a plain-language explanation. Private by default. At the top tier, the app *actively prompts* the user to share. |
+| **Detect** | Paste a message or upload a screenshot. The AI returns a confidence tier, the manipulation techniques found, and a plain-language explanation. Private by default. Users can also opt in to search published fact checks and check a public link without changing the tier. At the top tier, the app *actively prompts* the user to share. |
 | **Share** | Publishes only when the AI's top tier **and** the user's explicit opt-in agree. Only the structured summary publishes — never raw screenshots or message text. |
 | **Report** | For people who *already know* — a scam, or a viral lie that targeted them. Same analysis engine, but publishes on the user's attestation; the AI's independent tier is shown as a transparency badge. Requires sign-in (anonymous auth) so submissions are accountable, not anonymous on the backend. |
 
@@ -30,7 +30,7 @@ Detect, Share, Report, and the dashboard require Clerk sign-in. The public home 
 
 Borrowing vocabulary Vietnamese police warnings already use — even the bottom tier never implies "safe," only "nothing flagged yet."
 
-| Tier | Vietnamese | Internal score |
+| Tier | Meaning | Internal score |
 |---|---|---|
 | Watch | Nothing flagged yet | 0–39 |
 | Caution | Verify before acting | 40–74 |
@@ -46,7 +46,7 @@ Deliberately simple — three steps, no agent orchestration:
 Input (screenshot or text)
   → 1. Extract + analyze   (ONE structured-output call: claims, techniques, tier, explanation)
   → 2. Find similar cases  (embedding search over confirmed cases — the "case-file library")
-  → 3. Assemble report
+  → 3. Assemble report   (optional external evidence cards; never changes the tier)
 ```
 
 Raw uploaded content is used transiently for step 1 and **never persisted** — only the structured output is stored. The vector DB retrieves context ("others reported this pattern"); it never votes on the tier.
@@ -87,7 +87,7 @@ npm run dev          # http://localhost:3000
 If `npm run dev` says Eve is running Node 22 or older, run `nvm use` in the
 same terminal first. The project has a `.nvmrc` file with the required version.
 
-No API keys needed yet — the frontend runs entirely on typed mock data behind the real API contract. Keys (`OPENAI_API_KEY`, Supabase) only matter when the backend phase lands.
+No API keys are needed for the core mock-backed flow. `GOOGLE_FACT_CHECK_API_KEY` and `VIRUSTOTAL_API_KEY` are optional: the user must explicitly opt in before the app sends derived claims or a public link to those services. Neither integration affects the tier or persists raw content.
 
 ## Roadmap (explicitly out of MVP scope)
 
