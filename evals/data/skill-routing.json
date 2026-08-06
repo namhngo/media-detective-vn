@@ -2,7 +2,7 @@
   {
     "skill": "check-claims",
     "shouldTrigger": [
-      "A post says a new law starts tomorrow and quotes a document number. Can you check what it actually claims?",
+      "A post says a new law starts tomorrow and quotes a document number. Analyze the claim and tell me what to verify.",
       "This chart says food prices doubled in one week. What evidence would confirm that number?",
       "A quote card says a minister announced a policy, but it has no link. Help me verify the quote."
     ],
