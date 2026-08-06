@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import type { DetectRequest, Source } from "@/lib/schema";
 
-const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // stays under the serverless body limit
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // keeps browser OCR responsive on common devices
 
 const placeholders: Record<Source, string> = {
   text: "Paste the message here — from Zalo, Facebook, SMS, anywhere…",
@@ -16,8 +16,8 @@ const placeholders: Record<Source, string> = {
 };
 
 /**
- * The shared input UI for Detect and Report — tabs for text and screenshots.
- * Raw content lives here only; it is sent for analysis and never stored.
+ * The shared input UI for Detect and Report. Screenshot bytes stay in the
+ * browser; only locally extracted OCR text is sent for analysis.
  */
 export function ContentInput({
   busy,
@@ -33,11 +33,14 @@ export function ContentInput({
   const [image, setImage] = useState<{ dataUrl: string; name: string } | null>(
     null,
   );
+  const [ocrBusy, setOcrBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const canSubmit =
-    !busy && (source === "screenshot" ? image !== null : text.trim().length > 0);
+    !busy &&
+    !ocrBusy &&
+    (source === "screenshot" ? image !== null : text.trim().length > 0);
 
   function pickImage(file: File | undefined) {
     setError(null);
@@ -56,11 +59,33 @@ export function ContentInput({
     reader.readAsDataURL(file);
   }
 
-  function submit() {
+  async function submit() {
     setError(null);
     if (source === "screenshot") {
       if (!image) return;
-      onSubmit({ source: "screenshot", imageBase64: image.dataUrl });
+      setOcrBusy(true);
+      try {
+        const { createWorker } = await import("tesseract.js");
+        const worker = await createWorker("eng+vie");
+        let extractedText = "";
+        try {
+          const { data } = await worker.recognize(image.dataUrl);
+          extractedText = data.text.trim();
+        } finally {
+          await worker.terminate();
+        }
+        if (!extractedText) {
+          setError(
+            "No readable text was found. Try a sharper screenshot or paste the message instead.",
+          );
+          return;
+        }
+        onSubmit({ source: "screenshot", text: extractedText });
+      } catch {
+        setError("Text could not be read from that screenshot. Try pasting the message instead.");
+      } finally {
+        setOcrBusy(false);
+      }
     } else {
       const trimmed = text.trim();
       if (!trimmed) return;
@@ -123,7 +148,7 @@ export function ContentInput({
               </span>
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Lock className="size-3" />
-                Analyzed in the moment — never stored
+                Text is read in this browser — the image never leaves your device
               </span>
             </button>
           )
@@ -156,7 +181,7 @@ export function ContentInput({
           Raw content is never stored
         </p>
         <Button onClick={submit} disabled={!canSubmit} size="lg" className="rounded-full">
-          {busy ? "Analyzing…" : submitLabel}
+          {ocrBusy ? "Reading screenshot…" : busy ? "Analyzing…" : submitLabel}
         </Button>
       </div>
     </div>

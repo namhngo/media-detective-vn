@@ -1,15 +1,14 @@
-import { mockDetectResponse, sleep } from "@/lib/mock";
-import { reportRequestSchema, reportResponseSchema } from "@/lib/schema";
 import { auth } from "@clerk/nextjs/server";
 
-/**
- * MOCK STUB — backend phase: require a signed-in session (anonymous auth),
- * run the SAME extract+analyze pipeline as /api/detect, then publish
- * immediately on the user's attestation (confirmation_source="user_reported").
- * The AI's independent tier is returned for the transparency badge.
- */
+import { analyzeWithEve } from "@/lib/eve-analysis";
+import { createEmbeddings } from "@/lib/embedding";
+import { createReport, findSimilarCases } from "@/lib/reports";
+import { reportRequestSchema, reportResponseSchema } from "@/lib/schema";
+import { createStructuredSummary } from "@/lib/structured-summary";
+
 export async function POST(request: Request) {
-  await auth.protect();
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const parsed = reportRequestSchema.safeParse(await request.json());
   if (!parsed.success) {
     return Response.json(
@@ -18,16 +17,36 @@ export async function POST(request: Request) {
     );
   }
 
-  await sleep(1400);
+  try {
+    const analysis = await analyzeWithEve({
+      request,
+      source: parsed.data.source,
+      text: parsed.data.text,
+    });
+    const summary = createStructuredSummary(analysis);
+    const [embedding] = await createEmbeddings([summary]);
+    const similarCases = await findSimilarCases(embedding);
+    const reportId = await createReport({
+      source: parsed.data.source,
+      analysis,
+      embedding,
+      submittedByClerkId: userId,
+      confirmationSource: null,
+    });
 
-  const { analysis, similarCases } = mockDetectResponse(
-    parsed.data.text ?? parsed.data.imageBase64 ?? "",
-  );
-  const response = {
-    reportId: `mock-${Date.now()}`,
-    analysis,
-    similarCases,
-    published: true,
-  };
-  return Response.json(reportResponseSchema.parse(response));
+    return Response.json(
+      reportResponseSchema.parse({
+        reportId,
+        analysis,
+        similarCases,
+        published: false,
+      }),
+    );
+  } catch (error) {
+    console.error("Report analysis failed", error);
+    return Response.json(
+      { error: "Analysis could not be completed. Nothing was stored." },
+      { status: 502 },
+    );
+  }
 }

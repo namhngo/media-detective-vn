@@ -114,3 +114,47 @@ export async function createReport({
 
   return report.id;
 }
+
+/** Applies an explicit user or warning-tier attestation to an existing report. */
+export async function publishReport({
+  reportId,
+  submittedByClerkId,
+  confirmationSource,
+}: {
+  reportId: string;
+  submittedByClerkId: string;
+  confirmationSource: ConfirmationSource;
+}) {
+  const prisma = getPrisma();
+  const report = await prisma.report.findFirst({
+    where: { id: reportId, submittedByClerkId },
+    select: { id: true, tier: true },
+  });
+  if (!report) throw new Error("Report not found.");
+  if (
+    confirmationSource === ConfirmationSource.ai_detected &&
+    report.tier !== "warning"
+  ) {
+    throw new Error("Only warning-tier reports can be shared automatically.");
+  }
+
+  await prisma.report.update({
+    where: { id: report.id },
+    data: { isShared: true, confirmationSource },
+  });
+  const eventType =
+    confirmationSource === ConfirmationSource.user_reported
+      ? ReportEventType.user_reported
+      : ReportEventType.shared;
+  await prisma.reportEvent.upsert({
+    where: {
+      reportId_type: { reportId: report.id, type: eventType },
+    },
+    create: {
+      reportId: report.id,
+      type: eventType,
+      actorClerkId: submittedByClerkId,
+    },
+    update: {},
+  });
+}

@@ -1,14 +1,14 @@
-import { mockDetectResponse, sleep } from "@/lib/mock";
-import { detectRequestSchema, detectResponseSchema } from "@/lib/schema";
 import { auth } from "@clerk/nextjs/server";
 
-/**
- * MOCK STUB — backend phase will replace the internals with the eve agent run
- * (extract+analyze → find_similar_cases → save_report). The request/response
- * contract here is final; only the internals change.
- */
+import { analyzeWithEve } from "@/lib/eve-analysis";
+import { createEmbeddings } from "@/lib/embedding";
+import { createReport, findSimilarCases } from "@/lib/reports";
+import { detectRequestSchema, detectResponseSchema } from "@/lib/schema";
+import { createStructuredSummary } from "@/lib/structured-summary";
+
 export async function POST(request: Request) {
-  await auth.protect();
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const parsed = detectRequestSchema.safeParse(await request.json());
   if (!parsed.success) {
     return Response.json(
@@ -17,11 +17,36 @@ export async function POST(request: Request) {
     );
   }
 
-  await sleep(1400); // simulate analysis latency for realistic UI states
+  try {
+    const analysis = await analyzeWithEve({
+      request,
+      source: parsed.data.source,
+      text: parsed.data.text,
+    });
+    const summary = createStructuredSummary(analysis);
+    const [embedding] = await createEmbeddings([summary]);
+    const similarCases = await findSimilarCases(embedding);
+    const reportId = await createReport({
+      source: parsed.data.source,
+      analysis,
+      embedding,
+      submittedByClerkId: userId,
+      confirmationSource: null,
+    });
 
-  const response = mockDetectResponse(
-    parsed.data.text ?? parsed.data.imageBase64 ?? "",
-  );
-  // Parse on the way out so a drifting mock fails loudly in development.
-  return Response.json(detectResponseSchema.parse(response));
+    return Response.json(
+      detectResponseSchema.parse({
+        reportId,
+        analysis,
+        similarCases,
+        sharePrompted: analysis.tier === "warning",
+      }),
+    );
+  } catch (error) {
+    console.error("Detect analysis failed", error);
+    return Response.json(
+      { error: "Analysis could not be completed. Nothing was stored." },
+      { status: 502 },
+    );
+  }
 }

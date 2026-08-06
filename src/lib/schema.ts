@@ -92,13 +92,8 @@ export const similarCaseSchema = z.object({
 export const detectRequestSchema = z
   .object({
     source: sourceSchema,
-    /** Raw pasted text. Transient — never persisted. */
-    text: z.string().min(1).optional(),
-    /** Base64 data URL for screenshots. Transient — never persisted. */
-    imageBase64: z.string().optional(),
-  })
-  .refine((v) => v.text || v.imageBase64, {
-    message: "Either text or imageBase64 is required",
+    /** Pasted text or browser-extracted screenshot text. Transient — never persisted. */
+    text: z.string().min(1),
   });
 
 export const detectResponseSchema = z.object({
@@ -128,6 +123,14 @@ export const reportResponseSchema = z.object({
   analysis: analysisResultSchema,
   similarCases: z.array(similarCaseSchema),
   published: z.boolean(),
+});
+
+export const reportPublishRequestSchema = z.object({
+  reportId: z.string(),
+});
+
+export const reportPublishResponseSchema = z.object({
+  ok: z.boolean(),
 });
 
 export const galleryEntrySchema = z.object({
@@ -190,5 +193,7 @@ export type ShareRequest = z.infer<typeof shareRequestSchema>;
 export type ShareResponse = z.infer<typeof shareResponseSchema>;
 export type ReportRequest = z.infer<typeof reportRequestSchema>;
 export type ReportResponse = z.infer<typeof reportResponseSchema>;
+export type ReportPublishRequest = z.infer<typeof reportPublishRequestSchema>;
+export type ReportPublishResponse = z.infer<typeof reportPublishResponseSchema>;
 export type GalleryEntry = z.infer<typeof galleryEntrySchema>;
 export type DashboardResponse = z.infer<typeof dashboardResponseSchema>;

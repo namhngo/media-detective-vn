@@ -52,10 +52,20 @@ export function ReportFlow() {
     if (phase.status !== "preview") return;
     const { request, result } = phase;
     setPhase({ status: "publishing", request, result });
-    // Mock phase: /api/report already published. Backend phase: confirm call
-    // against the signed-in (anonymous auth) session.
-    await new Promise((r) => setTimeout(r, 600));
-    setPhase({ status: "published", reportId: result.reportId });
+    try {
+      const response = await fetch("/api/report/publish", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reportId: result.reportId }),
+      });
+      if (!response.ok) throw new Error(`Publishing failed (${response.status})`);
+      setPhase({ status: "published", reportId: result.reportId });
+    } catch (error) {
+      setPhase({
+        status: "error",
+        message: error instanceof Error ? error.message : "Something went wrong",
+      });
+    }
   }
 
   const analyzing = phase.status === "analyzing";
