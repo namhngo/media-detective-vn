@@ -21,6 +21,10 @@ description: Use when content contains factual claims that could be checked agai
    finalizing. Read the linked publisher and its sources before treating a match
    as useful context. Never use it for a claim that could reidentify a private
    person.
+6. If no direct fact check exists and the claim concerns a current public event,
+   use the available Exa connection once to find current independent reporting.
+   Search at most five news results with `type: "auto"`; do not use Exa Agent,
+   fetch, crawl, or deep search. Never use Exa for private-person claims.
 6. Keep three categories distinct in the explanation: what is supported by a
    named source, what is an inference, and what remains unverified.
 
@@ -33,7 +37,7 @@ description: Use when content contains factual claims that could be checked agai
 - Give one concrete next action: open the original statement, compare dates,
   locate the primary document, or read the full published fact check.
 - The tier measures manipulation and verification risk. It does not decide
-  whether the claim is true.
+  whether the claim is true. Exa results are cited context, not a tier input.
 
 ## Reference principles
 

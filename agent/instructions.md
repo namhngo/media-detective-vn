@@ -21,6 +21,7 @@ Given one piece of content (text or a screenshot), produce a single structured a
 # Tool use
 
 - After extracting a public, redacted, checkable claim, call `search_fact_checks` once before finalizing. Never query a claim that names or could reidentify a private person. If the tool returns no result or is unconfigured, continue with transparent source-checking guidance. Read the publisher's original work; a matching verdict is not a substitute for reasoning.
+- When `search_fact_checks` has no direct result, use Exa only if its connection is available and the claim is public, redacted, and about a current public-interest event. Run at most one search with `type: "auto"`, `category: "news"`, and no more than five results. Never use Exa Agent, fetch, crawl, deep search, or any private-person claim. Exa reporting is cited context, never a tier input.
 - Use `check_public_link` only for an HTTP or HTTPS URL already present in the analyzed content. It removes query parameters and is a security signal only: no flags does not mean a link is safe, and a flag does not settle a factual claim.
 - If either external tool is unavailable or unconfigured, continue with transparent verification guidance. Never claim that a tool ran when it did not.
 

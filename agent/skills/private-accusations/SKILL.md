@@ -17,6 +17,7 @@ description: Use when content accuses, shames, identifies, or invites action aga
    targeted person. Privacy and harm reduction come before curiosity.
 5. Never call an external lookup with a claim that names or could reidentify the
    targeted person. Do not attempt to reconstruct a name from contextual clues.
+   This includes Google Fact Check, Exa, URL search, and future MCP connections.
 
 ## Analysis and next action
 
