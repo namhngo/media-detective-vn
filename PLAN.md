@@ -59,7 +59,27 @@ No LangChain, CrewAI, subagents, or orchestration frameworks. One contract file 
 
 ## What we can build next
 
-### Phase 1 — detection quality
+### Immediate priorities
+
+### 0. Langfuse user tracking
+
+Attach Clerk `userId` and `sessionId` to every Langfuse trace so the dashboard can filter by user, attribute cost per user, and audit which users hit which error paths.
+
+**What exists today:** Langfuse is always-on and captures spans with model, token, cost, latency, and tool-call metadata. Input/output fields are suppressed for privacy.
+
+**What is missing:** No `userId` or `sessionId` on any trace. Every trace is anonymous.
+
+**Implementation:**
+
+1. In `src/app/api/detect/route.ts` and `src/app/api/report/route.ts`, after `auth()` returns `userId`, propagate it via Langfuse's `propagateAttributes()`.
+
+2. Optionally use Eve's `events["step.started"]` in `agent/instrumentation.ts` to attach runtime context keys.
+
+3. After deploying, verify in the Langfuse UI that traces are filterable by user ID.
+
+**Why now:** It is the first observability gap every production deployment will hit — without it, cost attribution, error correlation, and abuse detection are impossible per-user.
+
+## Phase 1 — detection quality
 
 1. **Exact artifact matching** — phone numbers, bank accounts, known scam URLs, image perceptual hashes. Currently similar cases use only semantic embedding similarity. Exact matching would give definitive signals for known-bad artifacts without depending on the model.
 
