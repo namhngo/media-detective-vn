@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 import { withEve } from "eve/next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Defender has optional native ML imports that are not used by our Tier 1 policy.
+  serverExternalPackages: ["@stackone/defender"],
 };
 
 // Mounts the Eve runtime on the same Next.js origin under /eve/v1/*.

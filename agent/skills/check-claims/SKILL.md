@@ -17,15 +17,21 @@ description: Use when content contains factual claims that could be checked agai
 4. Prefer the relevant primary record: an original statement, official document,
    complete interview, public data, or the source's original media. Explain when
    the original source cannot be located.
-5. Use `search_fact_checks` once for a concise, redacted public claim before
-   finalizing. Read the linked publisher and its sources before treating a match
-   as useful context. Never use it for a claim that could reidentify a private
-   person.
+5. For every assessable public factual claim, use `search_fact_checks` exactly
+   once for a concise, redacted claim before finalizing. Missing attribution,
+   location, document number, or a direct link does not waive this step; search
+   the checkable wording available. Read the linked publisher and its sources
+   before treating a match as useful context. For public figures or public
+   proceedings, retain only the public identity needed to distinguish the
+   claim. For private people, remove unnecessary identifiers and search the
+   minimally identifying factual allegation.
 6. If no direct fact check exists and the claim concerns a current public event,
    use the available Exa connection once to find current independent reporting.
    Search at most five news results with `type: "auto"`; do not use Exa Agent,
-   fetch, crawl, or deep search. Never use Exa for private-person claims.
-6. Keep three categories distinct in the explanation: what is supported by a
+   fetch, crawl, or deep search. For a private-person allegation, use Exa only
+   when the event is already covered as a legitimate public-interest matter;
+   search the event rather than private identifiers or local gossip.
+7. Keep three categories distinct in the explanation: what is supported by a
    named source, what is an inference, and what remains unverified.
 
 ## Output rules
@@ -38,6 +44,9 @@ description: Use when content contains factual claims that could be checked agai
   locate the primary document, or read the full published fact check.
 - The tier measures manipulation and verification risk. It does not decide
   whether the claim is true. Exa results are cited context, not a tier input.
+- Add only HTTPS sources actually returned by Google Fact Check or Exa to
+  `evidenceSources`. Identify the matching provider and return an empty list if
+  neither tool returned useful evidence. Never invent a citation.
 
 ## Reference principles
 

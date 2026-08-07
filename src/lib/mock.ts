@@ -225,6 +225,7 @@ export const seedGallery: GalleryEntry[] = [
 /* ------------------------- Canned analyses (detect) ---------------------- */
 
 const timeshareAnalysis: AnalysisResult = {
+  assessmentStatus: "assessable",
   claims: [
     "A prize or free vacation offer invites the recipient to a hotel presentation",
     "Offer is framed as available today only",
@@ -236,11 +237,13 @@ const timeshareAnalysis: AnalysisResult = {
   riskScore: 81,
   explanationEn:
     "This follows the timeshare funnel that Vietnamese police have warned about: a prize offer, a polished hotel seminar, then pressure to sign and pay on the same day. Hanoi's Economic Police alone charged 187 people over this scheme, with 493 confirmed victims. A prize that requires attending a sales presentation is bait, and any contract that cannot wait 24 hours should not be signed.",
+  evidenceSources: [],
   moneyRequested: true,
   amountVnd: null,
 };
 
 const benignAnalysis: AnalysisResult = {
+  assessmentStatus: "assessable",
   claims: ["Promotional message for a supermarket weekend discount"],
   techniques: [],
   category: "other",
@@ -249,11 +252,13 @@ const benignAnalysis: AnalysisResult = {
   riskScore: 22,
   explanationEn:
     "Nothing here raises a clear flag yet: no time pressure, no request for money or personal details, no borrowed authority. That said, 'no flag' is not a guarantee — if any message ever asks you to transfer money, share a code, or keep a secret from family, verify it through a channel you already trust before acting.",
+  evidenceSources: [],
   moneyRequested: false,
   amountVnd: null,
 };
 
 const misinformationAnalysis: AnalysisResult = {
+  assessmentStatus: "assessable",
   claims: [
     "Post accuses a named student of cheating, with a photo offered as proof",
     "Urges readers to share widely before any official statement",
@@ -271,6 +276,7 @@ const misinformationAnalysis: AnalysisResult = {
   riskScore: 79,
   explanationEn:
     "This asks you to judge and share before any verification: a private individual is named and shamed, the 'proof' is a photo that proves nothing by itself, and the push to share now is the engine of the harm. This year in Vietnam, a false accusation exactly like this went viral and the consequences were irreversible. Before sharing: check whether any credible outlet or official statement confirms it, look for the original source of the photo, and remember that virality is not evidence. When a private person is targeted, not sharing is the default.",
+  evidenceSources: [],
   moneyRequested: false,
   amountVnd: null,
 };

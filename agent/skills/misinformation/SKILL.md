@@ -1,5 +1,5 @@
 ---
-description: Use when the content is a viral news claim, a public accusation against a private individual, or a screenshot of an alleged official announcement that may be fabricated.
+description: Use when content describes an urgent viral rumor, says everyone is sharing, presents virality as proof, makes a person-targeting accusation, reuses old media, or shows an alleged official announcement that may be fabricated.
 ---
 
 # Misinformation
@@ -30,8 +30,10 @@ doctored evidence, not merely because a screenshot lacks a link. Use
 `decontextualization` when genuine material appears to be placed in a misleading
 time, place, or narrative. Use `bandwagon` when reach is offered as proof.
 
-For a private person, also load private-accusations and remove identifying details
-from the structured claims. Never amplify the allegation while explaining it.
+For any person-targeting allegation, also load private-accusations. Retain a
+public figure's identity only when needed to check a public-role claim; remove
+unnecessary identifying details about private people from structured claims.
+Never amplify unsupported details while explaining the evidence.
 
 ## Tool and source discipline
 

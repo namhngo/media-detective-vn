@@ -2,8 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 
 import { analyzeWithEve } from "@/lib/eve-analysis";
 import { createEmbeddings } from "@/lib/embedding";
-import { createReport, findSimilarCases } from "@/lib/reports";
+import { createReport } from "@/lib/reports";
 import { reportRequestSchema, reportResponseSchema } from "@/lib/schema";
+import { findSimilarCases } from "@/lib/similar-cases";
 import { createStructuredSummary } from "@/lib/structured-summary";
 
 export async function POST(request: Request) {
@@ -23,6 +24,17 @@ export async function POST(request: Request) {
       source: parsed.data.source,
       text: parsed.data.text,
     });
+    if (analysis.assessmentStatus !== "assessable") {
+      return Response.json(
+        reportResponseSchema.parse({
+          reportId: null,
+          analysis,
+          similarCases: [],
+          published: false,
+        }),
+      );
+    }
+
     const summary = createStructuredSummary(analysis);
     const [embedding] = await createEmbeddings([summary]);
     const similarCases = await findSimilarCases(embedding);

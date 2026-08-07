@@ -5,6 +5,7 @@ import {
   type AnalysisResult,
   type Source,
 } from "@/lib/schema";
+import { assertSafeAnalysis } from "@/lib/prompt-defense";
 
 /**
  * Sends raw text only through Eve's transient per-turn context. The generic
@@ -45,5 +46,7 @@ export async function analyzeWithEve({
     throw new Error("Eve did not return a structured assessment.");
   }
 
-  return analysisResultSchema.parse(result.data);
+  const analysis = analysisResultSchema.parse(result.data);
+  await assertSafeAnalysis(analysis);
+  return analysis;
 }

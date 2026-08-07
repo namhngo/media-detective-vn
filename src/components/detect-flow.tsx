@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { AssessmentBoundary } from "@/components/assessment-boundary";
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
 import { InvestigationGuide } from "@/components/investigation-guide";
@@ -74,16 +75,20 @@ export function DetectFlow() {
       {phase.status === "done" && (
         <>
           <div className="mx-auto max-w-3xl">
-            <CaseFile
-              reportId={phase.result.reportId}
-              source={phase.request.source}
-              analysis={phase.result.analysis}
-              similarCases={phase.result.similarCases}
-            >
-              {phase.result.sharePrompted && (
-                <SharePrompt reportId={phase.result.reportId} />
-              )}
-            </CaseFile>
+            {phase.result.reportId === null ? (
+              <AssessmentBoundary analysis={phase.result.analysis} />
+            ) : (
+              <CaseFile
+                reportId={phase.result.reportId}
+                source={phase.request.source}
+                analysis={phase.result.analysis}
+                similarCases={phase.result.similarCases}
+              >
+                {phase.result.sharePrompted && (
+                  <SharePrompt reportId={phase.result.reportId} />
+                )}
+              </CaseFile>
+            )}
           </div>
           <div className="flex justify-center">
             <button

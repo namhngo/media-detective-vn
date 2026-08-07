@@ -1,6 +1,8 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
 
+import { defendExternalResult } from "../../src/lib/prompt-defense";
+
 const VIRUSTOTAL_ENDPOINT = "https://www.virustotal.com/api/v3/urls";
 
 type VirusTotalApiResponse = {
@@ -42,7 +44,7 @@ export default defineTool({
       const stats = body.data?.attributes?.last_analysis_stats;
       if (!stats) return { status: "unavailable" as const, result: null };
 
-      return {
+      const result = {
         status: "available" as const,
         result: {
           url: publicUrl,
@@ -50,6 +52,10 @@ export default defineTool({
           suspiciousCount: stats.suspicious ?? 0,
         },
       };
+      const safeResult = await defendExternalResult(result, "check_public_link");
+      if (!safeResult) return { status: "blocked" as const, result: null };
+
+      return safeResult;
     } catch {
       return { status: "unavailable" as const, result: null };
     }

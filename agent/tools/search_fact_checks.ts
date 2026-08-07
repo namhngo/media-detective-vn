@@ -1,6 +1,8 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
 
+import { defendExternalResult } from "../../src/lib/prompt-defense";
+
 const FACT_CHECK_ENDPOINT =
   "https://factchecktools.googleapis.com/v1alpha1/claims:search";
 
@@ -17,9 +19,18 @@ type FactCheckApiResponse = {
   }>;
 };
 
+function redactSensitiveQueryText(value: string) {
+  return value
+    .replace(/https?:\/\/\S+/gi, "[link]")
+    .replace(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g, "[email]")
+    .replace(/@[A-Za-z0-9_.-]+/g, "[handle]")
+    .replace(/(?:\+?\d[\d .()-]{7,}\d)/g, "[number]")
+    .replace(/\b\d{8,}\b/g, "[number]");
+}
+
 export default defineTool({
   description:
-    "Search published fact checks for redacted, structured claims. Use after extracting claims, never with raw user content. Results are evidence context, not a verdict engine.",
+    "Mandatory once before finalizing any assessable public factual claim, including person-targeting claims. Search a concise claim even when details are missing. Public figures may be named only when their public role is material; private-person queries must omit nonessential identifiers and all contact, school, workplace, precise-location, medical, or intimate information. Never send raw user content. Results are evidence context, not a verdict engine.",
   inputSchema: z.object({
     claims: z.array(z.string().max(500)).min(1).max(3),
   }),
@@ -27,7 +38,12 @@ export default defineTool({
     const apiKey = process.env.GOOGLE_FACT_CHECK_API_KEY;
     if (!apiKey) return { status: "not_configured" as const, results: [] };
 
-    const query = claims.filter(Boolean).join(" ").slice(0, 500);
+    const query = claims
+      .filter(Boolean)
+      .map(redactSensitiveQueryText)
+      .join(" ")
+      .slice(0, 500);
+    if (!query.trim()) return { status: "blocked" as const, results: [] };
     try {
       const params = new URLSearchParams({ query, key: apiKey, pageSize: "3" });
       const response = await fetch(`${FACT_CHECK_ENDPOINT}?${params}`, {
@@ -47,10 +63,15 @@ export default defineTool({
             reviewDate: review.reviewDate ?? null,
           })),
         )
-        .filter((review) => review.url.startsWith("http"))
+        .filter((review) => review.url.startsWith("https://"))
         .slice(0, 3);
 
-      return { status: "available" as const, results };
+      const safeResults = await defendExternalResult(results, "search_fact_checks");
+      if (!safeResults) {
+        return { status: "blocked" as const, results: [] };
+      }
+
+      return { status: "available" as const, results: safeResults };
     } catch {
       return { status: "unavailable" as const, results: [] };
     }

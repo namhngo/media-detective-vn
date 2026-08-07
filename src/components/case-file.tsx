@@ -1,6 +1,6 @@
 "use client";
 
-import { Puzzle, Quote, Users } from "lucide-react";
+import { BookOpenCheck, ExternalLink, Puzzle, Quote, Users } from "lucide-react";
 import { motion } from "motion/react";
 
 import { TierIcon } from "@/components/tier-icon";
@@ -158,6 +158,42 @@ export function CaseFile({
           </div>
         </div>
       </div>
+
+      {analysis.evidenceSources.length > 0 && (
+        <div className="border-t border-border/70 px-5 py-6 sm:px-6">
+          <SectionHeading icon={BookOpenCheck}>Sources checked</SectionHeading>
+          <ul className="mt-3 space-y-2">
+            {analysis.evidenceSources.map((source) => (
+              <li key={`${source.provider}:${source.url}`}>
+                <a
+                  href={source.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="group flex items-start justify-between gap-3 rounded-xl bg-secondary/60 p-3.5 transition-colors hover:bg-secondary"
+                >
+                  <span>
+                    <span className="block text-sm font-medium group-hover:underline">
+                      {source.title}
+                    </span>
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      {source.publisher ??
+                        (source.provider === "exa"
+                          ? "Source found via Exa"
+                          : "Published fact check")}
+                      {source.publishedAt ? ` · ${source.publishedAt}` : ""}
+                    </span>
+                  </span>
+                  <ExternalLink className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-muted-foreground">
+            These links are context for your own verification. They do not set
+            the confidence tier.
+          </p>
+        </div>
+      )}
 
       {/* Similar cases */}
       <div className="border-t border-border/70 px-5 py-6 sm:px-6">

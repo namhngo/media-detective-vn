@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check, Lock, MessageSquareText } from "lucide-react";
 
+import { AssessmentBoundary } from "@/components/assessment-boundary";
 import { Button } from "@/components/ui/button";
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
@@ -51,15 +52,17 @@ export function ReportFlow() {
   async function publish() {
     if (phase.status !== "preview") return;
     const { request, result } = phase;
+    if (result.reportId === null) return;
+    const reportId = result.reportId;
     setPhase({ status: "publishing", request, result });
     try {
       const response = await fetch("/api/report/publish", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ reportId: result.reportId }),
+        body: JSON.stringify({ reportId }),
       });
       if (!response.ok) throw new Error(`Publishing failed (${response.status})`);
-      setPhase({ status: "published", reportId: result.reportId });
+      setPhase({ status: "published", reportId });
     } catch (error) {
       setPhase({
         status: "error",
@@ -113,54 +116,74 @@ export function ReportFlow() {
       )}
 
       {(phase.status === "preview" || phase.status === "publishing") && (
-        <>
-          <div className="mx-auto max-w-3xl">
-            <CaseFile
-              reportId={phase.result.reportId}
-              source={phase.request.source}
-              analysis={phase.result.analysis}
-              similarCases={phase.result.similarCases}
-              attestation={
-                <div className="mx-5 mt-4 flex items-center gap-2 rounded-full bg-confirmed-user/10 px-3.5 py-2 text-sm font-medium text-confirmed-user sm:mx-6">
-                  <MessageSquareText className="size-4" />
-                  Reported by you · AI signal: {tierMeta[phase.result.analysis.tier].label}
-                </div>
-              }
-            />
-          </div>
-          <div className="mx-auto max-w-3xl rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
-            <p className="text-sm leading-relaxed">
-              Publishing adds this case file to the public library. Your
-              account is the trust signal here — the AI&rsquo;s independent
-              signal stays attached for transparency, even where it differs
-              from your experience.
-            </p>
-            <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
-              <p>Published: category, techniques, tier, and explanation.</p>
-              <p className="flex flex-wrap items-center gap-2">
-                <span className="flex items-center gap-1.5 whitespace-nowrap">
-                  <Lock className="size-3 shrink-0" />
-                  Never published:
-                </span>
-                <RedactedLine />
-                <span>raw content, names, numbers.</span>
-              </p>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button onClick={publish} disabled={publishing} className="rounded-full">
-                {publishing ? "Publishing…" : "Publish case file"}
-              </Button>
+        phase.result.reportId === null ? (
+          <div className="mx-auto max-w-3xl space-y-4">
+            <AssessmentBoundary analysis={phase.result.analysis} />
+            <div className="flex justify-center">
               <Button
                 variant="ghost"
                 onClick={() => setPhase({ status: "idle" })}
-                disabled={publishing}
                 className="rounded-full"
               >
-                Discard
+                Try another
               </Button>
             </div>
           </div>
-        </>
+        ) : (
+          <>
+            <div className="mx-auto max-w-3xl">
+              <CaseFile
+                reportId={phase.result.reportId}
+                source={phase.request.source}
+                analysis={phase.result.analysis}
+                similarCases={phase.result.similarCases}
+                attestation={
+                  <div className="mx-5 mt-4 flex items-center gap-2 rounded-full bg-confirmed-user/10 px-3.5 py-2 text-sm font-medium text-confirmed-user sm:mx-6">
+                    <MessageSquareText className="size-4" />
+                    Reported by you · AI signal:{" "}
+                    {tierMeta[phase.result.analysis.tier].label}
+                  </div>
+                }
+              />
+            </div>
+            <div className="mx-auto max-w-3xl rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
+              <p className="text-sm leading-relaxed">
+                Publishing adds this case file to the public library. Your
+                account is the trust signal here — the AI&rsquo;s independent
+                signal stays attached for transparency, even where it differs
+                from your experience.
+              </p>
+              <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
+                <p>Published: category, techniques, tier, and explanation.</p>
+                <p className="flex flex-wrap items-center gap-2">
+                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                    <Lock className="size-3 shrink-0" />
+                    Never published:
+                  </span>
+                  <RedactedLine />
+                  <span>raw content, names, numbers.</span>
+                </p>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button
+                  onClick={publish}
+                  disabled={publishing}
+                  className="rounded-full"
+                >
+                  {publishing ? "Publishing…" : "Publish case file"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setPhase({ status: "idle" })}
+                  disabled={publishing}
+                  className="rounded-full"
+                >
+                  Discard
+                </Button>
+              </div>
+            </div>
+          </>
+        )
       )}
 
       {phase.status === "published" && (

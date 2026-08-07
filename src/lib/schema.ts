@@ -46,13 +46,30 @@ export const techniqueSchema = z.enum([
 
 export const tierSchema = z.enum(["watch", "caution", "warning"]);
 
+export const assessmentStatusSchema = z.enum([
+  "assessable",
+  "not_media",
+  "insufficient",
+]);
+
 export const confirmationSourceSchema = z.enum(["ai_detected", "user_reported"]);
+
+export const evidenceSourceSchema = z.object({
+  provider: z.enum(["google_fact_check", "exa"]),
+  title: z.string().max(300),
+  publisher: z.string().max(200).nullable(),
+  url: z.string().url().startsWith("https://"),
+  publishedAt: z.string().max(100).nullable(),
+});
 
 /**
  * What the model produces in the single extract+analyze call.
  * This is the agent's `outputSchema` — schema-guaranteed, never a bare number.
  */
 export const analysisResultSchema = z.object({
+  assessmentStatus: assessmentStatusSchema.describe(
+    "Whether the submission is media or an account to investigate, an unrelated request, or too incomplete to assess",
+  ),
   claims: z.array(z.string()).describe("The specific claims the content makes"),
   techniques: z
     .array(techniqueSchema)
@@ -71,6 +88,12 @@ export const analysisResultSchema = z.object({
   explanationEn: z
     .string()
     .describe("Plain-language explanation of the reasoning, calm and jargon-free"),
+  evidenceSources: z
+    .array(evidenceSourceSchema)
+    .max(5)
+    .describe(
+      "Public sources actually returned by Google Fact Check or Exa; empty when neither returned useful evidence",
+    ),
   moneyRequested: z.boolean(),
   amountVnd: z.number().int().nullable(),
 });
@@ -97,7 +120,8 @@ export const detectRequestSchema = z
   });
 
 export const detectResponseSchema = z.object({
-  reportId: z.string(),
+  /** Null when no assessable media was submitted; nothing is persisted in that case. */
+  reportId: z.string().nullable(),
   analysis: analysisResultSchema,
   /** May legitimately be empty — the similarity floor forces honesty. */
   similarCases: z.array(similarCaseSchema),
@@ -119,7 +143,7 @@ export const reportRequestSchema = detectRequestSchema.and(
 );
 
 export const reportResponseSchema = z.object({
-  reportId: z.string(),
+  reportId: z.string().nullable(),
   analysis: analysisResultSchema,
   similarCases: z.array(similarCaseSchema),
   published: z.boolean(),
@@ -184,7 +208,9 @@ export type Platform = z.infer<typeof platformSchema>;
 export type Category = z.infer<typeof categorySchema>;
 export type Technique = z.infer<typeof techniqueSchema>;
 export type Tier = z.infer<typeof tierSchema>;
+export type AssessmentStatus = z.infer<typeof assessmentStatusSchema>;
 export type ConfirmationSource = z.infer<typeof confirmationSourceSchema>;
+export type EvidenceSource = z.infer<typeof evidenceSourceSchema>;
 export type AnalysisResult = z.infer<typeof analysisResultSchema>;
 export type SimilarCase = z.infer<typeof similarCaseSchema>;
 export type DetectRequest = z.infer<typeof detectRequestSchema>;

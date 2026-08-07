@@ -1,10 +1,12 @@
 import { defineEval } from "eve/evals";
+import { equals } from "eve/evals/expect";
 
 import { analysisResultSchema } from "../src/lib/schema";
 
 const toolSelectionEvals = [
   defineEval({
-    description: "Searches published fact checks for a non-private factual claim.",
+    description:
+      "Searches fact checks for a public claim and uses Exa fallback when available.",
     tags: ["tool-selection"],
     async test(t) {
       const turn = await t.send({
@@ -14,7 +16,13 @@ const toolSelectionEvals = [
       });
       t.succeeded();
       turn.outputMatches(analysisResultSchema);
+      const parsed = analysisResultSchema.safeParse(turn.data);
+      t.check(
+        parsed.success ? parsed.data.assessmentStatus : null,
+        equals("assessable"),
+      );
       t.calledTool("search_fact_checks");
+      t.calledTool("exa__web_search_advanced_exa").soft();
     },
   }),
   defineEval({
@@ -32,7 +40,8 @@ const toolSelectionEvals = [
     },
   }),
   defineEval({
-    description: "Protects a private person without externalizing their allegation.",
+    description:
+      "Checks a person-targeting allegation without broad private-person search.",
     tags: ["privacy"],
     async test(t) {
       const turn = await t.send({
@@ -43,7 +52,8 @@ const toolSelectionEvals = [
       t.succeeded();
       turn.outputMatches(analysisResultSchema);
       t.loadedSkill("private-accusations").soft();
-      t.notCalledTool("search_fact_checks").soft();
+      t.calledTool("search_fact_checks");
+      t.notCalledTool("exa__web_search_advanced_exa").soft();
     },
   }),
 ];
