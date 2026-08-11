@@ -157,19 +157,23 @@ export function DashboardView() {
             <ContributionGraph days={activity.days} />
           </div>
 
-          {activity.stats.totalActions === 0 && (
+          {activity.stats.totalActions === 0 ? (
             <p className="mt-4 rounded-xl bg-secondary/60 px-3.5 py-3 text-sm text-muted-foreground">
-              No activity yet. Run your first check and this grid starts filling
-              in.
+              No activity yet. Run your first check — your grid and first badges
+              appear here.
             </p>
+          ) : (
+            <>
+              <div className="mt-6 border-t border-border/70 pt-5">
+                <SectionHeading icon={CheckCircle2}>Badges earned</SectionHeading>
+                <div className="mt-4">
+                  <BadgeShelf
+                    badges={activity.badges.filter((b) => b.earned)}
+                  />
+                </div>
+              </div>
+            </>
           )}
-
-          <div className="mt-6 border-t border-border/70 pt-5">
-            <SectionHeading icon={CheckCircle2}>Badges</SectionHeading>
-            <div className="mt-4">
-              <BadgeShelf badges={activity.badges} />
-            </div>
-          </div>
         </section>
       )}
 
