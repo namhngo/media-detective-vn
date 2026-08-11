@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { AnalyzingCard } from "@/components/analyzing-card";
 import { AssessmentBoundary } from "@/components/assessment-boundary";
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
@@ -47,18 +48,7 @@ export function DetectFlow() {
       </div>
 
       {analyzing && (
-        <div className="rounded-2xl border border-border/70 bg-card px-5 py-8 shadow-sm sm:px-6">
-          <div className="flex items-center gap-3">
-            <span className="size-2 animate-pulse rounded-full bg-primary" />
-            <p className="text-sm text-muted-foreground">
-              Analyzing — extracting claims, checking techniques, searching
-              similar cases…
-            </p>
-          </div>
-          <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full w-1/3 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-primary/60" />
-          </div>
-        </div>
+        <AnalyzingCard label="Analyzing — extracting claims, checking techniques, searching similar cases…" />
       )}
 
       {phase.status === "error" && (

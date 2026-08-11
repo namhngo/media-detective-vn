@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${beVietnamPro.variable} ${plexMono.variable}`}>
       <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
-        <ClerkProvider>
+        <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up">
           <MotionProvider>
             <SiteHeader />
             <main className="flex-1">{children}</main>

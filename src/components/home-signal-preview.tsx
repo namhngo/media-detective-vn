@@ -1,3 +1,12 @@
+"use client";
+
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import {
   CircleAlert,
   LockKeyhole,
@@ -7,12 +16,42 @@ import {
 
 /**
  * A concrete preview of the product's value: an urgent message becomes
- * recognizable signals and a calm next step. It is intentionally static so
- * the home page stays fast and the message is readable at first paint.
+ * recognizable signals and a calm next step. Subtle pointer tilt gives the
+ * panel physical presence; reduced motion keeps it perfectly still.
  */
 export function HomeSignalPreview() {
+  const reduce = useReducedMotion();
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [3, -3]), {
+    stiffness: 140,
+    damping: 16,
+  });
+  const rotateY = useSpring(useTransform(mx, [-0.5, 0.5], [-4, 4]), {
+    stiffness: 140,
+    damping: 16,
+  });
+
   return (
-    <aside className="relative overflow-hidden rounded-[2rem] bg-[#12345a] p-5 text-white shadow-2xl shadow-primary/20 ring-1 ring-white/10 sm:p-7">
+    <motion.aside
+      onPointerMove={(event) => {
+        if (reduce) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        mx.set((event.clientX - rect.left) / rect.width - 0.5);
+        my.set((event.clientY - rect.top) / rect.height - 0.5);
+      }}
+      onPointerLeave={() => {
+        mx.set(0);
+        my.set(0);
+      }}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+        perspective: 1000,
+      }}
+      className="relative overflow-hidden rounded-[2rem] bg-[#12345a] p-5 text-white shadow-2xl shadow-primary/20 ring-1 ring-white/10 sm:p-7"
+    >
       <div className="absolute right-8 top-2 size-32 rounded-full border border-white/15" />
       <div className="absolute right-4 top-20 size-20 rounded-full border border-white/10" />
 
@@ -27,7 +66,10 @@ export function HomeSignalPreview() {
           </span>
         </div>
 
-        <div className="mt-8 rounded-2xl bg-white p-4 text-foreground shadow-lg">
+        <div
+          className="mt-8 rounded-2xl bg-white p-4 text-foreground shadow-lg"
+          style={{ transform: "translateZ(18px)" }}
+        >
           <div className="flex items-center gap-2">
             <span className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary">
               <MessageCircle className="size-4" />
@@ -42,7 +84,10 @@ export function HomeSignalPreview() {
           </p>
         </div>
 
-        <div className="relative z-10 mx-4 -mt-3 rounded-2xl bg-white p-4 text-foreground shadow-xl">
+        <div
+          className="relative z-10 mx-4 -mt-3 rounded-2xl bg-white p-4 text-foreground shadow-xl"
+          style={{ transform: "translateZ(42px)" }}
+        >
           <div className="flex items-center gap-2">
             <span className="flex size-8 items-center justify-center rounded-full bg-tier-warning/10 text-tier-warning">
               <CircleAlert className="size-4" />
@@ -67,6 +112,6 @@ export function HomeSignalPreview() {
           Your original message is analyzed in the moment, never published.
         </p>
       </div>
-    </aside>
+    </motion.aside>
   );
 }

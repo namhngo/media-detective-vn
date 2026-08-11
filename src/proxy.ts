@@ -2,7 +2,11 @@ import { clerkMiddleware } from "@clerk/nextjs/server";
 
 // Resource-level auth lives in each protected page and route handler. This
 // middleware remains required for Clerk's App Router integration and tokens.
-export default clerkMiddleware();
+// Embedded auth pages keep sign-in on this site instead of the hosted portal.
+export default clerkMiddleware({
+  signInUrl: "/sign-in",
+  signUpUrl: "/sign-up",
+});
 
 export const config = {
   matcher: [

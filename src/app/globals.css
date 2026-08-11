@@ -128,3 +128,21 @@
     @apply outline-2 outline-offset-2 outline-ring;
   }
 }
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-marquee {
+    animation: marquee-x 42s linear infinite;
+  }
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+}
