@@ -94,7 +94,7 @@ export function ContentInput({
   }
 
   return (
-    <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+    <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)] sm:p-6">
       <Tabs
         value={source}
         onValueChange={(v) => {

@@ -68,7 +68,7 @@ export function CaseFile({
   return (
     <motion.article
       {...fadeUp}
-      className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm"
+      className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)]"
     >
       {/* Reference tag — present for traceability, deliberately quiet */}
       <div className="flex items-center justify-between gap-2 px-5 pt-4 sm:px-6">

@@ -98,6 +98,21 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Ambient depth: soft color washes + fine film grain, fixed to viewport.
+       Tier hues only, very low alpha — warmth without noise. */
+    background-image:
+      radial-gradient(
+        56rem 38rem at 88% -8%,
+        color-mix(in oklch, var(--primary) 8%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        48rem 34rem at -12% 108%,
+        color-mix(in oklch, var(--tier-caution) 7%, transparent),
+        transparent 60%
+      ),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;

@@ -378,7 +378,7 @@ export const mockDashboard: DashboardResponse = {
   stats: {
     totalChecks: 147,
     confirmedCases: 21,
-    topCategoryThisWeek: "deepfake_impersonation",
+    topCategoryThisWeek: "misinformation",
   },
   trend: [
     { date: "2025-12-15", watch: 0, caution: 0, warning: 1 },

@@ -12,7 +12,7 @@ import {
  */
 export function HomeSignalPreview() {
   return (
-    <aside className="relative overflow-hidden rounded-[2rem] bg-[#12345a] p-5 text-white shadow-xl shadow-primary/15 sm:p-7">
+    <aside className="relative overflow-hidden rounded-[2rem] bg-[#12345a] p-5 text-white shadow-2xl shadow-primary/20 ring-1 ring-white/10 sm:p-7">
       <div className="absolute right-8 top-2 size-32 rounded-full border border-white/15" />
       <div className="absolute right-4 top-20 size-20 rounded-full border border-white/10" />
 
