@@ -5,8 +5,10 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 import { MotionProvider } from "@/components/motion-provider";
+import { ShareApp } from "@/components/share-app";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { Toaster } from "@/components/ui/sonner";
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
@@ -24,6 +26,21 @@ export const metadata: Metadata = {
   title: "Media Detective Vietnam — AI-assisted media literacy",
   description:
     "Check suspicious content, learn the manipulation techniques behind scams and fake news, and help others spot them. AI assists, you decide.",
+  metadataBase: new URL("https://media-detective-vn.vercel.app"),
+  openGraph: {
+    title: "Media Detective Vietnam — AI-assisted media literacy",
+    description:
+      "Check suspicious posts before sharing. Media Detective explains scam and misinformation patterns so you can decide for yourself.",
+    siteName: "Media Detective Vietnam",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: "Media Detective Vietnam — AI-assisted media literacy",
+    description:
+      "Check suspicious posts before sharing. AI assists, you decide.",
+  },
 };
 
 export default function RootLayout({
@@ -37,6 +54,8 @@ export default function RootLayout({
             <SiteHeader />
             <main className="flex-1">{children}</main>
             <SiteFooter />
+            <ShareApp floating />
+            <Toaster />
           </MotionProvider>
         </ClerkProvider>
       </body>
