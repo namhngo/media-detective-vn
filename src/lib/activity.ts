@@ -1,6 +1,5 @@
 import { BADGE_BY_KIND, BADGE_DEFINITIONS } from "@/lib/badges";
 import { getPrisma } from "@/lib/db";
-import { ensureUser } from "@/lib/users";
 import type { ActivityBadge, ActivityDay, ActivityResponse } from "@/lib/schema";
 
 /** 53 weeks — the width of the contribution grid. */
@@ -15,11 +14,12 @@ export async function getUserActivity(
   clerkId: string,
 ): Promise<ActivityResponse> {
   const prisma = getPrisma();
-  const userId = await ensureUser(clerkId);
 
   const [user, days] = await Promise.all([
-    prisma.user.findUniqueOrThrow({
-      where: { id: userId },
+    prisma.user.upsert({
+      where: { clerkId },
+      create: { clerkId },
+      update: {},
       select: {
         totalChecks: true,
         totalReports: true,
@@ -38,7 +38,7 @@ export async function getUserActivity(
         to_char(date_trunc('day', "created_at"), 'YYYY-MM-DD') AS "date",
         COUNT(*)::int AS "count"
       FROM "report_events"
-      WHERE "user_id" = ${userId}
+      WHERE "actor_clerk_id" = ${clerkId}
         AND "created_at" >= now() - make_interval(days => ${WINDOW_DAYS})
       GROUP BY 1
       ORDER BY 1

@@ -1,6 +1,4 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import {
   Activity,
   CheckCircle2,
@@ -22,7 +20,6 @@ import {
   TrendChart,
 } from "@/components/dashboard-charts";
 import { GalleryCard } from "@/components/gallery-card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { categoryLabels } from "@/lib/tier";
 import type { ActivityResponse, DashboardResponse } from "@/lib/schema";
 
@@ -66,71 +63,16 @@ function SectionHeading({
   );
 }
 
-export function DashboardView() {
-  const [data, setData] = useState<DashboardResponse | null>(null);
-  const [failed, setFailed] = useState(false);
-  const [activity, setActivity] = useState<ActivityResponse | null>(null);
-  const [activityLoading, setActivityLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/dashboard")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setData)
-      .catch(() => setFailed(true));
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/activity")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setActivity)
-      .catch(() => setActivity(null))
-      .finally(() => setActivityLoading(false));
-  }, []);
-
-  if (failed) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        The dashboard didn&rsquo;t load. Refresh to try again.
-      </p>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="space-y-4">
-        <div className="grid gap-4 lg:grid-cols-4">
-          <Skeleton className="h-72 rounded-2xl lg:col-span-3" />
-          <div className="grid grid-cols-3 gap-4 lg:grid-cols-1">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-24 rounded-2xl" />
-            ))}
-          </div>
-        </div>
-        <Skeleton className="h-64 rounded-2xl" />
-      </div>
-    );
-  }
+export function DashboardView({
+  data,
+  activity,
+}: {
+  data: DashboardResponse;
+  activity: ActivityResponse | null;
+}) {
 
   return (
     <div className="space-y-4">
-      {/* Your activity skeleton — visible while the personal band loads */}
-      {activityLoading && (
-        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <Skeleton className="h-5 w-28 rounded-full" />
-            <Skeleton className="h-4 w-36 rounded-full" />
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-4">
-            {[0, 1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-20 rounded-xl" />
-            ))}
-          </div>
-          <div className="mt-5">
-            <Skeleton className="h-28 w-full rounded-xl" />
-          </div>
-        </section>
-      )}
-
       {/* Your activity — private to the signed-in user, never in the library */}
       {activity && (
         <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">
@@ -195,6 +137,12 @@ export function DashboardView() {
               </div>
             </>
           )}
+        </section>
+      )}
+      {!activity && (
+        <section className="rounded-2xl border border-border/60 bg-card px-5 py-4 text-sm text-muted-foreground shadow-[0_1px_2px_rgba(28,25,23,0.04),inset_0_1px_0_0_rgba(255,255,255,0.8)]">
+          Your private activity is temporarily unavailable. Community trends are
+          still up to date below.
         </section>
       )}
 
