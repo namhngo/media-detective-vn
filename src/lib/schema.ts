@@ -224,6 +224,8 @@ export const activityBadgeSchema = z.object({
   label: z.string(),
   description: z.string(),
   earned: z.boolean(),
+  /** ISO timestamp of the award — the audit trail a recomputation cannot give. */
+  earnedAt: z.string().nullable(),
   /** Progress toward the badge, capped at target — drives the locked state. */
   progress: z.number().int(),
   target: z.number().int(),
@@ -239,6 +241,7 @@ export const activityResponseSchema = z.object({
     totalActions: z.number().int(),
     publicContributions: z.number().int(),
     currentStreak: z.number().int(),
+    longestStreak: z.number().int(),
     categoriesSeen: z.number().int(),
   }),
   badges: z.array(activityBadgeSchema),

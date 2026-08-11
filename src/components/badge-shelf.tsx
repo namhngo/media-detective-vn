@@ -62,10 +62,22 @@ export function BadgeShelf({ badges }: { badges: ActivityBadge[] }) {
               <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
                 {badge.description}
               </p>
-              {!badge.earned && badge.target > 1 && (
-                <p className="mt-1.5 font-mono text-[11px] text-muted-foreground">
-                  {badge.progress} / {badge.target}
+              {badge.earned && badge.earnedAt ? (
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  Earned{" "}
+                  {new Date(badge.earnedAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </p>
+              ) : (
+                !badge.earned &&
+                badge.target > 1 && (
+                  <p className="mt-1.5 font-mono text-[11px] text-muted-foreground">
+                    {badge.progress} / {badge.target}
+                  </p>
+                )
               )}
             </div>
           </li>

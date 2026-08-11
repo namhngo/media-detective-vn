@@ -143,7 +143,9 @@ export function DashboardView() {
                 <Flame className="size-4 text-tier-caution" />
                 <CountUp value={activity.stats.currentStreak} />
               </p>
-              <p className="text-xs text-muted-foreground">day streak</p>
+              <p className="text-xs text-muted-foreground">
+                day streak · best {activity.stats.longestStreak}
+              </p>
             </div>
             <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">

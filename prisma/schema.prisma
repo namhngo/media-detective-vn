@@ -12,7 +12,6 @@ enum Source {
   screenshot
   text
 }
-
 enum Platform {
   zalo
   facebook
@@ -65,6 +64,58 @@ enum ReportEventType {
   seeded
 }
 
+// Badge identifiers. Thresholds and copy live in src/lib/badges.ts so the
+// definitions stay versioned in code; only the award itself is persisted.
+enum BadgeKind {
+  first_check
+  watchful_10
+  watchful_50
+  first_report
+  guardian_5
+  streak_7
+  pattern_spotter
+}
+
+/// An application user, keyed by their Clerk identity. Clerk remains the source
+/// of truth for profile data (name, email, avatar) — this table stores only
+/// app-owned state, so there is nothing to keep in sync.
+model User {
+  id                  String   @id @default(uuid())
+  clerkId             String   @unique @map("clerk_id")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  // Denormalized counters for O(1) dashboard reads. Maintained on every write
+  // and rebuildable from reports/report_events via recomputeUserStats().
+  totalChecks         Int      @default(0) @map("total_checks")
+  totalReports        Int      @default(0) @map("total_reports")
+  publicContributions Int      @default(0) @map("public_contributions")
+  currentStreak       Int      @default(0) @map("current_streak")
+  longestStreak       Int      @default(0) @map("longest_streak")
+  categoriesSeen      Int      @default(0) @map("categories_seen")
+  lastActiveOn        DateTime? @map("last_active_on") @db.Date
+
+  reports             Report[]
+  events              ReportEvent[]
+  badges              UserBadge[]
+
+  @@map("users")
+}
+
+/// One awarded badge. Immutable: the row's existence is the award, and
+/// earnedAt is the audit trail a recomputed value could never provide.
+model UserBadge {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     BadgeKind
+  earnedAt  DateTime  @default(now()) @map("earned_at")
+
+  @@unique([userId, badge])
+  @@index([userId, earnedAt])
+  @@map("user_badges")
+}
+
 model Report {
   id                     String              @id @default(uuid())
   createdAt              DateTime            @default(now()) @map("created_at")
@@ -92,6 +143,10 @@ model Report {
 
   // Clerk user ID stays backend-only. It is never exposed in the gallery.
   submittedByClerkId     String?             @map("submitted_by_clerk_id")
+  // Referential link to the app user. SetNull on delete: a deleted account
+  // leaves its published case in the library, anonymized, never orphaned.
+  userId                 String?             @map("user_id")
+  user                   User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
   sourceCitation         String?             @map("source_citation")
 
   // Prisma does normal CRUD; pgvector writes and searches use typed raw SQL.
@@ -106,6 +161,7 @@ model Report {
   @@index([isSeed])
   @@index([isDemo])
   @@index([submittedByClerkId])
+  @@index([userId])
   @@map("reports")
 }
 
@@ -118,9 +174,14 @@ model ReportEvent {
 
   // Present only for an authenticated Clerk actor; never exposed publicly.
   actorClerkId           String?         @map("actor_clerk_id")
+  userId                 String?         @map("user_id")
+  user                   User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@unique([reportId, type])
   @@index([reportId, createdAt])
   @@index([type, createdAt])
+  // Drives the contribution grid: per-user daily rollup straight from source.
+  @@index([actorClerkId, createdAt])
+  @@index([userId, createdAt])
   @@map("report_events")
 }

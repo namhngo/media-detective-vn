@@ -3,6 +3,7 @@ import { ConfirmationSource, ReportEventType } from "@prisma/client";
 import { getPrisma } from "@/lib/db";
 import { toVectorLiteral } from "@/lib/embedding";
 import type { AnalysisResult, Source } from "@/lib/schema";
+import { ensureUser, recomputeUserStats } from "@/lib/users";
 
 /**
  * Persists only the structured model output and its structured-summary vector.
@@ -23,6 +24,7 @@ export async function createReport({
 }) {
   const prisma = getPrisma();
   const isShared = confirmationSource !== null;
+  const userId = await ensureUser(submittedByClerkId);
   const report = await prisma.report.create({
     data: {
       source,
@@ -38,6 +40,7 @@ export async function createReport({
       isShared,
       confirmationSource,
       submittedByClerkId,
+      userId,
     },
   });
 
@@ -55,8 +58,12 @@ export async function createReport({
           ? ReportEventType.user_reported
           : ReportEventType.analysis_created,
       actorClerkId: submittedByClerkId,
+      userId,
     },
   });
+
+  // Counters and badge awards follow the event that earned them.
+  await recomputeUserStats(submittedByClerkId);
 
   return report.id;
 }
@@ -92,6 +99,7 @@ export async function publishReport({
     confirmationSource === ConfirmationSource.user_reported
       ? ReportEventType.user_reported
       : ReportEventType.shared;
+  const userId = await ensureUser(submittedByClerkId);
   await prisma.reportEvent.upsert({
     where: {
       reportId_type: { reportId: report.id, type: eventType },
@@ -100,7 +108,10 @@ export async function publishReport({
       reportId: report.id,
       type: eventType,
       actorClerkId: submittedByClerkId,
+      userId,
     },
     update: {},
   });
+
+  await recomputeUserStats(submittedByClerkId);
 }
