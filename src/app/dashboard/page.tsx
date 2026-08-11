@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { DashboardView } from "@/components/dashboard-view";
 import { PageHero } from "@/components/page-hero";
 import { WorkspaceBackdrop } from "@/components/workspace-backdrop";
+import { getServerLanguage } from "@/lib/server-i18n";
 import { getUserActivity } from "@/lib/activity";
 import { getDashboardData } from "@/lib/dashboard";
 
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const { userId } = await auth.protect();
+  const language = await getServerLanguage();
+  const vi = language === "vi";
   const [data, activity] = await Promise.all([
     getDashboardData(),
     getUserActivity(userId).catch((error) => {
@@ -27,10 +30,10 @@ export default async function DashboardPage() {
       <WorkspaceBackdrop />
       <PageHero
         eyebrowIcon={Activity}
-        eyebrow="All activity anonymous"
-        title="The picture so far"
-        accent="picture"
-        lede="Aggregates from every check run against the library. Individual cases are only ever shown when confirmed — everything else contributes to counts, never to names."
+        eyebrow={vi ? "Mọi hoạt động đều ẩn danh" : "All activity anonymous"}
+        title={vi ? "Bức tranh hiện tại" : "The picture so far"}
+        accent={vi ? undefined : "picture"}
+        lede={vi ? "Tổng hợp từ các lượt kiểm tra trong thư viện. Chỉ các vụ việc đã xác nhận mới được hiển thị riêng — mọi thứ khác chỉ đóng góp vào số liệu, không có tên người." : "Aggregates from every check run against the library. Individual cases are only ever shown when confirmed — everything else contributes to counts, never to names."}
       />
       <div className="mt-10">
         <DashboardView data={data} activity={activity} />

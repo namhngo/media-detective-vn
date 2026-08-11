@@ -5,10 +5,12 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 import { MotionProvider } from "@/components/motion-provider";
+import { I18nProvider } from "@/components/i18n-provider";
 import { ShareApp } from "@/components/share-app";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Toaster } from "@/components/ui/sonner";
+import { getServerLanguage } from "@/lib/server-i18n";
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
@@ -43,20 +45,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const language = await getServerLanguage();
   return (
-    <html lang="en" className={`${beVietnamPro.variable} ${plexMono.variable}`}>
+    <html lang={language} className={`${beVietnamPro.variable} ${plexMono.variable}`}>
       <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
         <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up">
-          <MotionProvider>
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-            <ShareApp floating />
-            <Toaster />
-          </MotionProvider>
+          <I18nProvider>
+            <MotionProvider>
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+              <ShareApp floating />
+              <Toaster />
+            </MotionProvider>
+          </I18nProvider>
         </ClerkProvider>
       </body>
     </html>

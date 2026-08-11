@@ -11,15 +11,17 @@ import {
 } from "@clerk/nextjs";
 
 import { cn } from "@/lib/utils";
-
-const nav = [
-  { href: "/detect", label: "Check content", short: "Check" },
-  { href: "/report", label: "Report a case", short: "Report" },
-  { href: "/dashboard", label: "Dashboard", short: "Dashboard", mobileHidden: true },
-];
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useI18n } from "@/components/i18n-provider";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const { t } = useI18n();
+  const nav = [
+    { href: "/detect", label: t("navCheck"), short: t("navCheck").split(" ")[0] },
+    { href: "/report", label: t("navReport"), short: t("navReport").split(" ")[0] },
+    { href: "/dashboard", label: t("navDashboard"), short: t("navDashboard"), mobileHidden: true },
+  ];
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur">
@@ -66,7 +68,7 @@ export function SiteHeader() {
                 type="button"
                 className="rounded-full px-2.5 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground sm:px-3 sm:text-sm"
               >
-                Sign in
+                {t("signIn")}
               </button>
             </SignInButton>
             <SignUpButton>
@@ -74,7 +76,7 @@ export function SiteHeader() {
                 type="button"
                 className="hidden rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85 sm:inline-flex"
               >
-                Create account
+                {t("createAccount")}
               </button>
             </SignUpButton>
           </Show>
@@ -82,6 +84,7 @@ export function SiteHeader() {
           <Show when="signed-in">
             <UserButton />
           </Show>
+          <LanguageSwitcher />
         </div>
       </div>
     </header>

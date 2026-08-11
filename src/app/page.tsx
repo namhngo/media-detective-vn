@@ -25,10 +25,15 @@ import { ScanField } from "@/components/scan-field";
 import { TechniqueMarquee } from "@/components/technique-marquee";
 import { tierMeta } from "@/lib/tier";
 import type { Tier } from "@/lib/schema";
+import { getServerLanguage } from "@/lib/server-i18n";
+import { translate } from "@/lib/i18n";
 
 const tiers: Tier[] = ["watch", "caution", "warning"];
 
-export default function Home() {
+export default async function Home() {
+  const language = await getServerLanguage();
+  const t = <K extends keyof typeof import("@/lib/i18n").messages.en>(key: K) =>
+    translate(language, key);
   return (
     <div className="ambient-landing mx-auto max-w-6xl px-4 sm:px-6">
       {/* The product story, not just product copy: an urgent message becomes a pause. */}
@@ -46,20 +51,21 @@ export default function Home() {
           <HeroItem>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">
               <ScanSearch className="size-3.5" />
-              Media literacy, one case at a time
+              {t("homeEyebrow")}
             </span>
           </HeroItem>
           <HeroItem>
             <h1 className="mt-4 max-w-xl text-4xl font-semibold tracking-tight sm:text-6xl">
-              Pause before you <AccentWord>act</AccentWord> on it.
+              {language === "vi" ? (
+                t("homeTitle")
+              ) : (
+                <>Pause before you <AccentWord>act</AccentWord> on it.</>
+              )}
             </h1>
           </HeroItem>
           <HeroItem>
             <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-              An urgent call, a too-good offer, a viral accusation — Media
-              Detective helps you see what is happening before money moves or a
-              post spreads.{" "}
-              <span className="text-foreground">AI assists, you decide.</span>
+              {t("homeLead")} <span className="text-foreground">{t("aiAssists")}</span>
             </p>
           </HeroItem>
           <HeroItem>
@@ -70,7 +76,7 @@ export default function Home() {
                 size="lg"
                 className="rounded-full"
               >
-                Check content
+                {t("checkContent")}
                 <ArrowRight data-icon="inline-end" />
               </Button>
               <Button
@@ -80,7 +86,7 @@ export default function Home() {
                 size="lg"
                 className="rounded-full"
               >
-                Report a case
+                {t("reportCase")}
               </Button>
             </div>
           </HeroItem>
@@ -99,33 +105,31 @@ export default function Home() {
           <div>
             <p className="flex items-center gap-2 text-sm font-medium">
               <ShieldCheck className="size-4 text-muted-foreground" />
-              Why check first
+              {t("whyCheck")}
             </p>
             <p className="mt-3 max-w-md text-2xl font-semibold tracking-tight">
-              Most scams never touch your phone. They rush your judgment.
+              {t("whyCheckTitle")}
             </p>
             <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-              An urgent transfer, a familiar voice, a post everyone is sharing —
-              the thirty-second pause is the whole defense. These checks are
-              yours; the AI just makes them faster.
+              {t("whyCheckLead")}
             </p>
           </div>
           <ol className="space-y-4">
             {[
               {
                 icon: ShieldCheck,
-                title: "Use an official channel",
-                body: "Open the organisation's known website or app instead of following an unexpected link.",
+                title: t("officialChannel"),
+                body: t("officialChannelBody"),
               },
               {
                 icon: Clock3,
-                title: "Slow down urgency",
-                body: "No legitimate emergency needs a transfer before verification.",
+                title: t("slowUrgency"),
+                body: t("slowUrgencyBody"),
               },
               {
                 icon: Share2,
-                title: "Virality is not proof",
-                body: "For a post about a private person, do not share before checking the source.",
+                title: t("virality"),
+                body: t("viralityBody"),
               },
             ].map(({ icon: Icon, title, body }, index) => (
               <li key={title} className="flex gap-3.5">
@@ -151,11 +155,10 @@ export default function Home() {
       <section className="border-t border-border/70 py-12 lg:py-16">
         <p className="flex items-center gap-2 text-sm font-medium">
           <ScanSearch className="size-4 text-muted-foreground" />
-          Every day, hundreds of messages. Some are traps.
+          {language === "vi" ? "Mỗi ngày có hàng trăm tin nhắn. Một số là cái bẫy." : "Every day, hundreds of messages. Some are traps."}
         </p>
         <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-          Hold the button to see how each post would be tiered — Watch,
-          Caution, or Warning.
+          {language === "vi" ? "Giữ nút để xem mỗi bài đăng được xếp cấp độ nào — Theo dõi, Cẩn trọng hay Cảnh báo." : "Hold the button to see how each post would be tiered — Watch, Caution, or Warning."}
         </p>
         <div className="mt-6">
           <ScanField />
@@ -167,7 +170,7 @@ export default function Home() {
             size="lg"
             className="rounded-full"
           >
-            Check your own message
+            {language === "vi" ? "Kiểm tra tin nhắn của bạn" : "Check your own message"}
             <ArrowRight data-icon="inline-end" />
           </Button>
         </div>
@@ -177,7 +180,7 @@ export default function Home() {
       <section className="border-t border-border/70 py-12 lg:py-16">
         <p className="flex items-center gap-2 text-sm font-medium">
           <ShieldQuestion className="size-4 text-muted-foreground" />
-          How confident is the AI? Never a bare number.
+          {language === "vi" ? "AI tự tin đến đâu? Không chỉ là một con số." : "How confident is the AI? Never a bare number."}
         </p>
         <div className="mt-5 grid gap-4 sm:grid-cols-3">
           {tiers.map((tier) => (
@@ -199,8 +202,7 @@ export default function Home() {
           ))}
         </div>
         <p className="mt-6 text-sm text-muted-foreground">
-          Even the lowest tier never means &ldquo;safe&rdquo; — only that
-          nothing was flagged yet. No result is ever 100% accurate.
+          {language === "vi" ? "Cấp độ thấp nhất không có nghĩa là “an toàn” — chỉ là chưa phát hiện tín hiệu rõ ràng. Không kết quả nào chính xác 100%." : "Even the lowest tier never means “safe” — only that nothing was flagged yet. No result is ever 100% accurate."}
         </p>
       </section>
 
@@ -211,27 +213,27 @@ export default function Home() {
             <div>
               <p className="flex items-center gap-2 text-sm font-medium">
                 <Megaphone className="size-4 text-muted-foreground" />
-                Why report
+            {t("whyReport")}
               </p>
               <p className="mt-3 max-w-md text-2xl font-semibold tracking-tight">
-                Your story becomes someone else&rsquo;s early warning.
+            {t("whyReportTitle")}
               </p>
               <ol className="mt-6 space-y-4">
                 {[
                   {
                     icon: MessageSquareText,
-                    title: "Describe what happened",
-                    body: "Write what you saw in your own words — specific details help others learn the pattern.",
+                title: t("describe"),
+                body: t("describeBody"),
                   },
                   {
                     icon: LockKeyhole,
-                    title: "Raw content stays private",
-                    body: "The public case file keeps a structured summary, never your original message or screenshot.",
+                title: t("rawPrivate"),
+                body: t("rawPrivateBody"),
                   },
                   {
                     icon: Eye,
-                    title: "Review before publishing",
-                    body: "You attest the report. The AI's independent signal stays visible beside it for transparency.",
+                title: t("reviewPublish"),
+                body: t("reviewPublishBody"),
                   },
                 ].map(({ icon: Icon, title, body }, index) => (
                   <li key={title} className="flex gap-3.5">
@@ -258,7 +260,7 @@ export default function Home() {
                   size="lg"
                   className="rounded-full bg-card"
                 >
-                  Report a case
+              {t("reportCase")}
                   <ArrowRight data-icon="inline-end" />
                 </Button>
               </div>
@@ -309,15 +311,11 @@ export default function Home() {
       <section className="border-t border-border/70 py-12">
         <p className="flex items-center gap-2 text-sm font-medium">
           <Lock className="size-4 text-muted-foreground" />
-          We never keep your message
+          {language === "vi" ? "Chúng tôi không lưu tin nhắn của bạn" : "We never keep your message"}
         </p>
         <RedactedLine className="mt-4" />
         <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-          Raw messages and screenshots are analyzed in the moment and{" "}
-          <span className="text-foreground">never stored</span> — only the
-          structured assessment is kept: techniques, tier, and explanation.
-          Names, phone numbers, and personal details never end up on a public
-          page.
+          {language === "vi" ? "Tin nhắn và ảnh chụp được phân tích ngay lúc đó và không bao giờ được lưu — chỉ bản đánh giá có cấu trúc được giữ lại. Tên, số điện thoại và thông tin cá nhân không xuất hiện trên trang công khai." : "Raw messages and screenshots are analyzed in the moment and never stored — only the structured assessment is kept: techniques, tier, and explanation. Names, phone numbers, and personal details never end up on a public page."}
         </p>
       </section>
     </div>
