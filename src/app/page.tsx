@@ -30,7 +30,7 @@ const tiers: Tier[] = ["watch", "caution", "warning"];
 
 export default function Home() {
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <div className="ambient-landing mx-auto max-w-6xl px-4 sm:px-6">
       {/* The product story, not just product copy: an urgent message becomes a pause. */}
       <section className="relative isolate grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(420px,0.78fr)] lg:py-20">
         {/* Ambient glow behind the preview — depth without a flat canvas */}

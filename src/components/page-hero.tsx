@@ -24,10 +24,6 @@ export function PageHero({
 
   return (
     <div className="relative">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-12 right-0 -z-10 size-80 rounded-full bg-primary/8 blur-3xl"
-      />
       <FadeUp>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">
           <Icon className="size-3.5" />

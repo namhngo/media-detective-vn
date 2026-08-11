@@ -33,7 +33,7 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="flex flex-col justify-center rounded-2xl border border-border/70 bg-gradient-to-b from-card to-secondary/50 px-5 py-4 shadow-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)]">
+    <div className="flex flex-col justify-center rounded-2xl border border-border/60 bg-gradient-to-b from-card to-secondary/50 px-5 py-4 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)]">
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" />
         {label}
@@ -101,7 +101,7 @@ export function DashboardView() {
       {/* Bento row: the trend is the hero cell — data-dense, non-sequential
           content is exactly where a real hierarchy grid earns its keep. */}
       <div className="grid gap-4 lg:grid-cols-4">
-        <section className="flex min-w-0 flex-col rounded-2xl border border-border/70 bg-card p-5 shadow-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)] sm:p-6 lg:col-span-3">
+        <section className="flex min-w-0 flex-col rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6 lg:col-span-3">
           <SectionHeading icon={Activity}>
             Check volume over time, by tier
           </SectionHeading>
