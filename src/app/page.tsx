@@ -12,6 +12,7 @@ import { RedactedLine } from "@/components/redacted-line";
 import { HeroIntro } from "@/components/hero-intro";
 import { HomeStats } from "@/components/home-stats";
 import { HomeSignalPreview } from "@/components/home-signal-preview";
+import { ScanField } from "@/components/scan-field";
 import { tierMeta } from "@/lib/tier";
 import type { Tier } from "@/lib/schema";
 
@@ -59,6 +60,32 @@ export default function Home() {
           <HomeStats />
         </HeroIntro>
         <HomeSignalPreview />
+      </section>
+
+      {/* Interactive scan field — hold to reveal what the AI looks for */}
+      <section className="border-t border-border/70 py-12 lg:py-16">
+        <p className="flex items-center gap-2 text-sm font-medium">
+          <ScanSearch className="size-4 text-muted-foreground" />
+          Every day, hundreds of messages. Some are traps.
+        </p>
+        <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+          Hold the button to see what the AI looks for — the hidden techniques
+          behind ordinary-looking posts.
+        </p>
+        <div className="mt-6">
+          <ScanField />
+        </div>
+        <div className="mt-6 flex justify-center">
+          <Button
+            render={<Link href="/detect" prefetch={false} />}
+            nativeButton={false}
+            size="lg"
+            className="rounded-full"
+          >
+            Check your own message
+            <ArrowRight data-icon="inline-end" />
+          </Button>
+        </div>
       </section>
 
       {/* Confidence tiers */}

@@ -102,6 +102,12 @@
   html {
     @apply font-sans;
   }
+  /* Native smooth scrolling — off when the user prefers reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
   /* Visible keyboard focus — part of the quality floor. */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
