@@ -201,6 +201,49 @@ export const dashboardResponseSchema = z.object({
   gallery: z.array(galleryEntrySchema),
 });
 
+/* ------------------------------ Your activity ---------------------------- */
+
+export const activityBadgeIdSchema = z.enum([
+  "first_check",
+  "watchful_10",
+  "watchful_50",
+  "first_report",
+  "guardian_5",
+  "streak_7",
+  "pattern_spotter",
+]);
+
+/** One day in the contribution grid. date is an ISO yyyy-mm-dd string (UTC). */
+export const activityDaySchema = z.object({
+  date: z.string(),
+  count: z.number().int(),
+});
+
+export const activityBadgeSchema = z.object({
+  id: activityBadgeIdSchema,
+  label: z.string(),
+  description: z.string(),
+  earned: z.boolean(),
+  /** Progress toward the badge, capped at target — drives the locked state. */
+  progress: z.number().int(),
+  target: z.number().int(),
+});
+
+/**
+ * Private to the signed-in caller. Never keyed by a user id from the client and
+ * never merged into the public gallery or community aggregates.
+ */
+export const activityResponseSchema = z.object({
+  days: z.array(activityDaySchema),
+  stats: z.object({
+    totalActions: z.number().int(),
+    publicContributions: z.number().int(),
+    currentStreak: z.number().int(),
+    categoriesSeen: z.number().int(),
+  }),
+  badges: z.array(activityBadgeSchema),
+});
+
 /* --------------------------------- Types --------------------------------- */
 
 export type Source = z.infer<typeof sourceSchema>;
@@ -223,3 +266,7 @@ export type ReportPublishRequest = z.infer<typeof reportPublishRequestSchema>;
 export type ReportPublishResponse = z.infer<typeof reportPublishResponseSchema>;
 export type GalleryEntry = z.infer<typeof galleryEntrySchema>;
 export type DashboardResponse = z.infer<typeof dashboardResponseSchema>;
+export type ActivityDay = z.infer<typeof activityDaySchema>;
+export type ActivityBadge = z.infer<typeof activityBadgeSchema>;
+export type ActivityBadgeId = z.infer<typeof activityBadgeIdSchema>;
+export type ActivityResponse = z.infer<typeof activityResponseSchema>;

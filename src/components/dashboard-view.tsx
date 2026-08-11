@@ -8,8 +8,13 @@ import {
   Puzzle,
   Users2,
   FileSearch,
+  Flame,
+  LockKeyhole,
+  Sparkles,
 } from "lucide-react";
 
+import { BadgeShelf } from "@/components/badge-shelf";
+import { ContributionGraph } from "@/components/contribution-graph";
 import { CountUp } from "@/components/count-up";
 import {
   ConfirmationSplit,
@@ -19,7 +24,7 @@ import {
 import { GalleryCard } from "@/components/gallery-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { categoryLabels } from "@/lib/tier";
-import type { DashboardResponse } from "@/lib/schema";
+import type { ActivityResponse, DashboardResponse } from "@/lib/schema";
 
 function StatCard({
   icon: Icon,
@@ -64,12 +69,21 @@ function SectionHeading({
 export function DashboardView() {
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [failed, setFailed] = useState(false);
+  const [activity, setActivity] = useState<ActivityResponse | null>(null);
 
   useEffect(() => {
     fetch("/api/dashboard")
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setData)
       .catch(() => setFailed(true));
+  }, []);
+
+  useEffect(() => {
+    // Personal band is additive: if it fails, the community view still renders.
+    fetch("/api/activity")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then(setActivity)
+      .catch(() => setActivity(null));
   }, []);
 
   if (failed) {
@@ -98,6 +112,67 @@ export function DashboardView() {
 
   return (
     <div className="space-y-4">
+      {/* Your activity — private to the signed-in user, never in the library */}
+      {activity && (
+        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <SectionHeading icon={Sparkles}>Your activity</SectionHeading>
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <LockKeyhole className="size-3" />
+              Only you can see this
+            </p>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-4">
+            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+              <p className="font-mono text-xl font-semibold">
+                <CountUp value={activity.stats.totalActions} />
+              </p>
+              <p className="text-xs text-muted-foreground">your actions</p>
+            </div>
+            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+              <p className="font-mono text-xl font-semibold">
+                <CountUp value={activity.stats.publicContributions} />
+              </p>
+              <p className="text-xs text-muted-foreground">
+                added to the library
+              </p>
+            </div>
+            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+              <p className="flex items-center gap-1.5 font-mono text-xl font-semibold">
+                <Flame className="size-4 text-tier-caution" />
+                <CountUp value={activity.stats.currentStreak} />
+              </p>
+              <p className="text-xs text-muted-foreground">day streak</p>
+            </div>
+            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+              <p className="font-mono text-xl font-semibold">
+                <CountUp value={activity.stats.categoriesSeen} />
+              </p>
+              <p className="text-xs text-muted-foreground">categories seen</p>
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <ContributionGraph days={activity.days} />
+          </div>
+
+          {activity.stats.totalActions === 0 && (
+            <p className="mt-4 rounded-xl bg-secondary/60 px-3.5 py-3 text-sm text-muted-foreground">
+              No activity yet. Run your first check and this grid starts filling
+              in.
+            </p>
+          )}
+
+          <div className="mt-6 border-t border-border/70 pt-5">
+            <SectionHeading icon={CheckCircle2}>Badges</SectionHeading>
+            <div className="mt-4">
+              <BadgeShelf badges={activity.badges} />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Bento row: the trend is the hero cell — data-dense, non-sequential
           content is exactly where a real hierarchy grid earns its keep. */}
       <div className="grid gap-4 lg:grid-cols-4">
