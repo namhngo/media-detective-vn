@@ -70,6 +70,7 @@ export function DashboardView() {
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [failed, setFailed] = useState(false);
   const [activity, setActivity] = useState<ActivityResponse | null>(null);
+  const [activityLoading, setActivityLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/dashboard")
@@ -79,11 +80,11 @@ export function DashboardView() {
   }, []);
 
   useEffect(() => {
-    // Personal band is additive: if it fails, the community view still renders.
     fetch("/api/activity")
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setActivity)
-      .catch(() => setActivity(null));
+      .catch(() => setActivity(null))
+      .finally(() => setActivityLoading(false));
   }, []);
 
   if (failed) {
@@ -112,6 +113,24 @@ export function DashboardView() {
 
   return (
     <div className="space-y-4">
+      {/* Your activity skeleton — visible while the personal band loads */}
+      {activityLoading && (
+        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Skeleton className="h-5 w-28 rounded-full" />
+            <Skeleton className="h-4 w-36 rounded-full" />
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-20 rounded-xl" />
+            ))}
+          </div>
+          <div className="mt-5">
+            <Skeleton className="h-28 w-full rounded-xl" />
+          </div>
+        </section>
+      )}
+
       {/* Your activity — private to the signed-in user, never in the library */}
       {activity && (
         <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">

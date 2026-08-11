@@ -17,7 +17,7 @@ export async function getUserActivity(
   const prisma = getPrisma();
   const userId = await ensureUser(clerkId);
 
-  const [user, awarded, days] = await Promise.all([
+  const [user, days] = await Promise.all([
     prisma.user.findUniqueOrThrow({
       where: { id: userId },
       select: {
@@ -27,12 +27,11 @@ export async function getUserActivity(
         currentStreak: true,
         longestStreak: true,
         categoriesSeen: true,
+        badges: {
+          select: { badge: true, earnedAt: true },
+          orderBy: { earnedAt: "asc" },
+        },
       },
-    }),
-    prisma.userBadge.findMany({
-      where: { userId },
-      select: { badge: true, earnedAt: true },
-      orderBy: { earnedAt: "asc" },
     }),
     prisma.$queryRaw<ActivityDay[]>`
       SELECT
@@ -47,7 +46,7 @@ export async function getUserActivity(
   ]);
 
   const earnedAtByKind = new Map(
-    awarded.map((row) => [row.badge, row.earnedAt.toISOString()]),
+    user.badges.map((row) => [row.badge, row.earnedAt.toISOString()]),
   );
 
   const metricValue = {
