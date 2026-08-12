@@ -64,11 +64,11 @@ export function InvestigationGuide({ mode }: { mode: GuideMode }) {
   const content = guide[mode];
 
   return (
-    <aside className="relative overflow-hidden rounded-3xl bg-secondary/70 p-5 ring-1 ring-border/50 lg:sticky lg:top-24">
-      {/* Quiet dot grid — echoes the scan-field motif without competing */}
+    <aside className="torch-panel relative overflow-hidden rounded-3xl p-5 lg:sticky lg:top-24">
+      {/* A faint coordinate field keeps the checklist part of the same workspace. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,color-mix(in_oklch,var(--foreground)_5%,transparent)_1px,transparent_1.5px)] bg-[size:20px_20px]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,color-mix(in_oklch,white_9%,transparent)_1px,transparent_1.5px)] bg-[size:20px_20px]"
       />
       <div className="relative">
         <p className="flex items-center gap-2 text-sm font-semibold">
@@ -77,10 +77,10 @@ export function InvestigationGuide({ mode }: { mode: GuideMode }) {
         </p>
         <p className="mt-1 text-sm text-muted-foreground">{content.lead}</p>
 
-        <ol className="mt-5 space-y-4">
+        <ol className="relative mt-5 space-y-4 before:absolute before:top-3 before:bottom-3 before:left-3.5 before:w-px before:bg-white/10">
           {content.items.map(({ icon: Icon, title, body }, index) => (
             <li key={title} className="flex gap-3">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-card text-xs font-semibold text-primary shadow-sm">
+              <span className="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary ring-1 ring-primary/20">
                 {index + 1}
               </span>
               <div>

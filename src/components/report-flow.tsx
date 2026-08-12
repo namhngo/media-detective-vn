@@ -84,6 +84,7 @@ export function ReportFlow() {
               busy={analyzing}
               submitLabel="Structure my report"
               onSubmit={analyze}
+              mode="report"
             />
             <InvestigationGuide mode="report" />
           </div>
@@ -92,7 +93,7 @@ export function ReportFlow() {
           )}
           {phase.status === "error" && (
             <div
-              className="rounded-2xl border border-destructive/40 bg-card px-5 py-4 sm:px-6"
+              className="torch-panel rounded-2xl border-destructive/40 px-5 py-4 sm:px-6"
               role="alert"
             >
               <p className="text-sm">
@@ -137,7 +138,7 @@ export function ReportFlow() {
                 }
               />
             </div>
-            <div className="mx-auto max-w-3xl rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
+            <div className="torch-panel mx-auto max-w-3xl rounded-2xl px-5 py-5 sm:px-6">
               <p className="text-sm leading-relaxed">
                 Publishing adds this case file to the public library. Your
                 account is the trust signal here — the AI&rsquo;s independent
@@ -178,7 +179,7 @@ export function ReportFlow() {
       )}
 
       {phase.status === "published" && (
-        <div className="rounded-2xl border border-border/70 bg-card px-5 py-10 text-center shadow-sm sm:px-6">
+        <div className="torch-panel rounded-2xl px-5 py-10 text-center sm:px-6">
           <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-confirmed-user/15">
             <Check className="size-5 text-confirmed-user" />
           </span>

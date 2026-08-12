@@ -43,7 +43,12 @@ export function DetectFlow() {
   return (
     <div className="space-y-6">
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
-        <ContentInput busy={analyzing} submitLabel="Investigate" onSubmit={analyze} />
+        <ContentInput
+          busy={analyzing}
+          submitLabel="Investigate"
+          onSubmit={analyze}
+          mode="detect"
+        />
         <InvestigationGuide mode="detect" />
       </div>
 
@@ -52,7 +57,7 @@ export function DetectFlow() {
       )}
 
       {phase.status === "error" && (
-        <div className="rounded-2xl border border-destructive/40 bg-card px-5 py-4 sm:px-6" role="alert">
+        <div className="torch-panel rounded-2xl border-destructive/40 px-5 py-4 sm:px-6" role="alert">
           <p className="text-sm">
             The analysis didn&rsquo;t complete: {phase.message}
           </p>

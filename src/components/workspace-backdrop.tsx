@@ -1,29 +1,33 @@
-/**
- * The app-page backdrop: a fine graph-paper grid fading down the page plus a
- * colorless light lift at the top. Deliberately hue-free — workspaces read as
- * paper and structure, never as a tinted marketing surface.
- */
+/** The persistent night field behind product workspaces. */
 export function WorkspaceBackdrop() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
     >
       <div
-        className="absolute inset-x-0 top-0 h-[34rem]"
+        className="absolute inset-0 bg-background"
+      />
+      <div
+        className="absolute -top-72 right-[-14rem] size-[58rem] rounded-full bg-amber-300/10 blur-3xl"
+      />
+      <div
+        className="absolute left-[-20rem] top-[24rem] size-[48rem] rounded-full bg-sky-500/10 blur-3xl"
+      />
+      <div
+        className="absolute inset-0 opacity-50"
         style={{
           backgroundImage:
-            "radial-gradient(62rem 26rem at 50% -12%, color-mix(in oklch, var(--card) 85%, transparent), transparent 70%)",
+            "linear-gradient(color-mix(in oklch, white 5%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in oklch, white 5%, transparent) 1px, transparent 1px)",
+          backgroundSize: "36px 36px",
+          maskImage: "linear-gradient(to bottom, black, transparent 76%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black, transparent 76%)",
         }}
       />
       <div
-        className="absolute inset-0"
+        className="absolute left-[68%] top-[-18rem] h-[52rem] w-[20rem] -rotate-[18deg] bg-gradient-to-b from-amber-200/10 via-amber-200/[0.03] to-transparent blur-2xl"
         style={{
-          backgroundImage:
-            "linear-gradient(color-mix(in oklch, var(--foreground) 4%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in oklch, var(--foreground) 4%, transparent) 1px, transparent 1px)",
-          backgroundSize: "34px 34px",
-          maskImage: "linear-gradient(to bottom, black, transparent 72%)",
-          WebkitMaskImage: "linear-gradient(to bottom, black, transparent 72%)",
+          transformOrigin: "top center",
         }}
       />
     </div>

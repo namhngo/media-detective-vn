@@ -15,6 +15,7 @@ import { ScanField } from "@/components/scan-field";
 import { TechniqueMarquee } from "@/components/technique-marquee";
 import { DetectFlow } from "@/components/detect-flow";
 import { ReportFlow } from "@/components/report-flow";
+import { WorkspaceBackdrop } from "@/components/workspace-backdrop";
 import { getServerLanguage } from "@/lib/server-i18n";
 import { translate } from "@/lib/i18n";
 
@@ -22,7 +23,7 @@ import { translate } from "@/lib/i18n";
 function SignInGate({ language }: { language: "en" | "vi" }) {
   const vi = language === "vi";
   return (
-    <div className="mx-auto max-w-md rounded-3xl border border-border/60 bg-card p-8 text-center shadow-[0_1px_2px_rgba(28,25,23,0.04),0_16px_36px_-14px_rgba(28,25,23,0.14),inset_0_1px_0_0_rgba(255,255,255,0.8)]">
+    <div className="torch-panel mx-auto max-w-md rounded-3xl p-8 text-center">
       <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-amber-400/15 text-amber-600">
         <Flame className="size-6" />
       </span>
@@ -51,7 +52,7 @@ export default async function Home() {
     translate(language, key);
 
   return (
-    <div>
+    <div className="torch-workspace">
       {/* ── The dark: every day, hundreds of voices in the dark ─────────── */}
       <section className="relative overflow-hidden bg-[#0A0E1A] text-white">
         {/* Ambient embers — warm light living inside the dark */}
@@ -133,74 +134,78 @@ export default async function Home() {
 
       <TechniqueMarquee />
 
-      {/* ── The light: try it yourself ──────────────────────────────────── */}
-      <section id="detect" className="scroll-mt-20 py-14 lg:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-sm font-medium text-muted-foreground">
-            <Lock className="size-3.5" />
-            {t("privateDefault")}
-          </span>
-          <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-            {vi ? (
-              "Điều gì khiến bạn dừng lại?"
-            ) : (
-              <>
-                What made you <AccentWord>pause</AccentWord>?
-              </>
-            )}
-          </h2>
-          <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
-            {t("detectLead")}
-          </p>
-          <div className="mt-8">
-            <Show when="signed-out">
-              <SignInGate language={language} />
-            </Show>
-            <Show when="signed-in">
-              <DetectFlow />
-            </Show>
-          </div>
-        </div>
-      </section>
+      <div className="relative isolate overflow-hidden">
+        <WorkspaceBackdrop />
 
-      {/* ── Share your story ────────────────────────────────────────────── */}
-      <section id="report" className="scroll-mt-20 border-t border-border/70 bg-secondary/40 py-14 lg:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-sm font-medium text-muted-foreground">
-            <MessageSquareText className="size-3.5" />
-            {t("accountWarning")}
-          </span>
-          <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-            {vi ? (
-              "Câu chuyện của bạn là ngọn lửa cho người tiếp theo."
-            ) : (
-              <>
-                Your story is someone else&rsquo;s <AccentWord>light</AccentWord>.
-              </>
-            )}
-          </h2>
-          <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
-            {t("reportLead")}
-          </p>
-          <div className="mt-8">
-            <Show when="signed-out">
-              <SignInGate language={language} />
-            </Show>
-            <Show when="signed-in">
-              <ReportFlow />
-            </Show>
+        {/* ── The light: try it yourself ────────────────────────────────── */}
+        <section id="detect" className="scroll-mt-20 border-t border-white/10 py-14 lg:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1 text-sm font-medium text-white/65 ring-1 ring-white/10">
+              <Lock className="size-3.5" />
+              {t("privateDefault")}
+            </span>
+            <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
+              {vi ? (
+                "Điều gì khiến bạn dừng lại?"
+              ) : (
+                <>
+                  What made you <AccentWord>pause</AccentWord>?
+                </>
+              )}
+            </h2>
+            <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+              {t("detectLead")}
+            </p>
+            <div className="mt-8">
+              <Show when="signed-out">
+                <SignInGate language={language} />
+              </Show>
+              <Show when="signed-in">
+                <DetectFlow />
+              </Show>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Closing trust line ──────────────────────────────────────────── */}
-      <section className="border-t border-border/70 py-10">
-        <p className="mx-auto max-w-xl px-4 text-center text-sm leading-relaxed text-muted-foreground sm:px-6">
-          {vi
-            ? "Tin nhắn và ảnh chụp được phân tích ngay lúc đó và không bao giờ được lưu — chỉ bản đánh giá có cấu trúc được giữ lại. Không kết quả nào chính xác 100%."
-            : "Messages and screenshots are analyzed in the moment and never stored — only the structured assessment is kept. No result is ever 100% accurate."}
-        </p>
-      </section>
+        {/* ── Share your story ──────────────────────────────────────────── */}
+        <section id="report" className="scroll-mt-20 border-y border-white/10 bg-[#0b1221]/55 py-14 lg:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1 text-sm font-medium text-white/65 ring-1 ring-white/10">
+              <MessageSquareText className="size-3.5" />
+              {t("accountWarning")}
+            </span>
+            <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
+              {vi ? (
+                "Câu chuyện của bạn là ngọn lửa cho người tiếp theo."
+              ) : (
+                <>
+                  Your story is someone else&rsquo;s <AccentWord>light</AccentWord>.
+                </>
+              )}
+            </h2>
+            <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+              {t("reportLead")}
+            </p>
+            <div className="mt-8">
+              <Show when="signed-out">
+                <SignInGate language={language} />
+              </Show>
+              <Show when="signed-in">
+                <ReportFlow />
+              </Show>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Closing trust line ────────────────────────────────────────── */}
+        <section className="border-t border-white/10 py-10">
+          <p className="mx-auto max-w-xl px-4 text-center text-sm leading-relaxed text-muted-foreground sm:px-6">
+            {vi
+              ? "Tin nhắn và ảnh chụp được phân tích ngay lúc đó và không bao giờ được lưu — chỉ bản đánh giá có cấu trúc được giữ lại. Không kết quả nào chính xác 100%."
+              : "Messages and screenshots are analyzed in the moment and never stored — only the structured assessment is kept. No result is ever 100% accurate."}
+          </p>
+        </section>
+      </div>
     </div>
   );
 }

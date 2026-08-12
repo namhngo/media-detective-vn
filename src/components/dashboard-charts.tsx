@@ -107,8 +107,8 @@ export function TechniqueChart({
 }
 
 const splitConfig = {
-  ai: { label: "AI + user confirmed", color: "#1d4ed8" },
-  user: { label: "Self-reported", color: "#0f766e" },
+  ai: { label: "AI + user confirmed", color: "var(--primary)" },
+  user: { label: "Self-reported", color: "var(--confirmed-user)" },
 } satisfies ChartConfig;
 
 /** AI-confirmed vs self-reported — the cheap, credible insight. */

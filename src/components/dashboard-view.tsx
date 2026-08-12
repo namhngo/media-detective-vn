@@ -35,7 +35,11 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="flex flex-col justify-center rounded-2xl border border-border/60 bg-gradient-to-b from-card to-secondary/50 px-5 py-4 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)]">
+    <div className="torch-panel relative flex flex-col justify-center overflow-hidden rounded-2xl px-5 py-4">
+      <div
+        aria-hidden
+        className="absolute -right-7 -top-8 size-24 rounded-full bg-primary/10 blur-2xl"
+      />
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" />
         {label}
@@ -57,7 +61,7 @@ function SectionHeading({
 }) {
   return (
     <h2 className="flex items-center gap-2 text-sm font-medium">
-      <Icon className="size-4 text-muted-foreground" />
+      <Icon className="size-4 text-primary/80" />
       {children}
     </h2>
   );
@@ -72,10 +76,14 @@ export function DashboardView({
 }) {
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Your activity — private to the signed-in user, never in the library */}
       {activity && (
-        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">
+        <section className="torch-panel relative overflow-hidden rounded-2xl p-5 sm:p-6">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl"
+          />
           <div className="flex flex-wrap items-center justify-between gap-3">
             <SectionHeading icon={Sparkles}>Your activity</SectionHeading>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -85,13 +93,13 @@ export function DashboardView({
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-4">
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">
                 <CountUp value={activity.stats.totalActions} />
               </p>
               <p className="text-xs text-muted-foreground">your actions</p>
             </div>
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">
                 <CountUp value={activity.stats.publicContributions} />
               </p>
@@ -99,7 +107,7 @@ export function DashboardView({
                 added to the library
               </p>
             </div>
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="flex items-center gap-1.5 font-mono text-xl font-semibold">
                 <Flame className="size-4 text-tier-caution" />
                 <CountUp value={activity.stats.currentStreak} />
@@ -108,7 +116,7 @@ export function DashboardView({
                 day streak · best {activity.stats.longestStreak}
               </p>
             </div>
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">
                 <CountUp value={activity.stats.categoriesSeen} />
               </p>
@@ -121,7 +129,7 @@ export function DashboardView({
           </div>
 
           {activity.stats.totalActions === 0 ? (
-            <p className="mt-4 rounded-xl bg-secondary/60 px-3.5 py-3 text-sm text-muted-foreground">
+            <p className="torch-inset mt-4 rounded-xl px-3.5 py-3 text-sm text-muted-foreground">
               No activity yet. Run your first check — your grid and first badges
               appear here.
             </p>
@@ -140,7 +148,7 @@ export function DashboardView({
         </section>
       )}
       {!activity && (
-        <section className="rounded-2xl border border-border/60 bg-card px-5 py-4 text-sm text-muted-foreground shadow-[0_1px_2px_rgba(28,25,23,0.04),inset_0_1px_0_0_rgba(255,255,255,0.8)]">
+        <section className="torch-panel rounded-2xl px-5 py-4 text-sm text-muted-foreground">
           Your private activity is temporarily unavailable. Community trends are
           still up to date below.
         </section>
@@ -149,7 +157,7 @@ export function DashboardView({
       {/* Bento row: the trend is the hero cell — data-dense, non-sequential
           content is exactly where a real hierarchy grid earns its keep. */}
       <div className="grid gap-4 lg:grid-cols-4">
-        <section className="flex min-w-0 flex-col rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6 lg:col-span-3">
+        <section className="torch-panel flex min-w-0 flex-col rounded-2xl p-5 sm:p-6 lg:col-span-3">
           <SectionHeading icon={Activity}>
             Check volume over time, by tier
           </SectionHeading>
@@ -202,7 +210,7 @@ export function DashboardView({
 
       {/* Techniques + split — matched-width pair, same bento discipline */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="min-w-0 rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <section className="torch-panel min-w-0 rounded-2xl p-5 sm:p-6">
           <SectionHeading icon={Puzzle}>
             Top manipulation techniques
           </SectionHeading>
@@ -210,7 +218,7 @@ export function DashboardView({
             <TechniqueChart data={data.techniqueCounts} />
           </div>
         </section>
-        <section className="min-w-0 rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <section className="torch-panel min-w-0 rounded-2xl p-5 sm:p-6">
           <SectionHeading icon={Users2}>
             Confirmed by AI + user, vs. self-reported
           </SectionHeading>
@@ -232,7 +240,7 @@ export function DashboardView({
 
       {/* Gallery — a list, deliberately not a grid: sequential content reads
           better as a stack than forced into cells. */}
-      <section className="pt-6">
+      <section className="border-t border-white/10 pt-7">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <SectionHeading icon={FileSearch}>
             Confirmed case library

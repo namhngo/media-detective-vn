@@ -114,7 +114,7 @@ export function ShareApp({
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Share Media Detective"
-          className="fixed right-5 bottom-5 z-40 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          className="fixed right-5 bottom-5 z-40 flex size-12 items-center justify-center rounded-full bg-amber-400 text-[#0A0E1A] shadow-[0_0_28px_rgba(251,191,36,0.28)] transition-transform hover:scale-105 hover:bg-amber-300 focus-visible:ring-3 focus-visible:ring-amber-300/50 focus-visible:outline-none"
         >
           <Forward className="size-5" />
         </button>
@@ -139,7 +139,7 @@ export function ShareApp({
             role="dialog"
             aria-modal="true"
             aria-label="Share Media Detective"
-            className="w-full max-w-md rounded-2xl border border-border/70 bg-card p-5 shadow-lg sm:p-6"
+            className="torch-overlay torch-panel w-full max-w-md rounded-2xl p-5 sm:p-6"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">

@@ -225,14 +225,14 @@ export function ScanField() {
                 "rounded-xl border p-3 transition-all duration-700",
                 post.width,
                 scanned
-                  ? "border-white/40 bg-white text-foreground shadow-[0_10px_40px_-10px_rgba(251,191,36,0.25)]"
+                  ? "border-white/40 bg-white text-[#0A0E1A] shadow-[0_10px_40px_-10px_rgba(251,191,36,0.25)]"
                   : "border-white/10 bg-white/[0.05] text-white/60 shadow-none",
               )}
             >
               <p
                 className={cn(
                   "text-[11px] font-medium transition-colors duration-700",
-                  scanned ? "text-muted-foreground" : "text-white/40",
+                  scanned ? "text-[#526074]" : "text-white/40",
                 )}
               >
                 {post.kind}

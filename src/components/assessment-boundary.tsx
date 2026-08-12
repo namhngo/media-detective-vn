@@ -17,7 +17,7 @@ export function AssessmentBoundary({ analysis }: { analysis: AnalysisResult }) {
       : headings[analysis.assessmentStatus];
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+    <article className="torch-panel overflow-hidden rounded-2xl">
       <div className="flex items-start gap-3.5 px-5 py-6 sm:px-6">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground">
           <FileQuestion className="size-5" />

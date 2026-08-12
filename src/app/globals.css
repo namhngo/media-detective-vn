@@ -98,8 +98,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* App-wide: warm paper + fine grain only. Color washes are landing-only
-       (see .ambient-landing) — workspaces stay flat and calm. */
+    /* The neutral paper surface remains useful for auth and system pages.
+       Product routes opt into .torch-workspace below. */
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-attachment: fixed;
@@ -119,6 +119,76 @@
         transparent 60%
       );
     background-attachment: fixed;
+  }
+
+  /* The app's torch world. Tokens can also be applied to overlays without
+     changing the document default. */
+  .torch-workspace,
+  .torch-overlay {
+    --background: #0a0f1d;
+    --foreground: #f7f3ea;
+    --card: #121b2d;
+    --card-foreground: #f7f3ea;
+    --popover: #121b2d;
+    --popover-foreground: #f7f3ea;
+    --primary: #fbbf24;
+    --primary-foreground: #101525;
+    --secondary: #1a263b;
+    --secondary-foreground: #f7f3ea;
+    --muted: #18243a;
+    --muted-foreground: #aebbd0;
+    --accent: #22314b;
+    --accent-foreground: #f7f3ea;
+    --destructive: #fb7185;
+    --border: #2b3953;
+    --input: #31415d;
+    --ring: #fbbf24;
+    --chart-1: #8ac8ee;
+    --chart-2: #f5bf4c;
+    --chart-3: #fb7185;
+    --chart-4: #5ee0b3;
+    --chart-5: #8492aa;
+    --tier-watch: #8ac8ee;
+    --tier-caution: #f5bf4c;
+    --tier-warning: #fb7185;
+    --confirmed-user: #5ee0b3;
+
+    color: var(--foreground);
+    color-scheme: dark;
+  }
+
+  .torch-workspace {
+    isolation: isolate;
+    min-height: 100%;
+    background-color: var(--background);
+    background-image:
+      radial-gradient(62rem 42rem at 92% -10%, rgba(251, 191, 36, 0.16), transparent 62%),
+      radial-gradient(54rem 36rem at -8% 38%, rgba(53, 117, 189, 0.2), transparent 64%),
+      linear-gradient(180deg, #0a0e1a 0%, #0d1424 42%, #090e1a 100%);
+    background-attachment: fixed;
+  }
+
+  .torch-panel {
+    border: 1px solid color-mix(in oklch, white 11%, transparent);
+    background:
+      linear-gradient(145deg, color-mix(in oklch, var(--card) 96%, white), var(--card));
+    box-shadow:
+      0 1px 0 color-mix(in oklch, white 10%, transparent) inset,
+      0 20px 50px -30px rgba(0, 0, 0, 0.92);
+  }
+
+  .torch-inset {
+    border: 1px solid color-mix(in oklch, white 8%, transparent);
+    background: color-mix(in oklch, var(--background) 74%, transparent);
+  }
+
+  .torch-overline {
+    color: color-mix(in oklch, var(--primary) 86%, white);
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
   }
   html {
     @apply font-sans;

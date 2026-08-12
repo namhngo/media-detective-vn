@@ -34,8 +34,8 @@ function confirmationMark(entry: GalleryEntry) {
  */
 export function GalleryCard({ entry }: { entry: GalleryEntry }) {
   return (
-    <details className="group rounded-2xl border border-border/70 bg-card shadow-sm">
-      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl px-5 py-4 transition-colors hover:bg-secondary/40 [&::-webkit-details-marker]:hidden">
+    <details className="torch-panel group rounded-2xl">
+      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl px-5 py-4 transition-colors hover:bg-white/[0.035] [&::-webkit-details-marker]:hidden">
         <p className="text-xs text-muted-foreground">
           {shortCaseRef(entry.id)} · {formatCaseDate(entry.createdAt)} ·{" "}
           {platformLabels[entry.platform]}
