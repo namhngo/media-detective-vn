@@ -144,11 +144,28 @@
   }
 }
 
+@keyframes torch-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 24px rgba(251, 191, 36, 0.45),
+      0 0 64px rgba(251, 191, 36, 0.22);
+  }
+  50% {
+    box-shadow:
+      0 0 36px rgba(251, 191, 36, 0.65),
+      0 0 96px rgba(251, 191, 36, 0.35);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .animate-marquee {
     animation: marquee-x 42s linear infinite;
   }
   .animate-marquee:hover {
     animation-play-state: paused;
+  }
+  .animate-torch-glow {
+    animation: torch-glow 2.6s ease-in-out infinite;
   }
 }

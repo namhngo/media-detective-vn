@@ -18,8 +18,7 @@ export function SiteHeader() {
   const pathname = usePathname();
   const { t } = useI18n();
   const nav = [
-    { href: "/detect", label: t("navCheck"), short: t("navCheck").split(" ")[0] },
-    { href: "/report", label: t("navReport"), short: t("navReport").split(" ")[0] },
+    { href: "/", label: t("navHome"), short: t("navHome") },
     { href: "/dashboard", label: t("navDashboard"), short: t("navDashboard"), mobileHidden: true },
   ];
 

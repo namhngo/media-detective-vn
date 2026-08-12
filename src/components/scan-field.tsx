@@ -10,23 +10,22 @@ import {
   useTransform,
   type AnimationPlaybackControls,
 } from "motion/react";
-import { Check, ScanSearch } from "lucide-react";
+import { Check, Flame } from "lucide-react";
 
 import { TierBadge } from "@/components/tier-badge";
 import type { Tier } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
 /**
- * The landing-page centerpiece: a field of everyday posts. Holding the center
- * button "scans" the field and reveals the confidence tier each post would
- * receive — Watch, Caution, or Warning — the same tiers explained below.
- * Patterns only, no real names or events (see AGENTS.md sensitive-content rule).
+ * The hero centerpiece — "hold a light into the darkness." Posts sit as dim
+ * silhouettes in a dark field; holding the torch floods the field with warm
+ * light and every post is revealed with its tier. Patterns only, no real
+ * names or events (see AGENTS.md sensitive-content rule).
  */
 type FieldPost = {
   kind: string;
   text: string;
   tier: Tier;
-  /** Position as % of the field, plus depth for the 3D parallax layer. */
   x: number;
   y: number;
   z: number;
@@ -123,7 +122,6 @@ export function ScanField() {
   const [scanned, setScanned] = useState(false);
   const [holding, setHolding] = useState(false);
 
-  // Pointer parallax — motion values only, never React state (per-frame updates).
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), {
@@ -139,7 +137,7 @@ export function ScanField() {
   const ring = useTransform(
     progress,
     (v) =>
-      `conic-gradient(var(--primary) ${v * 360}deg, var(--border) ${v * 360}deg)`,
+      `conic-gradient(#fbbf24 ${v * 360}deg, rgba(251,191,36,0.15) ${v * 360}deg)`,
   );
 
   function handlePointer(event: React.PointerEvent<HTMLDivElement>) {
@@ -161,7 +159,6 @@ export function ScanField() {
 
   function stopScan() {
     setHolding(false);
-    // Once a scan completes, results latch — releasing must not hide them.
     if (scanned) return;
     controlsRef.current?.stop();
     animate(progress, 0, { duration: 0.25, ease: "easeOut" });
@@ -181,13 +178,14 @@ export function ScanField() {
         mx.set(0);
         my.set(0);
       }}
-      className="relative h-[480px] overflow-hidden rounded-3xl border border-border/70 bg-secondary/40 shadow-[inset_0_2px_24px_rgba(28,25,23,0.05)] [perspective:1200px] sm:h-[560px]"
+      className="relative h-[480px] overflow-hidden rounded-3xl border border-white/10 bg-[#0B1120] shadow-[inset_0_2px_30px_rgba(0,0,0,0.5)] [perspective:1200px] sm:h-[560px]"
     >
-      {/* Soft light from the top so the field reads as a surface, not a void */}
+      {/* Faint warm glow that lives in the dark before the torch is lit */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-44 bg-gradient-to-b from-card/80 to-transparent"
+        className="pointer-events-none absolute left-1/2 top-1/2 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-3xl"
       />
+
       <motion.div
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         className="absolute inset-0"
@@ -204,7 +202,7 @@ export function ScanField() {
               left: `${post.x}%`,
               top: `${post.y}%`,
               z: post.z,
-              opacity: post.z < -60 ? 0.55 : post.z < 0 ? 0.75 : 1,
+              opacity: scanned ? 1 : post.z < -60 ? 0.35 : post.z < 0 ? 0.55 : 0.8,
             }}
           >
             <motion.div
@@ -219,17 +217,33 @@ export function ScanField() {
                 ease: "easeInOut",
                 delay: i * 0.35,
               }}
-              style={{ rotate: post.rotate }}
+              style={{
+                rotate: post.rotate,
+                transitionDelay: scanned ? `${i * 55}ms` : "0ms",
+              }}
               className={cn(
-                "rounded-xl border border-border/70 bg-card p-3 shadow-sm",
+                "rounded-xl border p-3 transition-all duration-700",
                 post.width,
+                scanned
+                  ? "border-white/40 bg-white text-foreground shadow-[0_10px_40px_-10px_rgba(251,191,36,0.25)]"
+                  : "border-white/10 bg-white/[0.05] text-white/60 shadow-none",
               )}
             >
-              <p className="text-[11px] font-medium text-muted-foreground">
+              <p
+                className={cn(
+                  "text-[11px] font-medium transition-colors duration-700",
+                  scanned ? "text-muted-foreground" : "text-white/40",
+                )}
+              >
                 {post.kind}
               </p>
               <p className="mt-1 text-sm leading-snug">{post.text}</p>
-              <div className="mt-1.5 h-2 w-16 rounded-full bg-muted" />
+              <div
+                className={cn(
+                  "mt-1.5 h-2 w-16 rounded-full transition-colors duration-700",
+                  scanned ? "bg-muted" : "bg-white/10",
+                )}
+              />
 
               <div className="mt-2">
                 <motion.span
@@ -241,7 +255,6 @@ export function ScanField() {
                   }
                   transition={{
                     duration: 0.25,
-                    // The wave radiates from the center button outward.
                     delay: scanned
                       ? Math.hypot(post.x - 46, post.y - 46) * 0.012
                       : 0,
@@ -256,7 +269,7 @@ export function ScanField() {
         ))}
       </motion.div>
 
-      {/* Radar wave on scan completion — the moment the field "lights up" */}
+      {/* The light wave — warm rings flooding outward from the torch */}
       {scanned && !reduce && (
         <div
           aria-hidden
@@ -265,16 +278,16 @@ export function ScanField() {
           {[0, 1].map((i) => (
             <motion.span
               key={i}
-              initial={{ scale: 0.04, opacity: 0.55 }}
+              initial={{ scale: 0.04, opacity: 0.6 }}
               animate={{ scale: 1, opacity: 0 }}
-              transition={{ duration: 1.05, delay: i * 0.16, ease: "easeOut" }}
-              className="absolute size-[1400px] rounded-full border-2 border-primary/45"
+              transition={{ duration: 1.1, delay: i * 0.16, ease: "easeOut" }}
+              className="absolute size-[1400px] rounded-full border-2 border-amber-400/50"
             />
           ))}
         </div>
       )}
 
-      {/* Center scan control */}
+      {/* The torch */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           {scanned ? (
@@ -284,18 +297,21 @@ export function ScanField() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.25 }}
               onClick={resetScan}
-              className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-foreground"
+              className="rounded-full border border-white/25 bg-[#0B1120]/80 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur transition-colors hover:bg-[#0B1120] hover:text-white"
             >
-              Scan again
+              Back to the dark
             </motion.button>
           ) : (
-            <span className="rounded-full bg-foreground px-3 py-1 text-xs font-medium text-background">
-              Press and hold to scan
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#0B1120]">
+              Press and hold the light
             </span>
           )}
           <motion.div
             style={{ background: ring }}
-            className="rounded-full p-1 shadow-lg"
+            className={cn(
+              "rounded-full p-1",
+              !scanned && "animate-torch-glow",
+            )}
           >
             <button
               type="button"
@@ -313,24 +329,27 @@ export function ScanField() {
                 if (event.key === "Enter" || event.key === " ") stopScan();
               }}
               className={cn(
-                "flex size-24 touch-none flex-col items-center justify-center gap-1 rounded-full bg-card text-sm font-semibold select-none sm:size-28",
-                "transition-transform focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none active:scale-95",
+                "flex size-24 touch-none flex-col items-center justify-center gap-1 rounded-full text-sm font-semibold select-none sm:size-28",
+                "transition-all focus-visible:ring-3 focus-visible:ring-amber-300/60 focus-visible:outline-none active:scale-95",
+                scanned
+                  ? "bg-amber-300 text-[#0B1120]"
+                  : "bg-gradient-to-b from-amber-300 to-amber-500 text-[#0B1120]",
               )}
             >
               {scanned ? (
                 <>
-                  <Check className="size-5 text-primary" />
-                  Scanned
+                  <Check className="size-5" />
+                  Revealed
                 </>
               ) : (
                 <>
-                  <ScanSearch
+                  <Flame
                     className={cn(
-                      "size-5 text-primary transition-transform",
-                      holding && "scale-110",
+                      "size-5 transition-transform",
+                      holding && "scale-125",
                     )}
                   />
-                  {holding ? "Scanning" : "Hold to scan"}
+                  {holding ? "Lighting" : "Hold the light"}
                 </>
               )}
             </button>
