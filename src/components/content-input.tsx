@@ -7,13 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import type { DetectRequest, Source } from "@/lib/schema";
+import { useI18n } from "@/components/i18n-provider";
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // keeps browser OCR responsive on common devices
-
-const placeholders: Record<Source, string> = {
-  text: "Paste the message here — from Zalo, Facebook, SMS, anywhere…",
-  screenshot: "",
-};
 
 /**
  * The shared input UI for Detect and Report. Screenshot bytes stay in the
@@ -30,6 +26,7 @@ export function ContentInput({
   onSubmit: (payload: DetectRequest) => void;
   mode?: "detect" | "report";
 }) {
+  const { t } = useI18n();
   const [source, setSource] = useState<Source>("text");
   const [text, setText] = useState("");
   const [image, setImage] = useState<{ dataUrl: string; name: string } | null>(
@@ -47,13 +44,13 @@ export function ContentInput({
   const intakeCopy =
     mode === "detect"
       ? {
-          overline: "Signal intake",
-          title: "Bring the message into the light",
+          overline: t("inputSignal"),
+          title: t("inputSignalTitle"),
           step: "01",
         }
       : {
-          overline: "Case account",
-          title: "Start with what happened",
+          overline: t("inputReport"),
+          title: t("inputReportTitle"),
           step: "01",
         };
 
@@ -61,11 +58,11 @@ export function ContentInput({
     setError(null);
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setError("That file is not an image — choose a screenshot.");
+      setError(t("inputNotImage"));
       return;
     }
     if (file.size > MAX_IMAGE_BYTES) {
-      setError("That image is over 4 MB — crop or compress it first.");
+      setError(t("inputTooLarge"));
       return;
     }
     const reader = new FileReader();
@@ -91,13 +88,13 @@ export function ContentInput({
         }
         if (!extractedText) {
           setError(
-            "No readable text was found. Try a sharper screenshot or paste the message instead.",
+            t("inputNoText"),
           );
           return;
         }
         onSubmit({ source: "screenshot", text: extractedText });
       } catch {
-        setError("Text could not be read from that screenshot. Try pasting the message instead.");
+        setError(t("inputOcrFailed"));
       } finally {
         setOcrBusy(false);
       }
@@ -133,10 +130,10 @@ export function ContentInput({
       >
         <TabsList className="w-full bg-background/75 ring-1 ring-white/5">
           <TabsTrigger value="text" className="flex-1">
-            Paste text
+            {t("inputPaste")}
           </TabsTrigger>
           <TabsTrigger value="screenshot" className="flex-1">
-            Screenshot
+            {t("inputScreenshot")}
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -148,14 +145,14 @@ export function ContentInput({
               {/* eslint-disable-next-line @next/next/no-img-element -- transient local preview, never uploaded elsewhere */}
               <img
                 src={image.dataUrl}
-                alt="Screenshot to analyze"
+                alt={t("inputScreenshotAlt")}
                 className="max-h-72 w-full object-contain bg-background"
               />
               <button
                 type="button"
                 onClick={() => setImage(null)}
                 className="absolute top-2 right-2 rounded-full border border-white/10 bg-background/90 p-1.5 shadow-sm"
-                aria-label="Remove screenshot"
+                aria-label={t("inputRemove")}
               >
                 <X className="size-4" />
               </button>
@@ -175,11 +172,11 @@ export function ContentInput({
                 <ImagePlus className="size-5" />
               </span>
               <span className="text-sm">
-                Drop a screenshot here, or click to browse
+                {t("inputDrop")}
               </span>
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Lock className="size-3" />
-                Text is read in this browser — the image never leaves your device
+                {t("inputLocalOcr")}
               </span>
             </button>
           )
@@ -187,7 +184,7 @@ export function ContentInput({
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={placeholders[source]}
+            placeholder={source === "text" ? t("inputPlaceholder") : ""}
             className="min-h-44 resize-y rounded-2xl border-white/10 bg-background/70 p-4 text-base"
           />
         )}
@@ -209,7 +206,7 @@ export function ContentInput({
       <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/[0.08] pt-4">
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Lock className="size-3" />
-          Raw content is never stored
+          {t("inputPrivate")}
         </p>
         <Button
           onClick={submit}
@@ -217,7 +214,7 @@ export function ContentInput({
           size="lg"
           className="rounded-full shadow-[0_0_28px_rgba(251,191,36,0.16)]"
         >
-          {ocrBusy ? "Reading screenshot…" : busy ? "Analyzing…" : submitLabel}
+          {ocrBusy ? t("inputReading") : busy ? t("inputAnalyzing") : submitLabel}
         </Button>
       </div>
     </div>

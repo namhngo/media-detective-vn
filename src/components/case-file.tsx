@@ -6,7 +6,8 @@ import { motion } from "motion/react";
 import { TierIcon } from "@/components/tier-icon";
 import { formatCaseDate, formatVnd, shortCaseRef } from "@/lib/format";
 import { fadeUp } from "@/lib/motion";
-import { categoryLabels, platformLabels, techniqueLabels, tierMeta } from "@/lib/tier";
+import { categoryLabel, platformLabel, techniqueLabel, tierGuidance, tierLabel } from "@/lib/tier";
+import { useI18n } from "@/components/i18n-provider";
 import type { AnalysisResult, SimilarCase, Source } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
@@ -24,11 +25,6 @@ function SectionHeading({
     </p>
   );
 }
-
-const sourceLabels: Record<Source, string> = {
-  text: "Pasted text",
-  screenshot: "Screenshot",
-};
 
 const tierTint: Record<AnalysisResult["tier"], string> = {
   watch: "bg-tier-watch/8",
@@ -63,7 +59,7 @@ export function CaseFile({
   /** Slot for the Share prompt (rendered only at warning tier by the caller). */
   children?: React.ReactNode;
 }) {
-  const meta = tierMeta[analysis.tier];
+  const { language, t } = useI18n();
 
   return (
     <motion.article
@@ -73,11 +69,10 @@ export function CaseFile({
       {/* Reference tag — present for traceability, deliberately quiet */}
       <div className="flex items-center justify-between gap-2 px-5 pt-4 sm:px-6">
         <p className="text-xs text-muted-foreground">
-          Reference #{shortCaseRef(reportId).replace("#", "")} ·{" "}
-          {sourceLabels[source]} · {formatCaseDate(new Date().toISOString())}
+           {t("caseReference")} #{shortCaseRef(reportId).replace("#", "")} · {source === "text" ? t("inputPaste") : t("inputScreenshot")} · {formatCaseDate(new Date().toISOString(), language)}
         </p>
         <p className="text-xs text-muted-foreground">
-          Model confidence: {analysis.riskScore}/100
+           {t("caseConfidence")} {analysis.riskScore}/100
         </p>
       </div>
 
@@ -95,8 +90,8 @@ export function CaseFile({
             <TierIcon tier={analysis.tier} className="size-5" />
           </span>
           <div>
-            <p className="text-lg font-semibold">{meta.label}</p>
-            <p className="text-sm text-muted-foreground">{meta.guidance}</p>
+            <p className="text-lg font-semibold">{tierLabel(analysis.tier, language)}</p>
+            <p className="text-sm text-muted-foreground">{tierGuidance(analysis.tier, language)}</p>
           </div>
         </div>
         <p className="mt-4 leading-relaxed">{analysis.explanationEn}</p>
@@ -105,7 +100,7 @@ export function CaseFile({
       {/* Evidence */}
       <div className="grid gap-6 px-5 py-6 sm:grid-cols-2 sm:px-6">
         <div>
-          <SectionHeading icon={Quote}>What it claims</SectionHeading>
+          <SectionHeading icon={Quote}>{t("caseClaims")}</SectionHeading>
           <ul className="mt-2.5 space-y-1.5 text-sm">
             {analysis.claims.map((claim, i) => (
               <li key={i} className="flex gap-2">
@@ -116,7 +111,7 @@ export function CaseFile({
           </ul>
         </div>
         <div>
-          <SectionHeading icon={Puzzle}>Manipulation techniques</SectionHeading>
+          <SectionHeading icon={Puzzle}>{t("caseTechniques")}</SectionHeading>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
             {analysis.techniques.length > 0 ? (
               analysis.techniques.map((t) => (
@@ -124,34 +119,34 @@ export function CaseFile({
                   key={t}
                   className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium"
                 >
-                  {techniqueLabels[t]}
+                    {techniqueLabel(t, language)}
                 </span>
               ))
             ) : (
               <span className="text-sm text-muted-foreground">
-                None detected
+                 {t("caseNone")}
               </span>
             )}
           </div>
           <div className="mt-4 space-y-1 text-sm text-muted-foreground">
             <p>
-              Category:{" "}
+              {t("caseCategory")} {" "}
               <span className="text-foreground">
-                {categoryLabels[analysis.category]}
+                 {categoryLabel(analysis.category, language)}
               </span>
             </p>
             <p>
-              Platform:{" "}
+              {t("casePlatform")} {" "}
               <span className="text-foreground">
-                {platformLabels[analysis.platform]}
+                 {platformLabel(analysis.platform, language)}
               </span>
             </p>
             <p>
-              Money requested:{" "}
+              {t("caseMoney")} {" "}
               <span className="text-foreground">
-                {analysis.moneyRequested ? "Yes" : "No"}
+                 {analysis.moneyRequested ? t("caseYes") : t("caseNo")}
                 {analysis.amountVnd
-                  ? ` — ${formatVnd(analysis.amountVnd)}`
+                   ? ` — ${formatVnd(analysis.amountVnd, language)}`
                   : ""}
               </span>
             </p>
@@ -161,7 +156,7 @@ export function CaseFile({
 
       {analysis.evidenceSources.length > 0 && (
         <div className="border-t border-border/70 px-5 py-6 sm:px-6">
-          <SectionHeading icon={BookOpenCheck}>Sources checked</SectionHeading>
+        <SectionHeading icon={BookOpenCheck}>{t("caseSources")}</SectionHeading>
           <ul className="mt-3 space-y-2">
             {analysis.evidenceSources.map((source) => (
               <li key={`${source.provider}:${source.url}`}>
@@ -178,8 +173,8 @@ export function CaseFile({
                     <span className="mt-1 block text-xs text-muted-foreground">
                       {source.publisher ??
                         (source.provider === "exa"
-                          ? "Source found via Exa"
-                          : "Published fact check")}
+                           ? t("caseExa")
+                           : t("caseFactCheck"))}
                       {source.publishedAt ? ` · ${source.publishedAt}` : ""}
                     </span>
                   </span>
@@ -189,8 +184,7 @@ export function CaseFile({
             ))}
           </ul>
           <p className="mt-3 text-xs text-muted-foreground">
-            These links are context for your own verification. They do not set
-            the confidence tier.
+             {t("caseSourceNote")}
           </p>
         </div>
       )}
@@ -198,7 +192,7 @@ export function CaseFile({
       {/* Similar cases */}
       <div className="border-t border-border/70 px-5 py-6 sm:px-6">
         <SectionHeading icon={Users}>
-          Others have seen this before
+           {t("caseOthers")}
         </SectionHeading>
         {similarCases.length > 0 ? (
           <ul className="mt-3 space-y-3">
@@ -210,7 +204,7 @@ export function CaseFile({
                     {c.sourceCitation ? ` · ${c.sourceCitation}` : ""}
                   </p>
                   <span className="shrink-0 rounded-full bg-background px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                    {Math.round(c.similarity * 100)}% match
+                     {Math.round(c.similarity * 100)}% {t("caseMatch")}
                   </span>
                 </div>
                 <p className="mt-1.5 text-sm text-muted-foreground">
@@ -221,13 +215,11 @@ export function CaseFile({
           </ul>
         ) : (
           <p className="mt-2 text-sm text-muted-foreground">
-            No similar cases in the library yet — nothing cleared the similarity
-            floor.
+             {t("caseNoSimilar")}
           </p>
         )}
         <p className="mt-3 text-xs text-muted-foreground">
-          Similar cases are context, not evidence — the tier comes from the
-          analysis alone.
+           {t("caseSimilarNote")}
         </p>
       </div>
 

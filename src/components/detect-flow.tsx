@@ -9,6 +9,7 @@ import { ContentInput } from "@/components/content-input";
 import { InvestigationGuide } from "@/components/investigation-guide";
 import { SharePrompt } from "@/components/share-prompt";
 import type { DetectRequest, DetectResponse } from "@/lib/schema";
+import { useI18n } from "@/components/i18n-provider";
 
 type Phase =
   | { status: "idle" }
@@ -17,6 +18,7 @@ type Phase =
   | { status: "error"; message: string };
 
 export function DetectFlow() {
+  const { t } = useI18n();
   const [phase, setPhase] = useState<Phase>({ status: "idle" });
 
   async function analyze(payload: DetectRequest) {
@@ -45,7 +47,7 @@ export function DetectFlow() {
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
         <ContentInput
           busy={analyzing}
-          submitLabel="Investigate"
+          submitLabel={t("detectSubmit")}
           onSubmit={analyze}
           mode="detect"
         />
@@ -53,16 +55,14 @@ export function DetectFlow() {
       </div>
 
       {analyzing && (
-        <AnalyzingCard label="Analyzing — extracting claims, checking techniques, searching similar cases…" />
+        <AnalyzingCard label={t("detectProgress")} />
       )}
 
       {phase.status === "error" && (
         <div className="torch-panel rounded-2xl border-destructive/40 px-5 py-4 sm:px-6" role="alert">
-          <p className="text-sm">
-            The analysis didn&rsquo;t complete: {phase.message}
-          </p>
+              <p className="text-sm">{t("flowError")} {phase.message}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Check the input and try again — nothing was stored.
+              {t("flowNothingStored")}
           </p>
         </div>
       )}
@@ -91,7 +91,7 @@ export function DetectFlow() {
               onClick={() => setPhase({ status: "idle" })}
               className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
             >
-              Check another
+              {t("flowAnother")}
             </button>
           </div>
         </>

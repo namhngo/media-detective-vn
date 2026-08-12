@@ -19,14 +19,9 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { techniqueLabels } from "@/lib/tier";
+import { techniqueLabel } from "@/lib/tier";
+import { useI18n } from "@/components/i18n-provider";
 import type { DashboardResponse } from "@/lib/schema";
-
-const trendConfig = {
-  watch: { label: "Watch", color: "var(--chart-1)" },
-  caution: { label: "Caution", color: "var(--chart-2)" },
-  warning: { label: "Warning", color: "var(--chart-3)" },
-} satisfies ChartConfig;
 
 /** Check volume over time, stacked by tier. Tier colors, naturally. */
 export function TrendChart({
@@ -34,6 +29,12 @@ export function TrendChart({
 }: {
   data: DashboardResponse["trend"];
 }) {
+  const { language, t } = useI18n();
+  const trendConfig = {
+    watch: { label: t("tierWatch"), color: "var(--chart-1)" },
+    caution: { label: t("tierCaution"), color: "var(--chart-2)" },
+    warning: { label: t("tierWarning"), color: "var(--chart-3)" },
+  } satisfies ChartConfig;
   return (
     <ChartContainer config={trendConfig} className="aspect-auto h-64 w-full">
       <AreaChart data={data} margin={{ left: 0, right: 8, top: 8 }}>
@@ -44,7 +45,7 @@ export function TrendChart({
           axisLine={false}
           tickMargin={8}
           tickFormatter={(iso: string) =>
-            new Date(iso).toLocaleDateString("en-US", {
+            new Date(iso).toLocaleDateString(language === "vi" ? "vi-VN" : "en-US", {
               month: "short",
               day: "numeric",
             })
@@ -75,17 +76,15 @@ export function TrendChart({
   );
 }
 
-const techniqueConfig = {
-  count: { label: "Checks", color: "var(--chart-5)" },
-} satisfies ChartConfig;
-
 /** Technique frequency across all checks — neutral stone, not tier hues. */
 export function TechniqueChart({
   data,
 }: {
   data: DashboardResponse["techniqueCounts"];
 }) {
+  const { language, t } = useI18n();
   const top = data.slice(0, 6);
+  const techniqueConfig = { count: { label: t("dashboardChecks"), color: "var(--chart-5)" } } satisfies ChartConfig;
   return (
     <ChartContainer config={techniqueConfig} className="aspect-auto h-64 w-full">
       <BarChart data={top} layout="vertical" margin={{ left: 8, right: 16 }}>
@@ -97,7 +96,7 @@ export function TechniqueChart({
           tickLine={false}
           axisLine={false}
           width={132}
-          tickFormatter={(t: string) => techniqueLabels[t] ?? t}
+          tickFormatter={(value: string) => techniqueLabel(value, language)}
         />
         <ChartTooltip content={<ChartTooltipContent hideLabel />} />
         <Bar dataKey="count" fill="var(--color-count)" radius={[0, 4, 4, 0]} />
@@ -106,17 +105,17 @@ export function TechniqueChart({
   );
 }
 
-const splitConfig = {
-  ai: { label: "AI + user confirmed", color: "var(--primary)" },
-  user: { label: "Self-reported", color: "var(--confirmed-user)" },
-} satisfies ChartConfig;
-
 /** AI-confirmed vs self-reported — the cheap, credible insight. */
 export function ConfirmationSplit({
   data,
 }: {
   data: DashboardResponse["confirmationSplit"];
 }) {
+  const { t } = useI18n();
+  const splitConfig = {
+    ai: { label: t("dashboardAiConfirmed"), color: "var(--primary)" },
+    user: { label: t("dashboardSelfReported"), color: "var(--confirmed-user)" },
+  } satisfies ChartConfig;
   const total = data.aiDetected + data.userReported;
   const pieData = [
     { key: "ai", name: splitConfig.ai.label, value: data.aiDetected },

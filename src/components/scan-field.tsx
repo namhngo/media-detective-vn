@@ -13,6 +13,7 @@ import {
 import { Check, Flame } from "lucide-react";
 
 import { TierBadge } from "@/components/tier-badge";
+import { useI18n } from "@/components/i18n-provider";
 import type { Tier } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,8 @@ import { cn } from "@/lib/utils";
 type FieldPost = {
   kind: string;
   text: string;
+  kindVi: string;
+  textVi: string;
   tier: Tier;
   x: number;
   y: number;
@@ -38,6 +41,8 @@ const POSTS: FieldPost[] = [
   {
     kind: "Flood photo",
     text: "Shared as if it happened today.",
+    kindVi: "Ảnh lũ lụt",
+    textVi: "Được chia sẻ như thể vừa xảy ra hôm nay.",
     tier: "caution",
     x: 3, y: 10, z: -120, rotate: -3, width: "w-44",
     mobileHidden: true,
@@ -45,48 +50,64 @@ const POSTS: FieldPost[] = [
   {
     kind: "Investment group",
     text: "“Easy job, high pay” — the group asks for a deposit first.",
+    kindVi: "Nhóm đầu tư",
+    textVi: "“Việc nhẹ, lương cao” — nhóm yêu cầu đặt cọc trước.",
     tier: "warning",
     x: 36, y: 6, z: 40, rotate: 2, width: "w-52",
   },
   {
     kind: "Official weather notice",
     text: "Tidal surge expected this weekend — national forecast center.",
+    kindVi: "Thông báo thời tiết chính thức",
+    textVi: "Dự báo triều cường cuối tuần — trung tâm dự báo quốc gia.",
     tier: "watch",
     x: 72, y: 3, z: -60, rotate: 1.5, width: "w-48",
   },
   {
     kind: "Fake document",
     text: "Screenshot of an “official announcement” with no source link.",
+    kindVi: "Văn bản giả",
+    textVi: "Ảnh chụp “thông báo chính thức” nhưng không có liên kết nguồn.",
     tier: "warning",
     x: 22, y: 28, z: 0, rotate: -1.5, width: "w-52",
   },
   {
     kind: "Prize call",
     text: "You won a free holiday — attend our hotel event today to claim it.",
+    kindVi: "Cuộc gọi báo trúng thưởng",
+    textVi: "Bạn trúng chuyến du lịch miễn phí — hãy đến sự kiện tại khách sạn hôm nay để nhận.",
     tier: "warning",
     x: 4, y: 46, z: 60, rotate: 2.5, width: "w-56",
   },
   {
     kind: "Video-call impersonation",
     text: "A familiar face on video asking for money right now.",
+    kindVi: "Mạo danh qua cuộc gọi video",
+    textVi: "Một gương mặt quen thuộc trên video đang yêu cầu chuyển tiền ngay.",
     tier: "warning",
     x: 64, y: 24, z: 100, rotate: -2, width: "w-56",
   },
   {
     kind: "Bank text message",
     text: "“Your account has been locked. Tap here to verify.”",
+    kindVi: "Tin nhắn ngân hàng",
+    textVi: "“Tài khoản của bạn đã bị khóa. Nhấn vào đây để xác minh.”",
     tier: "warning",
     x: 74, y: 52, z: 20, rotate: 1, width: "w-48",
   },
   {
     kind: "Viral accusation",
     text: "“Everyone is sharing this — pass it on before it gets deleted.”",
+    kindVi: "Cáo buộc lan truyền",
+    textVi: "“Ai cũng đang chia sẻ — hãy chuyển tiếp trước khi bài bị xóa.”",
     tier: "warning",
     x: 38, y: 62, z: -40, rotate: -2.5, width: "w-56",
   },
   {
     kind: "Supermarket promo",
     text: "Weekend discount at a local supermarket chain.",
+    kindVi: "Khuyến mãi siêu thị",
+    textVi: "Chương trình giảm giá cuối tuần tại một chuỗi siêu thị địa phương.",
     tier: "watch",
     x: 8, y: 78, z: -80, rotate: 2, width: "w-44",
     mobileHidden: true,
@@ -94,12 +115,16 @@ const POSTS: FieldPost[] = [
   {
     kind: "Loan app",
     text: "“0% interest, approved in 5 minutes — just pay a fee upfront.”",
+    kindVi: "Ứng dụng vay tiền",
+    textVi: "“Lãi suất 0%, duyệt trong 5 phút — chỉ cần trả phí trước.”",
     tier: "warning",
     x: 30, y: 84, z: 0, rotate: -1, width: "w-52",
   },
   {
     kind: "Public-health advisory",
     text: "New helmet regulation takes effect January 1 — ministry portal.",
+    kindVi: "Khuyến cáo y tế công cộng",
+    textVi: "Quy định mới về mũ bảo hiểm có hiệu lực từ ngày 1 tháng 1 — cổng thông tin bộ.",
     tier: "watch",
     x: 76, y: 80, z: -100, rotate: 2.5, width: "w-48",
     mobileHidden: true,
@@ -107,6 +132,8 @@ const POSTS: FieldPost[] = [
   {
     kind: "Charity message",
     text: "A sad story asking for donations to a personal account.",
+    kindVi: "Tin nhắn kêu gọi từ thiện",
+    textVi: "Một câu chuyện buồn kêu gọi quyên góp vào tài khoản cá nhân.",
     tier: "caution",
     x: 54, y: 88, z: 60, rotate: -2, width: "w-44",
     mobileHidden: true,
@@ -116,6 +143,7 @@ const POSTS: FieldPost[] = [
 const SCAN_MS = 700;
 
 export function ScanField() {
+  const { language, t } = useI18n();
   const reduce = useReducedMotion();
   const fieldRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<AnimationPlaybackControls | null>(null);
@@ -235,9 +263,11 @@ export function ScanField() {
                   scanned ? "text-[#526074]" : "text-white/40",
                 )}
               >
-                {post.kind}
+                {language === "vi" ? post.kindVi : post.kind}
               </p>
-              <p className="mt-1 text-sm leading-snug">{post.text}</p>
+              <p className="mt-1 text-sm leading-snug">
+                {language === "vi" ? post.textVi : post.text}
+              </p>
               <div
                 className={cn(
                   "mt-1.5 h-2 w-16 rounded-full transition-colors duration-700",
@@ -299,11 +329,11 @@ export function ScanField() {
               onClick={resetScan}
               className="rounded-full border border-white/25 bg-[#0B1120]/80 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur transition-colors hover:bg-[#0B1120] hover:text-white"
             >
-              Back to the dark
+              {t("scanBack")}
             </motion.button>
           ) : (
             <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#0B1120]">
-              Press and hold the light
+              {t("scanPrompt")}
             </span>
           )}
           <motion.div
@@ -315,7 +345,7 @@ export function ScanField() {
           >
             <button
               type="button"
-              aria-label="Hold to scan posts"
+              aria-label={t("scanAria")}
               onPointerDown={startScan}
               onPointerUp={stopScan}
               onPointerLeave={() => holding && stopScan()}
@@ -339,7 +369,7 @@ export function ScanField() {
               {scanned ? (
                 <>
                   <Check className="size-5" />
-                  Revealed
+                  {t("scanRevealed")}
                 </>
               ) : (
                 <>
@@ -349,7 +379,7 @@ export function ScanField() {
                       holding && "scale-125",
                     )}
                   />
-                  {holding ? "Lighting" : "Hold the light"}
+                  {holding ? t("scanLighting") : t("scanHold")}
                 </>
               )}
             </button>

@@ -1,15 +1,19 @@
 /** Small display helpers shared across flows. */
 
 /** 181000000000 → "₫181 billion"; 4,000,000,000 → "₫4 billion" */
-export function formatVnd(amount: number): string {
+export function formatVnd(amount: number, language: Language = "en"): string {
   if (amount >= 1_000_000_000) {
     const billions = amount / 1_000_000_000;
-    return `₫${Number(billions.toFixed(1))} billion`;
+    return language === "vi"
+      ? `₫${Number(billions.toFixed(1))} tỷ`
+      : `₫${Number(billions.toFixed(1))} billion`;
   }
   if (amount >= 1_000_000) {
-    return `₫${Number((amount / 1_000_000).toFixed(1))} million`;
+    return language === "vi"
+      ? `₫${Number((amount / 1_000_000).toFixed(1))} triệu`
+      : `₫${Number((amount / 1_000_000).toFixed(1))} million`;
   }
-  return `₫${amount.toLocaleString("en-US")}`;
+  return `₫${amount.toLocaleString(language === "vi" ? "vi-VN" : "en-US")}`;
 }
 
 /** "mock-1785817001246" → "#1246"; "seed-001" → "#SEED-001" */
@@ -20,13 +24,14 @@ export function shortCaseRef(id: string): string {
 }
 
 /** ISO string → "JAN 20 2026" (case-file meta style) */
-export function formatCaseDate(iso: string): string {
+export function formatCaseDate(iso: string, language: Language = "en"): string {
   const d = new Date(iso);
   return d
-    .toLocaleDateString("en-US", {
+    .toLocaleDateString(language === "vi" ? "vi-VN" : "en-US", {
       month: "short",
       day: "2-digit",
       year: "numeric",
     })
     .toUpperCase();
 }
+import type { Language } from "@/lib/i18n";

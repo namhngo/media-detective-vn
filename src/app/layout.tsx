@@ -53,7 +53,7 @@ export default async function RootLayout({
     <html lang={language} className={`${beVietnamPro.variable} ${plexMono.variable}`}>
       <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
         <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up">
-          <I18nProvider>
+            <I18nProvider initialLanguage={language}>
             <MotionProvider>
               <SiteHeader />
               <main className="flex-1">{children}</main>
