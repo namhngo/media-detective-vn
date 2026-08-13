@@ -383,8 +383,6 @@ function FieldPostCard({
     [threshold, threshold + 0.14],
     ["rgba(255,255,255,0.6)", "#0A0E1A"],
   );
-  const badgeScale = useTransform(progress, [threshold, threshold + 0.14], [0.7, 1]);
-
   return (
     <motion.div
       initial={reduce ? false : { opacity: 0, y: 12 }}
@@ -432,9 +430,9 @@ function FieldPostCard({
           )}
         />
 
-        <motion.div className="mt-2 inline-flex" style={{ scale: scanned ? 1 : badgeScale, opacity: scanned ? 1 : revealOpacity }}>
+        <div className="mt-2 inline-flex">
           <TierBadge tier={post.tier} />
-        </motion.div>
+        </div>
       </motion.div>
     </motion.div>
   );
