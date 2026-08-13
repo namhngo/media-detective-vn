@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { animate, useReducedMotion } from "motion/react";
+import { useI18n } from "@/components/i18n-provider";
 
 /**
  * Counts up to `value` once, on mount — used for real numbers that just
@@ -16,6 +17,7 @@ export function CountUp({
 }) {
   const [display, setDisplay] = useState(0);
   const reduce = useReducedMotion();
+  const { language } = useI18n();
 
   useEffect(() => {
     const controls = animate(0, value, {
@@ -26,5 +28,5 @@ export function CountUp({
     return () => controls.stop();
   }, [value, duration, reduce]);
 
-  return <>{display.toLocaleString("en-US")}</>;
+  return <>{display.toLocaleString(language === "vi" ? "vi-VN" : "en-US")}</>;
 }

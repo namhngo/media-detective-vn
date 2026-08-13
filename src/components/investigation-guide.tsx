@@ -9,66 +9,42 @@ import {
   Share2,
   ShieldCheck,
 } from "lucide-react";
+import { useI18n } from "@/components/i18n-provider";
 
 type GuideMode = "detect" | "report";
 
-const guide = {
-  detect: {
-    title: "A 30-second habit",
-    lead: "The model can help, but these checks are yours.",
-    items: [
-      {
-        icon: ShieldCheck,
-        title: "Use an official channel",
-        body: "Open the organisation's known website or app instead of following an unexpected link.",
-      },
-      {
-        icon: Clock3,
-        title: "Slow down urgency",
-        body: "No legitimate emergency needs a transfer before verification.",
-      },
-      {
-        icon: Share2,
-        title: "Virality is not proof",
-        body: "For a post about a private person, do not share before checking the source.",
-      },
-    ],
-    footer: "We will look for claims, pressure tactics, and familiar patterns.",
-  },
-  report: {
-    title: "Your story matters",
-    lead: "You decide what becomes public.",
-    items: [
-      {
-        icon: MessageSquareText,
-        title: "Describe what happened",
-        body: "Write what you saw or experienced in your own words. Specific details help others learn.",
-      },
-      {
-        icon: LockKeyhole,
-        title: "Your raw content stays private",
-        body: "The public case file only contains a structured summary, never your original message or screenshot.",
-      },
-      {
-        icon: Eye,
-        title: "Review before publishing",
-        body: "Your report is your attestation. The AI signal remains visible separately for transparency.",
-      },
-    ],
-    footer: "Your account and the AI analysis play different roles. Both stay visible.",
-  },
-} as const;
-
 /** The companion rail that teaches a verification habit before an AI answer. */
 export function InvestigationGuide({ mode }: { mode: GuideMode }) {
-  const content = guide[mode];
+  const { t } = useI18n();
+  const content =
+    mode === "detect"
+      ? {
+          title: t("guideDetectTitle"),
+          lead: t("guideDetectLead"),
+          items: [
+            { icon: ShieldCheck, title: t("officialChannel"), body: t("officialChannelBody") },
+            { icon: Clock3, title: t("slowUrgency"), body: t("slowUrgencyBody") },
+            { icon: Share2, title: t("virality"), body: t("viralityBody") },
+          ],
+          footer: t("detectLead"),
+        }
+      : {
+          title: t("guideReportTitle"),
+          lead: t("guideReportLead"),
+          items: [
+            { icon: MessageSquareText, title: t("describe"), body: t("describeBody") },
+            { icon: LockKeyhole, title: t("rawPrivate"), body: t("rawPrivateBody") },
+            { icon: Eye, title: t("reviewPublish"), body: t("reviewPublishBody") },
+          ],
+          footer: t("reportLead"),
+        };
 
   return (
-    <aside className="relative overflow-hidden rounded-3xl bg-secondary/70 p-5 ring-1 ring-border/50 lg:sticky lg:top-24">
-      {/* Quiet dot grid — echoes the scan-field motif without competing */}
+    <aside className="torch-panel relative overflow-hidden rounded-3xl p-5 lg:sticky lg:top-24">
+      {/* A faint coordinate field keeps the checklist part of the same workspace. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,color-mix(in_oklch,var(--foreground)_5%,transparent)_1px,transparent_1.5px)] bg-[size:20px_20px]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,color-mix(in_oklch,white_9%,transparent)_1px,transparent_1.5px)] bg-[size:20px_20px]"
       />
       <div className="relative">
         <p className="flex items-center gap-2 text-sm font-semibold">
@@ -77,10 +53,10 @@ export function InvestigationGuide({ mode }: { mode: GuideMode }) {
         </p>
         <p className="mt-1 text-sm text-muted-foreground">{content.lead}</p>
 
-        <ol className="mt-5 space-y-4">
+        <ol className="relative mt-5 space-y-4 before:absolute before:top-3 before:bottom-3 before:left-3.5 before:w-px before:bg-white/10">
           {content.items.map(({ icon: Icon, title, body }, index) => (
             <li key={title} className="flex gap-3">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-card text-xs font-semibold text-primary shadow-sm">
+              <span className="relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary ring-1 ring-primary/20">
                 {index + 1}
               </span>
               <div>

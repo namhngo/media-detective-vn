@@ -1,30 +1,26 @@
 import { FileQuestion } from "lucide-react";
 
 import type { AnalysisResult } from "@/lib/schema";
-
-const headings: Record<
-  Exclude<AnalysisResult["assessmentStatus"], "assessable">,
-  string
-> = {
-  not_media: "This is a request, not media to investigate",
-  insufficient: "There is not enough content to investigate",
-};
+import { useI18n } from "@/components/i18n-provider";
 
 export function AssessmentBoundary({ analysis }: { analysis: AnalysisResult }) {
+  const { t } = useI18n();
   const heading =
     analysis.assessmentStatus === "assessable"
-      ? "No case file was created"
-      : headings[analysis.assessmentStatus];
+      ? t("assessmentNone")
+      : analysis.assessmentStatus === "not_media"
+        ? t("assessmentRequest")
+        : t("assessmentInsufficient");
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+    <article className="torch-panel overflow-hidden rounded-2xl">
       <div className="flex items-start gap-3.5 px-5 py-6 sm:px-6">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground">
           <FileQuestion className="size-5" />
         </span>
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
-            No case file created or saved
+            {t("assessmentNone")}
           </p>
           <h2 className="mt-1 text-lg font-semibold">{heading}</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

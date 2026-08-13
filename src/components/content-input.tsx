@@ -1,19 +1,15 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Lock, X } from "lucide-react";
+import { ImagePlus, Lock, MessageSquareText, ScanSearch, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import type { DetectRequest, Source } from "@/lib/schema";
+import { useI18n } from "@/components/i18n-provider";
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // keeps browser OCR responsive on common devices
-
-const placeholders: Record<Source, string> = {
-  text: "Paste the message here — from Zalo, Facebook, SMS, anywhere…",
-  screenshot: "",
-};
 
 /**
  * The shared input UI for Detect and Report. Screenshot bytes stay in the
@@ -23,11 +19,14 @@ export function ContentInput({
   busy,
   submitLabel,
   onSubmit,
+  mode = "detect",
 }: {
   busy: boolean;
   submitLabel: string;
   onSubmit: (payload: DetectRequest) => void;
+  mode?: "detect" | "report";
 }) {
+  const { t } = useI18n();
   const [source, setSource] = useState<Source>("text");
   const [text, setText] = useState("");
   const [image, setImage] = useState<{ dataUrl: string; name: string } | null>(
@@ -41,16 +40,29 @@ export function ContentInput({
     !busy &&
     !ocrBusy &&
     (source === "screenshot" ? image !== null : text.trim().length > 0);
+  const IntakeIcon = mode === "detect" ? ScanSearch : MessageSquareText;
+  const intakeCopy =
+    mode === "detect"
+      ? {
+          overline: t("inputSignal"),
+          title: t("inputSignalTitle"),
+          step: "01",
+        }
+      : {
+          overline: t("inputReport"),
+          title: t("inputReportTitle"),
+          step: "01",
+        };
 
   function pickImage(file: File | undefined) {
     setError(null);
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setError("That file is not an image — choose a screenshot.");
+      setError(t("inputNotImage"));
       return;
     }
     if (file.size > MAX_IMAGE_BYTES) {
-      setError("That image is over 4 MB — crop or compress it first.");
+      setError(t("inputTooLarge"));
       return;
     }
     const reader = new FileReader();
@@ -76,13 +88,13 @@ export function ContentInput({
         }
         if (!extractedText) {
           setError(
-            "No readable text was found. Try a sharper screenshot or paste the message instead.",
+            t("inputNoText"),
           );
           return;
         }
         onSubmit({ source: "screenshot", text: extractedText });
       } catch {
-        setError("Text could not be read from that screenshot. Try pasting the message instead.");
+        setError(t("inputOcrFailed"));
       } finally {
         setOcrBusy(false);
       }
@@ -94,7 +106,21 @@ export function ContentInput({
   }
 
   return (
-    <div className="rounded-3xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_16px_36px_-14px_rgba(28,25,23,0.14),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">
+    <div className="torch-panel rounded-3xl p-5 sm:p-6">
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary ring-1 ring-primary/20">
+            <IntakeIcon className="size-4" />
+          </span>
+          <div>
+            <p className="torch-overline">{intakeCopy.overline}</p>
+            <p className="mt-1 text-sm font-medium">{intakeCopy.title}</p>
+          </div>
+        </div>
+        <span className="font-mono text-xs text-muted-foreground">
+          {intakeCopy.step}
+        </span>
+      </div>
       <Tabs
         value={source}
         onValueChange={(v) => {
@@ -102,12 +128,12 @@ export function ContentInput({
           setError(null);
         }}
       >
-        <TabsList className="w-full">
+        <TabsList className="w-full bg-background/75 ring-1 ring-white/5">
           <TabsTrigger value="text" className="flex-1">
-            Paste text
+            {t("inputPaste")}
           </TabsTrigger>
           <TabsTrigger value="screenshot" className="flex-1">
-            Screenshot
+            {t("inputScreenshot")}
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -115,18 +141,18 @@ export function ContentInput({
       <div className="mt-4">
         {source === "screenshot" ? (
           image ? (
-            <div className="relative overflow-hidden rounded-md border">
+            <div className="torch-inset relative overflow-hidden rounded-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element -- transient local preview, never uploaded elsewhere */}
               <img
                 src={image.dataUrl}
-                alt="Screenshot to analyze"
-                className="max-h-72 w-full object-contain bg-muted"
+                alt={t("inputScreenshotAlt")}
+                className="max-h-72 w-full object-contain bg-background"
               />
               <button
                 type="button"
                 onClick={() => setImage(null)}
-                className="absolute top-2 right-2 rounded-full bg-background/90 p-1.5 shadow-sm border"
-                aria-label="Remove screenshot"
+                className="absolute top-2 right-2 rounded-full border border-white/10 bg-background/90 p-1.5 shadow-sm"
+                aria-label={t("inputRemove")}
               >
                 <X className="size-4" />
               </button>
@@ -140,15 +166,17 @@ export function ContentInput({
                 e.preventDefault();
                 pickImage(e.dataTransfer.files?.[0]);
               }}
-              className="flex min-h-36 w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+              className="torch-inset flex min-h-44 w-full flex-col items-center justify-center gap-2 rounded-2xl border-dashed text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
             >
-              <ImagePlus className="size-5" />
+              <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <ImagePlus className="size-5" />
+              </span>
               <span className="text-sm">
-                Drop a screenshot here, or click to browse
+                {t("inputDrop")}
               </span>
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Lock className="size-3" />
-                Text is read in this browser — the image never leaves your device
+                {t("inputLocalOcr")}
               </span>
             </button>
           )
@@ -156,8 +184,8 @@ export function ContentInput({
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={placeholders[source]}
-            className="min-h-36 resize-y text-base"
+            placeholder={source === "text" ? t("inputPlaceholder") : ""}
+            className="min-h-44 resize-y rounded-2xl border-white/10 bg-background/70 p-4 text-base"
           />
         )}
         <input
@@ -175,13 +203,18 @@ export function ContentInput({
         </p>
       )}
 
-      <div className="mt-4 flex items-center justify-between gap-4">
+      <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/[0.08] pt-4">
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Lock className="size-3" />
-          Raw content is never stored
+          {t("inputPrivate")}
         </p>
-        <Button onClick={submit} disabled={!canSubmit} size="lg" className="rounded-full">
-          {ocrBusy ? "Reading screenshot…" : busy ? "Analyzing…" : submitLabel}
+        <Button
+          onClick={submit}
+          disabled={!canSubmit}
+          size="lg"
+          className="rounded-full shadow-[0_0_28px_rgba(251,191,36,0.16)]"
+        >
+          {ocrBusy ? t("inputReading") : busy ? t("inputAnalyzing") : submitLabel}
         </Button>
       </div>
     </div>

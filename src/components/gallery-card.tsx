@@ -3,27 +3,28 @@ import { ChevronDown, Lock, Quote, Puzzle } from "lucide-react";
 import { TierBadge } from "@/components/tier-badge";
 import { RedactedLine } from "@/components/redacted-line";
 import { formatCaseDate, formatVnd, shortCaseRef } from "@/lib/format";
-import { categoryLabels, platformLabels, techniqueLabels } from "@/lib/tier";
+import { categoryLabel, platformLabel, techniqueLabel } from "@/lib/tier";
 import type { GalleryEntry } from "@/lib/schema";
+import { useI18n } from "@/components/i18n-provider";
 
-function confirmationMark(entry: GalleryEntry) {
+function confirmationMark(entry: GalleryEntry, labels: { seed: string; ai: string; reported: string }) {
   if (entry.isSeed) {
     return (
       <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
-        Seed case
+        {labels.seed}
       </span>
     );
   }
   if (entry.confirmationSource === "ai_detected") {
     return (
       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-        AI + user confirmed
+        {labels.ai}
       </span>
     );
   }
   return (
     <span className="rounded-full bg-confirmed-user/10 px-2 py-0.5 text-xs font-medium text-confirmed-user">
-      Reported by user
+      {labels.reported}
     </span>
   );
 }
@@ -33,18 +34,19 @@ function confirmationMark(entry: GalleryEntry) {
  * Structured summary only; raw content never exists here.
  */
 export function GalleryCard({ entry }: { entry: GalleryEntry }) {
+  const { language, t } = useI18n();
   return (
-    <details className="group rounded-2xl border border-border/70 bg-card shadow-sm">
-      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl px-5 py-4 transition-colors hover:bg-secondary/40 [&::-webkit-details-marker]:hidden">
+    <details className="torch-panel group rounded-2xl">
+      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl px-5 py-4 transition-colors hover:bg-white/[0.035] [&::-webkit-details-marker]:hidden">
         <p className="text-xs text-muted-foreground">
-          {shortCaseRef(entry.id)} · {formatCaseDate(entry.createdAt)} ·{" "}
-          {platformLabels[entry.platform]}
+           {shortCaseRef(entry.id)} · {formatCaseDate(entry.createdAt, language)} ·{" "}
+           {platformLabel(entry.platform, language)}
         </p>
         <span className="text-sm font-medium">
-          {categoryLabels[entry.category]}
+           {categoryLabel(entry.category, language)}
         </span>
         <span className="ml-auto flex items-center gap-3">
-          {confirmationMark(entry)}
+           {confirmationMark(entry, { seed: t("gallerySeed"), ai: t("galleryAi"), reported: t("galleryReported") })}
           <TierBadge tier={entry.tier} />
           <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" />
         </span>
@@ -53,9 +55,9 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
       <div className="border-t border-border/70 px-5 py-4">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <p className="flex items-center gap-1.5 text-sm font-medium">
+             <p className="flex items-center gap-1.5 text-sm font-medium">
               <Quote className="size-3.5 text-muted-foreground" />
-              Claims
+               {t("galleryClaims")}
             </p>
             <ul className="mt-2 space-y-1.5 text-sm">
               {entry.claims.map((claim, i) => (
@@ -69,7 +71,7 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
           <div>
             <p className="flex items-center gap-1.5 text-sm font-medium">
               <Puzzle className="size-3.5 text-muted-foreground" />
-              Techniques
+               {t("galleryTechniques")}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {entry.techniques.length > 0 ? (
@@ -78,19 +80,19 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
                     key={t}
                     className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium"
                   >
-                    {techniqueLabels[t]}
+                   {techniqueLabel(t, language)}
                   </span>
                 ))
               ) : (
                 <span className="text-sm text-muted-foreground">
-                  None tagged
+                   {t("galleryNone")}
                 </span>
               )}
             </div>
             {(entry.location || entry.amountVnd) && (
               <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-                {entry.location && <p>Location: {entry.location}</p>}
-                {entry.amountVnd && <p>Losses: {formatVnd(entry.amountVnd)}</p>}
+               {entry.location && <p>{t("galleryLocation")} {entry.location}</p>}
+               {entry.amountVnd && <p>{t("galleryLosses")} {formatVnd(entry.amountVnd, language)}</p>}
               </div>
             )}
           </div>
@@ -103,7 +105,7 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/70 pt-3">
           {entry.sourceCitation ? (
             <p className="text-xs text-muted-foreground">
-              Source: {entry.sourceCitation}
+               {t("gallerySource")} {entry.sourceCitation}
             </p>
           ) : (
             <span />
@@ -111,10 +113,10 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
           <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5 whitespace-nowrap">
               <Lock className="size-3 shrink-0" />
-              Raw content:
+               {t("galleryRaw")}
             </span>
             <RedactedLine />
-            <span>never stored</span>
+             <span>{t("galleryNever")}</span>
           </p>
         </div>
       </div>

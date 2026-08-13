@@ -17,7 +17,13 @@ type I18nContextValue = {
 
 const I18nContext = createContext<I18nContextValue | null>(null);
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
+export function I18nProvider({
+  children,
+  initialLanguage = "en",
+}: {
+  children: React.ReactNode;
+  initialLanguage?: Language;
+}) {
   const language = useSyncExternalStore<Language>(
     (onChange) => {
       window.addEventListener("mdv-language-change", onChange);
@@ -27,7 +33,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       normalizeLanguage(
         document.cookie.match(new RegExp(`${languageCookie}=([^;]+)`))?.[1],
       ),
-    () => "en" as Language,
+    () => initialLanguage,
   );
 
   const value = useMemo(

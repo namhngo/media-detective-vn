@@ -8,7 +8,7 @@ import { motion } from "motion/react";
  */
 export function AnalyzingCard({ label }: { label: string }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card px-5 py-8 shadow-sm sm:px-6">
+    <div className="torch-panel relative overflow-hidden rounded-2xl px-5 py-8 sm:px-6">
       <motion.div
         aria-hidden
         className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-primary/10 to-transparent"

@@ -10,6 +10,7 @@ import {
 
 import type { ActivityBadge, ActivityBadgeId } from "@/lib/schema";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 const BADGE_ICON: Record<
   ActivityBadgeId,
@@ -26,6 +27,16 @@ const BADGE_ICON: Record<
 
 /** Earned badges carry brand color; locked ones stay muted with progress. */
 export function BadgeShelf({ badges }: { badges: ActivityBadge[] }) {
+  const { language } = useI18n();
+  const badgeCopy: Record<string, { label: string; description: string }> = language === "vi" ? {
+    first_check: { label: "Lần kiểm tra đầu tiên", description: "Đã kiểm tra nội dung lần đầu." },
+    watchful_10: { label: "Cảnh giác", description: "Đã kiểm tra 10 nội dung." },
+    watchful_50: { label: "Tỉnh táo", description: "Đã kiểm tra 50 nội dung." },
+    first_report: { label: "Báo cáo đầu tiên", description: "Đã báo cáo một vụ việc từ trải nghiệm của mình." },
+    guardian_5: { label: "Người bảo vệ cộng đồng", description: "Đã thêm 5 vụ việc vào thư viện công khai." },
+    streak_7: { label: "Giữ mạch", description: "Đã hoạt động 7 ngày liên tiếp." },
+    pattern_spotter: { label: "Nhận ra thủ đoạn", description: "Đã gặp 5 danh mục lừa đảo khác nhau." },
+  } : {};
   return (
     <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {badges.map((badge) => {
@@ -57,15 +68,15 @@ export function BadgeShelf({ badges }: { badges: ActivityBadge[] }) {
                   !badge.earned && "text-muted-foreground",
                 )}
               >
-                {badge.label}
+                {badgeCopy[badge.id]?.label ?? badge.label}
               </p>
               <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                {badge.description}
+                {badgeCopy[badge.id]?.description ?? badge.description}
               </p>
               {badge.earned && badge.earnedAt ? (
                 <p className="mt-1.5 text-[11px] text-muted-foreground">
-                  Earned{" "}
-                  {new Date(badge.earnedAt).toLocaleDateString("en-US", {
+                  {language === "vi" ? "Đã nhận " : "Earned "}
+                  {new Date(badge.earnedAt).toLocaleDateString(language === "vi" ? "vi-VN" : "en-US", {
                     month: "short",
                     day: "numeric",
                     year: "numeric",

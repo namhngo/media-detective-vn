@@ -11,8 +11,9 @@ import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
 import { InvestigationGuide } from "@/components/investigation-guide";
 import { RedactedLine } from "@/components/redacted-line";
-import { tierMeta } from "@/lib/tier";
 import type { DetectRequest, ReportResponse } from "@/lib/schema";
+import { useI18n } from "@/components/i18n-provider";
+import { tierLabel } from "@/lib/tier";
 
 type Phase =
   | { status: "idle" }
@@ -29,6 +30,7 @@ type Phase =
  * transparency badge even when it diverges from the user's account.
  */
 export function ReportFlow() {
+  const { language, t } = useI18n();
   const [phase, setPhase] = useState<Phase>({ status: "idle" });
 
   async function analyze(payload: DetectRequest) {
@@ -82,24 +84,25 @@ export function ReportFlow() {
           <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
             <ContentInput
               busy={analyzing}
-              submitLabel="Structure my report"
+              submitLabel={t("reportSubmit")}
               onSubmit={analyze}
+              mode="report"
             />
             <InvestigationGuide mode="report" />
           </div>
           {analyzing && (
-            <AnalyzingCard label="Structuring your account into a case file…" />
+            <AnalyzingCard label={t("reportProgress")} />
           )}
           {phase.status === "error" && (
             <div
-              className="rounded-2xl border border-destructive/40 bg-card px-5 py-4 sm:px-6"
+              className="torch-panel rounded-2xl border-destructive/40 px-5 py-4 sm:px-6"
               role="alert"
             >
               <p className="text-sm">
-                The analysis didn&rsquo;t complete: {phase.message}
+                {t("flowError")} {phase.message}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Check the input and try again — nothing was stored.
+                {t("flowNothingStored")}
               </p>
             </div>
           )}
@@ -116,7 +119,7 @@ export function ReportFlow() {
                 onClick={() => setPhase({ status: "idle" })}
                 className="rounded-full"
               >
-                Try another
+                {t("flowTryAnother")}
               </Button>
             </div>
           </div>
@@ -131,28 +134,24 @@ export function ReportFlow() {
                 attestation={
                   <div className="mx-5 mt-4 flex items-center gap-2 rounded-full bg-confirmed-user/10 px-3.5 py-2 text-sm font-medium text-confirmed-user sm:mx-6">
                     <MessageSquareText className="size-4" />
-                    Reported by you · AI signal:{" "}
-                    {tierMeta[phase.result.analysis.tier].label}
+                    {t("reportAttestation")} {tierLabel(phase.result.analysis.tier, language)}
                   </div>
                 }
               />
             </div>
-            <div className="mx-auto max-w-3xl rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
+            <div className="torch-panel mx-auto max-w-3xl rounded-2xl px-5 py-5 sm:px-6">
               <p className="text-sm leading-relaxed">
-                Publishing adds this case file to the public library. Your
-                account is the trust signal here — the AI&rsquo;s independent
-                signal stays attached for transparency, even where it differs
-                from your experience.
+                {t("reportPublishIntro")}
               </p>
               <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
-                <p>Published: category, techniques, tier, and explanation.</p>
+                <p>{t("reportPublishedFields")}</p>
                 <p className="flex flex-wrap items-center gap-2">
                   <span className="flex items-center gap-1.5 whitespace-nowrap">
                     <Lock className="size-3 shrink-0" />
-                    Never published:
+                    {t("reportNeverPublished")}
                   </span>
                   <RedactedLine />
-                  <span>raw content, names, numbers.</span>
+                   <span>{t("reportRaw")}</span>
                 </p>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -161,7 +160,7 @@ export function ReportFlow() {
                   disabled={publishing}
                   className="rounded-full"
                 >
-                  {publishing ? "Publishing…" : "Publish case file"}
+                  {publishing ? t("reportPublishing") : t("reportPublish")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -169,7 +168,7 @@ export function ReportFlow() {
                   disabled={publishing}
                   className="rounded-full"
                 >
-                  Discard
+                  {t("reportDiscard")}
                 </Button>
               </div>
             </div>
@@ -178,14 +177,13 @@ export function ReportFlow() {
       )}
 
       {phase.status === "published" && (
-        <div className="rounded-2xl border border-border/70 bg-card px-5 py-10 text-center shadow-sm sm:px-6">
+        <div className="torch-panel rounded-2xl px-5 py-10 text-center sm:px-6">
           <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-confirmed-user/15">
             <Check className="size-5 text-confirmed-user" />
           </span>
-          <p className="mt-3 font-medium">Published — thank you.</p>
+          <p className="mt-3 font-medium">{t("reportPublished")}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Your case file is now part of the public library. The next person
-            who checks a similar pattern will see it.
+            {t("reportPublishedBody")}
           </p>
           <div className="mt-5 flex justify-center gap-2">
             <Button
@@ -194,14 +192,14 @@ export function ReportFlow() {
               variant="outline"
               className="rounded-full"
             >
-              View dashboard
+              {t("reportDashboard")}
             </Button>
             <Button
               variant="ghost"
               onClick={() => setPhase({ status: "idle" })}
               className="rounded-full"
             >
-              Report another
+              {t("reportAnother")}
             </Button>
           </div>
         </div>

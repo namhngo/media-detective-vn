@@ -1,7 +1,8 @@
 import type { Tier } from "@/lib/schema";
 import { TierIcon } from "@/components/tier-icon";
-import { tierMeta } from "@/lib/tier";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
+import { tierLabel } from "@/lib/tier";
 
 const tierClass: Record<Tier, string> = {
   watch: "bg-tier-watch",
@@ -17,7 +18,7 @@ export function TierBadge({
   tier: Tier;
   className?: string;
 }) {
-  const meta = tierMeta[tier];
+  const { language } = useI18n();
   return (
     <span
       className={cn(
@@ -27,7 +28,7 @@ export function TierBadge({
       )}
     >
       <TierIcon tier={tier} className="size-3.5" />
-      {meta.label}
+      {tierLabel(tier, language)}
     </span>
   );
 }

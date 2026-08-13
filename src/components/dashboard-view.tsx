@@ -20,7 +20,8 @@ import {
   TrendChart,
 } from "@/components/dashboard-charts";
 import { GalleryCard } from "@/components/gallery-card";
-import { categoryLabels } from "@/lib/tier";
+import { categoryLabel } from "@/lib/tier";
+import { useI18n } from "@/components/i18n-provider";
 import type { ActivityResponse, DashboardResponse } from "@/lib/schema";
 
 function StatCard({
@@ -35,7 +36,11 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="flex flex-col justify-center rounded-2xl border border-border/60 bg-gradient-to-b from-card to-secondary/50 px-5 py-4 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)]">
+    <div className="torch-panel relative flex flex-col justify-center overflow-hidden rounded-2xl px-5 py-4">
+      <div
+        aria-hidden
+        className="absolute -right-7 -top-8 size-24 rounded-full bg-primary/10 blur-2xl"
+      />
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" />
         {label}
@@ -57,7 +62,7 @@ function SectionHeading({
 }) {
   return (
     <h2 className="flex items-center gap-2 text-sm font-medium">
-      <Icon className="size-4 text-muted-foreground" />
+      <Icon className="size-4 text-primary/80" />
       {children}
     </h2>
   );
@@ -70,49 +75,54 @@ export function DashboardView({
   data: DashboardResponse;
   activity: ActivityResponse | null;
 }) {
+  const { language, t } = useI18n();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Your activity — private to the signed-in user, never in the library */}
       {activity && (
-        <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6">
+        <section className="torch-panel relative overflow-hidden rounded-2xl p-5 sm:p-6">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl"
+          />
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <SectionHeading icon={Sparkles}>Your activity</SectionHeading>
+            <SectionHeading icon={Sparkles}>{t("dashboardActivity")}</SectionHeading>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <LockKeyhole className="size-3" />
-              Only you can see this
+              {t("dashboardOnlyYou")}
             </p>
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-4">
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">
                 <CountUp value={activity.stats.totalActions} />
               </p>
-              <p className="text-xs text-muted-foreground">your actions</p>
+              <p className="text-xs text-muted-foreground">{t("dashboardActions")}</p>
             </div>
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">
                 <CountUp value={activity.stats.publicContributions} />
               </p>
               <p className="text-xs text-muted-foreground">
-                added to the library
+                {t("dashboardAdded")}
               </p>
             </div>
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="flex items-center gap-1.5 font-mono text-xl font-semibold">
                 <Flame className="size-4 text-tier-caution" />
                 <CountUp value={activity.stats.currentStreak} />
               </p>
               <p className="text-xs text-muted-foreground">
-                day streak · best {activity.stats.longestStreak}
+                {t("dashboardStreak")} {activity.stats.longestStreak}
               </p>
             </div>
-            <div className="rounded-xl bg-secondary/60 px-3.5 py-3">
+            <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">
                 <CountUp value={activity.stats.categoriesSeen} />
               </p>
-              <p className="text-xs text-muted-foreground">categories seen</p>
+              <p className="text-xs text-muted-foreground">{t("dashboardCategories")}</p>
             </div>
           </div>
 
@@ -121,14 +131,13 @@ export function DashboardView({
           </div>
 
           {activity.stats.totalActions === 0 ? (
-            <p className="mt-4 rounded-xl bg-secondary/60 px-3.5 py-3 text-sm text-muted-foreground">
-              No activity yet. Run your first check — your grid and first badges
-              appear here.
+            <p className="torch-inset mt-4 rounded-xl px-3.5 py-3 text-sm text-muted-foreground">
+              {t("dashboardNoActivity")}
             </p>
           ) : (
             <>
               <div className="mt-6 border-t border-border/70 pt-5">
-                <SectionHeading icon={CheckCircle2}>Badges earned</SectionHeading>
+                <SectionHeading icon={CheckCircle2}>{t("dashboardBadges")}</SectionHeading>
                 <div className="mt-4">
                   <BadgeShelf
                     badges={activity.badges.filter((b) => b.earned)}
@@ -140,18 +149,17 @@ export function DashboardView({
         </section>
       )}
       {!activity && (
-        <section className="rounded-2xl border border-border/60 bg-card px-5 py-4 text-sm text-muted-foreground shadow-[0_1px_2px_rgba(28,25,23,0.04),inset_0_1px_0_0_rgba(255,255,255,0.8)]">
-          Your private activity is temporarily unavailable. Community trends are
-          still up to date below.
+        <section className="torch-panel rounded-2xl px-5 py-4 text-sm text-muted-foreground">
+          {t("dashboardUnavailable")}
         </section>
       )}
 
       {/* Bento row: the trend is the hero cell — data-dense, non-sequential
           content is exactly where a real hierarchy grid earns its keep. */}
       <div className="grid gap-4 lg:grid-cols-4">
-        <section className="flex min-w-0 flex-col rounded-2xl border border-border/60 bg-card p-5 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_12px_28px_-14px_rgba(28,25,23,0.12),inset_0_1px_0_0_rgba(255,255,255,0.8)] sm:p-6 lg:col-span-3">
+        <section className="torch-panel flex min-w-0 flex-col rounded-2xl p-5 sm:p-6 lg:col-span-3">
           <SectionHeading icon={Activity}>
-            Check volume over time, by tier
+            {t("dashboardVolume")}
           </SectionHeading>
           <div className="mt-4 flex-1">
             <TrendChart data={data.trend} />
@@ -159,15 +167,15 @@ export function DashboardView({
           <div className="mt-2 flex justify-center gap-6 text-xs text-muted-foreground">
             <p>
               <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-watch" />
-              Watch
+              {t("tierWatch")}
             </p>
             <p>
               <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-caution" />
-              Caution
+              {t("tierCaution")}
             </p>
             <p>
               <span className="mr-1.5 inline-block size-2 rounded-full bg-tier-warning" />
-              Warning
+              {t("tierWarning")}
             </p>
           </div>
         </section>
@@ -175,23 +183,23 @@ export function DashboardView({
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
           <StatCard
             icon={Activity}
-            label="Checks run"
+            label={t("dashboardChecks")}
             value={<CountUp value={data.stats.totalChecks} />}
           />
           <StatCard
             icon={CheckCircle2}
-            label="Confirmed"
+            label={t("dashboardConfirmed")}
             value={<CountUp value={data.stats.confirmedCases} />}
-            sub="Seed + shared + reported"
+            sub={t("dashboardConfirmedSub")}
           />
           <div className="col-span-2 lg:col-span-1">
             <StatCard
               icon={TrendingUp}
-              label="Top this week"
+            label={t("dashboardTop")}
               value={
                 <span className="text-lg">
                   {data.stats.topCategoryThisWeek
-                    ? categoryLabels[data.stats.topCategoryThisWeek]
+                    ? categoryLabel(data.stats.topCategoryThisWeek, language)
                     : "—"}
                 </span>
               }
@@ -202,17 +210,17 @@ export function DashboardView({
 
       {/* Techniques + split — matched-width pair, same bento discipline */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="min-w-0 rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <section className="torch-panel min-w-0 rounded-2xl p-5 sm:p-6">
           <SectionHeading icon={Puzzle}>
-            Top manipulation techniques
+            {t("dashboardTechniques")}
           </SectionHeading>
           <div className="mt-4">
             <TechniqueChart data={data.techniqueCounts} />
           </div>
         </section>
-        <section className="min-w-0 rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <section className="torch-panel min-w-0 rounded-2xl p-5 sm:p-6">
           <SectionHeading icon={Users2}>
-            Confirmed by AI + user, vs. self-reported
+            {t("dashboardSplit")}
           </SectionHeading>
           <div className="mt-4">
             <ConfirmationSplit data={data.confirmationSplit} />
@@ -220,11 +228,11 @@ export function DashboardView({
           <div className="flex justify-center gap-6 text-xs text-muted-foreground">
             <p>
               <span className="mr-1.5 inline-block size-2 rounded-full bg-primary" />
-              AI + user confirmed ({data.confirmationSplit.aiDetected})
+              {t("dashboardAiConfirmed")} ({data.confirmationSplit.aiDetected})
             </p>
             <p>
               <span className="mr-1.5 inline-block size-2 rounded-full bg-confirmed-user" />
-              Self-reported ({data.confirmationSplit.userReported})
+              {t("dashboardSelfReported")} ({data.confirmationSplit.userReported})
             </p>
           </div>
         </section>
@@ -232,13 +240,13 @@ export function DashboardView({
 
       {/* Gallery — a list, deliberately not a grid: sequential content reads
           better as a stack than forced into cells. */}
-      <section className="pt-6">
+      <section className="border-t border-white/10 pt-7">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <SectionHeading icon={FileSearch}>
-            Confirmed case library
+            {t("dashboardLibrary")}
           </SectionHeading>
           <p className="text-xs text-muted-foreground">
-            Structured summaries only — raw content never exists here
+            {t("dashboardLibraryNote")}
           </p>
         </div>
         <div className="mt-4 space-y-3">
