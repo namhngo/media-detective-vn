@@ -12,6 +12,7 @@ enum Source {
   screenshot
   text
 }
+
 enum Platform {
   zalo
   facebook
@@ -76,40 +77,89 @@ enum BadgeKind {
   pattern_spotter
 }
 
+// Immutable ledger entries for the star economy. Balance is earned/spent, not
+// derived from report_events alone, so — unlike totalChecks/totalReports —
+// it cannot be recomputed from other tables and needs its own audit trail.
+enum StarEventKind {
+  earned_check
+  earned_report
+  spent_play
+}
+
 /// An application user, keyed by their Clerk identity. Clerk remains the source
 /// of truth for profile data (name, email, avatar) — this table stores only
 /// app-owned state, so there is nothing to keep in sync.
 model User {
-  id                  String   @id @default(uuid())
-  clerkId             String   @unique @map("clerk_id")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid())
+  clerkId   String   @unique @map("clerk_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // Denormalized counters for O(1) dashboard reads. Maintained on every write
   // and rebuildable from reports/report_events via recomputeUserStats().
-  totalChecks         Int      @default(0) @map("total_checks")
-  totalReports        Int      @default(0) @map("total_reports")
-  publicContributions Int      @default(0) @map("public_contributions")
-  currentStreak       Int      @default(0) @map("current_streak")
-  longestStreak       Int      @default(0) @map("longest_streak")
-  categoriesSeen      Int      @default(0) @map("categories_seen")
+  totalChecks         Int       @default(0) @map("total_checks")
+  totalReports        Int       @default(0) @map("total_reports")
+  publicContributions Int       @default(0) @map("public_contributions")
+  currentStreak       Int       @default(0) @map("current_streak")
+  longestStreak       Int       @default(0) @map("longest_streak")
+  categoriesSeen      Int       @default(0) @map("categories_seen")
   lastActiveOn        DateTime? @map("last_active_on") @db.Date
 
-  reports             Report[]
-  events              ReportEvent[]
-  badges              UserBadge[]
+  // Spendable balance for the dashboard's star game. Denormalized from
+  // star_events the same way totalChecks is denormalized from report_events —
+  // maintained transactionally, rebuildable by summing the ledger.
+  starBalance Int @default(0) @map("star_balance")
+
+  reports    Report[]
+  events     ReportEvent[]
+  badges     UserBadge[]
+  starEvents StarEvent[]
 
   @@map("users")
+}
+
+/// One earn or spend in the star ledger. Immutable, like ReportEvent — the
+/// row's existence is the fact; starBalance is a maintained cache of the sum.
+model StarEvent {
+  id        String        @id @default(uuid())
+  userId    String        @map("user_id")
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      StarEventKind
+  delta     Int
+  // Present only when kind = spent_play, links the spend to what it unlocked.
+  factId    String?       @map("fact_id")
+  fact      MilFact?      @relation(fields: [factId], references: [id], onDelete: SetNull)
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@map("star_events")
+}
+
+/// A media-literacy fact shown when a user spends stars to play the dashboard
+/// game. Sourced from UNESCO MIL documents (see content/mil-facts.json) and
+/// seeded via scripts/seed-mil-facts.ts. `reviewed` is a manual human gate —
+/// nothing here is ever flipped by extraction or seeding, only by a person.
+model MilFact {
+  id         String      @id @default(cuid())
+  category   String // source-verification | emotional-manipulation | technical-ai-literacy | sharing-responsibility
+  fact       String
+  source     String // citation, e.g. "filename.pdf, p.44"
+  reviewed   Boolean     @default(false)
+  createdAt  DateTime    @default(now()) @map("created_at")
+  starEvents StarEvent[]
+
+  @@index([category, reviewed])
+  @@map("mil_facts")
 }
 
 /// One awarded badge. Immutable: the row's existence is the award, and
 /// earnedAt is the audit trail a recomputed value could never provide.
 model UserBadge {
-  id        String    @id @default(uuid())
-  userId    String    @map("user_id")
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge     BadgeKind
-  earnedAt  DateTime  @default(now()) @map("earned_at")
+  id       String    @id @default(uuid())
+  userId   String    @map("user_id")
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge    BadgeKind
+  earnedAt DateTime  @default(now()) @map("earned_at")
 
   @@unique([userId, badge])
   @@index([userId, earnedAt])
@@ -117,43 +167,43 @@ model UserBadge {
 }
 
 model Report {
-  id                     String              @id @default(uuid())
-  createdAt              DateTime            @default(now()) @map("created_at")
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
 
-  source                 Source
-  platform               Platform
-  category               Category
+  source   Source
+  platform Platform
+  category Category
 
-  claims                 String[]            @default([])
-  techniques             Technique[]         @default([])
+  claims     String[]    @default([])
+  techniques Technique[] @default([])
 
-  tier                   Tier
-  riskScore              Int                 @map("risk_score")
-  explanationEn          String              @map("explanation_en")
+  tier          Tier
+  riskScore     Int    @map("risk_score")
+  explanationEn String @map("explanation_en")
 
-  moneyRequested         Boolean             @default(false) @map("money_requested")
-  amountVnd              BigInt?             @map("amount_vnd")
-  location               String?
+  moneyRequested Boolean @default(false) @map("money_requested")
+  amountVnd      BigInt? @map("amount_vnd")
+  location       String?
 
-  isSeed                 Boolean             @default(false) @map("is_seed")
+  isSeed             Boolean             @default(false) @map("is_seed")
   // Calibration fixtures for the dashboard. Never shown in the public gallery.
-  isDemo                 Boolean             @default(false) @map("is_demo")
-  isShared               Boolean             @default(false) @map("is_shared")
-  confirmationSource     ConfirmationSource? @map("confirmation_source")
+  isDemo             Boolean             @default(false) @map("is_demo")
+  isShared           Boolean             @default(false) @map("is_shared")
+  confirmationSource ConfirmationSource? @map("confirmation_source")
 
   // Clerk user ID stays backend-only. It is never exposed in the gallery.
-  submittedByClerkId     String?             @map("submitted_by_clerk_id")
+  submittedByClerkId String? @map("submitted_by_clerk_id")
   // Referential link to the app user. SetNull on delete: a deleted account
   // leaves its published case in the library, anonymized, never orphaned.
-  userId                 String?             @map("user_id")
-  user                   User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
-  sourceCitation         String?             @map("source_citation")
+  userId             String? @map("user_id")
+  user               User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sourceCitation     String? @map("source_citation")
 
   // Prisma does normal CRUD; pgvector writes and searches use typed raw SQL.
-  embedding              Unsupported("vector(1536)")?
-  agentSessionId         String?             @unique @map("agent_session_id")
+  embedding      Unsupported("vector(1536)")?
+  agentSessionId String?                      @unique @map("agent_session_id")
 
-  events                 ReportEvent[]
+  events ReportEvent[]
 
   @@index([createdAt])
   @@index([tier])
@@ -166,16 +216,16 @@ model Report {
 }
 
 model ReportEvent {
-  id                     String          @id @default(uuid())
-  reportId               String          @map("report_id")
-  report                 Report          @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  type                   ReportEventType
-  createdAt              DateTime        @default(now()) @map("created_at")
+  id        String          @id @default(uuid())
+  reportId  String          @map("report_id")
+  report    Report          @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  type      ReportEventType
+  createdAt DateTime        @default(now()) @map("created_at")
 
   // Present only for an authenticated Clerk actor; never exposed publicly.
-  actorClerkId           String?         @map("actor_clerk_id")
-  userId                 String?         @map("user_id")
-  user                   User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  actorClerkId String? @map("actor_clerk_id")
+  userId       String? @map("user_id")
+  user         User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@unique([reportId, type])
   @@index([reportId, createdAt])
