@@ -54,17 +54,7 @@ export default async function Home() {
   return (
     <div className="torch-workspace">
       {/* ── The dark: every day, hundreds of voices in the dark ─────────── */}
-      <section className="relative overflow-hidden bg-[#0A0E1A] text-white">
-        {/* Ambient embers — warm light living inside the dark */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-32 right-[8%] size-[30rem] rounded-full bg-amber-500/12 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute bottom-0 left-[4%] size-[24rem] rounded-full bg-primary/15 blur-3xl"
-        />
-
+      <section className="relative bg-[#0b0b0c] text-white">
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:py-20">
           <HeroIntro>
             <HeroItem>
@@ -97,7 +87,7 @@ export default async function Home() {
                   render={<a href="#detect" />}
                   nativeButton={false}
                   size="lg"
-                  className="rounded-full bg-amber-400 text-[#0A0E1A] hover:bg-amber-300"
+                  className="rounded-full bg-[#f7c948] text-[#1c1400] hover:bg-[#f7c948]/90"
                 >
                   {vi ? "Thử với tin nhắn của bạn" : "Try your own"}
                   <ArrowRight data-icon="inline-end" />
@@ -172,7 +162,7 @@ export default async function Home() {
         </section>
 
         {/* ── Share your story ──────────────────────────────────────────── */}
-        <section id="report" className="scroll-mt-20 border-y border-white/10 bg-[#0b1221]/55 py-14 lg:py-20">
+        <section id="report" className="scroll-mt-20 border-y border-white/10 bg-[#111113]/55 py-14 lg:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <p className="torch-label mb-4">
               <span className="torch-label-num">02</span>
