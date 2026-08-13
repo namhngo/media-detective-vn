@@ -47,3 +47,8 @@ next-env.d.ts
 
 # local-only working notes and plans (never published)
 *.local.md
+
+# UNESCO MIL source PDFs — extraction-only input, never committed.
+# content/mil-facts.json (with per-fact page citations) is the source of
+# truth once extraction is done; keep raw source docs out of git.
+/content/source/
