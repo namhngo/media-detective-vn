@@ -9,9 +9,11 @@ import {
   useSpring,
   useTransform,
   type AnimationPlaybackControls,
+  type MotionValue,
 } from "motion/react";
-import { Check, Flame } from "lucide-react";
+import { Check } from "lucide-react";
 
+import { FlashlightIcon } from "@/components/flashlight-icon";
 import { TierBadge } from "@/components/tier-badge";
 import { useI18n } from "@/components/i18n-provider";
 import type { Tier } from "@/lib/schema";
@@ -140,7 +142,8 @@ const POSTS: FieldPost[] = [
   },
 ];
 
-const SCAN_MS = 700;
+/** Long enough that the beam's growth and the field's reveal both read as gradual, not a snap. */
+const SCAN_MS = 1400;
 
 export function ScanField() {
   const { language, t } = useI18n();
@@ -167,6 +170,8 @@ export function ScanField() {
     (v) =>
       `conic-gradient(#fbbf24 ${v * 360}deg, rgba(251,191,36,0.15) ${v * 360}deg)`,
   );
+  const beamScale = useTransform(progress, [0, 1], [0.5, 14]);
+  const beamOpacity = useTransform(progress, [0, 0.1, 1], [0, 0.22, 0.5]);
 
   function handlePointer(event: React.PointerEvent<HTMLDivElement>) {
     if (reduce || !fieldRef.current) return;
@@ -214,88 +219,28 @@ export function ScanField() {
         className="pointer-events-none absolute left-1/2 top-1/2 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-3xl"
       />
 
+      {/* The beam itself — grows from the torch as it's held, ahead of any card flipping */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300"
+        style={{ scale: beamScale, opacity: beamOpacity, filter: "blur(48px)" }}
+      />
+
       <motion.div
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         className="absolute inset-0"
       >
         {POSTS.map((post, i) => (
-          <motion.div
+          <FieldPostCard
             key={post.kind}
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.4, delay: 0.05 * i }}
-            className={cn("absolute", post.mobileHidden && "hidden md:block")}
-            style={{
-              left: `${post.x}%`,
-              top: `${post.y}%`,
-              z: post.z,
-              opacity: scanned ? 1 : post.z < -60 ? 0.35 : post.z < 0 ? 0.55 : 0.8,
-            }}
-          >
-            <motion.div
-              animate={
-                reduce || scanned
-                  ? undefined
-                  : { y: [0, -6, 0], rotate: post.rotate }
-              }
-              transition={{
-                duration: 4.5 + (i % 3),
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.35,
-              }}
-              style={{
-                rotate: post.rotate,
-                transitionDelay: scanned ? `${i * 55}ms` : "0ms",
-              }}
-              className={cn(
-                "rounded-xl border p-3 transition-all duration-700",
-                post.width,
-                scanned
-                  ? "border-white/40 bg-white text-[#0A0E1A] shadow-[0_10px_40px_-10px_rgba(251,191,36,0.25)]"
-                  : "border-white/10 bg-white/[0.05] text-white/60 shadow-none",
-              )}
-            >
-              <p
-                className={cn(
-                  "text-[11px] font-medium transition-colors duration-700",
-                  scanned ? "text-[#526074]" : "text-white/40",
-                )}
-              >
-                {language === "vi" ? post.kindVi : post.kind}
-              </p>
-              <p className="mt-1 text-sm leading-snug">
-                {language === "vi" ? post.textVi : post.text}
-              </p>
-              <div
-                className={cn(
-                  "mt-1.5 h-2 w-16 rounded-full transition-colors duration-700",
-                  scanned ? "bg-muted" : "bg-white/10",
-                )}
-              />
-
-              <div className="mt-2">
-                <motion.span
-                  initial={false}
-                  animate={
-                    scanned
-                      ? { opacity: 1, scale: 1 }
-                      : { opacity: 0, scale: 0.7 }
-                  }
-                  transition={{
-                    duration: 0.25,
-                    delay: scanned
-                      ? Math.hypot(post.x - 46, post.y - 46) * 0.012
-                      : 0,
-                  }}
-                  className="inline-flex"
-                >
-                  <TierBadge tier={post.tier} />
-                </motion.span>
-              </div>
-            </motion.div>
-          </motion.div>
+            post={post}
+            index={i}
+            total={POSTS.length}
+            progress={progress}
+            scanned={scanned}
+            reduce={reduce}
+            language={language}
+          />
         ))}
       </motion.div>
 
@@ -373,11 +318,9 @@ export function ScanField() {
                 </>
               ) : (
                 <>
-                  <Flame
-                    className={cn(
-                      "size-5 transition-transform",
-                      holding && "scale-125",
-                    )}
+                  <FlashlightIcon
+                    progress={progress}
+                    className={cn("transition-transform", holding && "scale-110")}
                   />
                   {holding ? t("scanLighting") : t("scanHold")}
                 </>
@@ -387,5 +330,112 @@ export function ScanField() {
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * One post in the field. Reveal is tied directly to `progress` — each card
+ * has its own threshold along the hold, so cards flip in sequence as the
+ * beam grows rather than all at once when the hold completes. Releasing
+ * early lets `progress` fall back and the reveal follows it back down.
+ */
+function FieldPostCard({
+  post,
+  index,
+  total,
+  progress,
+  scanned,
+  reduce,
+  language,
+}: {
+  post: FieldPost;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  scanned: boolean;
+  reduce: boolean | null;
+  language: "en" | "vi";
+}) {
+  const threshold = 0.06 + (index / Math.max(total - 1, 1)) * 0.7;
+  const dimOpacity = post.z < -60 ? 0.35 : post.z < 0 ? 0.55 : 0.8;
+  const revealOpacity = useTransform(
+    progress,
+    [threshold, threshold + 0.14],
+    [dimOpacity, 1],
+  );
+  const revealBg = useTransform(
+    progress,
+    [threshold, threshold + 0.14],
+    ["rgba(255,255,255,0.05)", "rgba(255,255,255,1)"],
+  );
+  const revealBorder = useTransform(
+    progress,
+    [threshold, threshold + 0.14],
+    ["rgba(255,255,255,0.1)", "rgba(255,255,255,0.4)"],
+  );
+  const revealText = useTransform(
+    progress,
+    [threshold, threshold + 0.14],
+    ["rgba(255,255,255,0.4)", "#526074"],
+  );
+  const revealBodyText = useTransform(
+    progress,
+    [threshold, threshold + 0.14],
+    ["rgba(255,255,255,0.6)", "#0A0E1A"],
+  );
+  const badgeScale = useTransform(progress, [threshold, threshold + 0.14], [0.7, 1]);
+
+  return (
+    <motion.div
+      initial={reduce ? false : { opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.4, delay: 0.05 * index }}
+      className={cn("absolute", post.mobileHidden && "hidden md:block")}
+      style={{
+        left: `${post.x}%`,
+        top: `${post.y}%`,
+        z: post.z,
+        opacity: scanned ? 1 : revealOpacity,
+      }}
+    >
+      <motion.div
+        animate={reduce || scanned ? undefined : { y: [0, -6, 0], rotate: post.rotate }}
+        transition={{
+          duration: 4.5 + (index % 3),
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: index * 0.35,
+        }}
+        style={{
+          rotate: post.rotate,
+          backgroundColor: scanned ? "#ffffff" : revealBg,
+          borderColor: scanned ? "rgba(255,255,255,0.4)" : revealBorder,
+          boxShadow: scanned ? "0 10px 40px -10px rgba(251,191,36,0.25)" : "none",
+          color: scanned ? "#0A0E1A" : revealBodyText,
+        }}
+        className={cn("rounded-xl border p-3", post.width)}
+      >
+        <motion.p
+          className="text-[11px] font-medium"
+          style={{ color: scanned ? "#526074" : revealText }}
+        >
+          {language === "vi" ? post.kindVi : post.kind}
+        </motion.p>
+        <p className="mt-1 text-sm leading-snug text-inherit">
+          {language === "vi" ? post.textVi : post.text}
+        </p>
+        <div
+          className={cn(
+            "mt-1.5 h-2 w-16 rounded-full transition-colors duration-700",
+            scanned ? "bg-muted" : "bg-white/10",
+          )}
+        />
+
+        <motion.div className="mt-2 inline-flex" style={{ scale: scanned ? 1 : badgeScale, opacity: scanned ? 1 : revealOpacity }}>
+          <TierBadge tier={post.tier} />
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }

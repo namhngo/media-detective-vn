@@ -214,6 +214,17 @@
   }
 }
 
+@keyframes fab-pulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
 @keyframes torch-glow {
   0%,
   100% {
@@ -237,5 +248,8 @@
   }
   .animate-torch-glow {
     animation: torch-glow 2.6s ease-in-out infinite;
+  }
+  .animate-fab-pulse {
+    animation: fab-pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 }

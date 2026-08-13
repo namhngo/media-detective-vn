@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Copy, Forward, Megaphone, X } from "lucide-react";
+import { Check, Copy, Flashlight, Forward, Megaphone, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -121,14 +121,20 @@ export function ShareApp({
   return (
     <>
       {floating ? (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-           aria-label={t("shareAppAria")}
-          className="fixed right-5 bottom-5 z-40 flex size-12 items-center justify-center rounded-full bg-amber-400 text-[#0A0E1A] shadow-[0_0_28px_rgba(251,191,36,0.28)] transition-transform hover:scale-105 hover:bg-amber-300 focus-visible:ring-3 focus-visible:ring-amber-300/50 focus-visible:outline-none"
-        >
-          <Forward className="size-5" />
-        </button>
+        <div className="fixed right-5 bottom-5 z-40">
+          <span
+            aria-hidden
+            className="animate-fab-pulse pointer-events-none absolute inset-0 rounded-full border-2 border-amber-300"
+          />
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+             aria-label={t("shareAppAria")}
+            className="relative flex size-12 items-center justify-center rounded-full bg-amber-400 text-[#0A0E1A] shadow-[0_0_28px_rgba(251,191,36,0.28)] transition-transform hover:scale-105 hover:bg-amber-300 focus-visible:ring-3 focus-visible:ring-amber-300/50 focus-visible:outline-none"
+          >
+            <Flashlight className="size-5" />
+          </button>
+        </div>
       ) : (
         <Button
           variant={variant}
