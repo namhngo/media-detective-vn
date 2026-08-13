@@ -67,6 +67,30 @@ function streaksFromDays(days: Date[]): StreakRow {
   return { current, longest: Math.max(longest, current) };
 }
 
+const STARS_PER_CHECK = 1;
+const STARS_PER_REPORT = 2;
+
+/**
+ * Earned stars are a pure function of totalChecks/totalReports — already an
+ * audited count derived from report_events — so only the spent side needs
+ * its own ledger query. Spending never touches totalChecks/totalReports, so
+ * this can never be reduced by anything other than star_events.
+ */
+async function computeStarBalance(
+  prisma: PrismaClient,
+  userId: string,
+  metrics: { totalChecks: number; totalReports: number },
+) {
+  const earned =
+    metrics.totalChecks * STARS_PER_CHECK + metrics.totalReports * STARS_PER_REPORT;
+  const spent = await prisma.starEvent.aggregate({
+    where: { userId },
+    _sum: { delta: true },
+  });
+  // delta is stored negative for spends, so adding it subtracts.
+  return Math.max(0, earned + (spent._sum.delta ?? 0));
+}
+
 /**
  * Rebuilds every counter from reports/report_events and awards any newly
  * qualifying badges. Idempotent, so it doubles as the reconciliation job if a
@@ -113,6 +137,8 @@ export async function recomputeUserStats(clerkId: string) {
     categoriesSeen: distinctCategories.length,
   };
 
+  const starBalance = await computeStarBalance(prisma, userId, metrics);
+
   await prisma.user.update({
     where: { id: userId },
     data: {
@@ -123,6 +149,7 @@ export async function recomputeUserStats(clerkId: string) {
       longestStreak: longest,
       categoriesSeen: metrics.categoriesSeen,
       lastActiveOn: activeDays[0]?.day ?? null,
+      starBalance,
     },
   });
 

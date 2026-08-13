@@ -244,7 +244,44 @@ export const activityResponseSchema = z.object({
     longestStreak: z.number().int(),
     categoriesSeen: z.number().int(),
   }),
+  /**
+   * Spendable balance — deliberately its own object, never merged into
+   * `stats`. `stats` is lifetime and only ever climbs; this number is a
+   * currency that goes up and down as the star game is played.
+   */
+  stars: z.object({
+    balance: z.number().int(),
+  }),
   badges: z.array(activityBadgeSchema),
+});
+
+/* ------------------------------- Star game -------------------------------- */
+
+/** Stars a play costs. Earning rates (+1 check, +2 report) live in users.ts,
+ * next to the totalChecks/totalReports they're derived from. */
+export const STAR_PLAY_COST = 3;
+
+export const milFactCategorySchema = z.enum([
+  "source-verification",
+  "emotional-manipulation",
+  "technical-ai-literacy",
+  "sharing-responsibility",
+]);
+
+/** What the client is allowed to see — `reviewed` is a moderation-only flag. */
+export const milFactPublicSchema = z.object({
+  id: z.string(),
+  category: milFactCategorySchema,
+  fact: z.string(),
+  source: z.string(),
+});
+
+export const starGamePlayResponseSchema = z.object({
+  ok: z.boolean(),
+  /** Balance after this attempt, whether or not it succeeded. */
+  balance: z.number().int(),
+  fact: milFactPublicSchema.nullable(),
+  reason: z.enum(["insufficient_balance", "no_facts_available"]).nullable(),
 });
 
 /* --------------------------------- Types --------------------------------- */
@@ -273,3 +310,6 @@ export type ActivityDay = z.infer<typeof activityDaySchema>;
 export type ActivityBadge = z.infer<typeof activityBadgeSchema>;
 export type ActivityBadgeId = z.infer<typeof activityBadgeIdSchema>;
 export type ActivityResponse = z.infer<typeof activityResponseSchema>;
+export type MilFactCategory = z.infer<typeof milFactCategorySchema>;
+export type MilFactPublic = z.infer<typeof milFactPublicSchema>;
+export type StarGamePlayResponse = z.infer<typeof starGamePlayResponseSchema>;

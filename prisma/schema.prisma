@@ -77,12 +77,10 @@ enum BadgeKind {
   pattern_spotter
 }
 
-// Immutable ledger entries for the star economy. Balance is earned/spent, not
-// derived from report_events alone, so — unlike totalChecks/totalReports —
-// it cannot be recomputed from other tables and needs its own audit trail.
+// What a star ledger row records. Earning is a pure function of totalChecks
+// and totalReports (already an audited count from report_events), so only
+// spends — a genuine action with no other record — need their own ledger.
 enum StarEventKind {
-  earned_check
-  earned_report
   spent_play
 }
 
@@ -105,9 +103,10 @@ model User {
   categoriesSeen      Int       @default(0) @map("categories_seen")
   lastActiveOn        DateTime? @map("last_active_on") @db.Date
 
-  // Spendable balance for the dashboard's star game. Denormalized from
-  // star_events the same way totalChecks is denormalized from report_events —
-  // maintained transactionally, rebuildable by summing the ledger.
+  // Spendable balance for the dashboard's star game: earned (a pure function
+  // of totalChecks/totalReports, recomputed alongside them) minus spent (the
+  // sum of this user's star_events). Denormalized cache, same as the counters
+  // above — rebuildable any time from those two sources, never from itself.
   starBalance Int @default(0) @map("star_balance")
 
   reports    Report[]
@@ -118,17 +117,18 @@ model User {
   @@map("users")
 }
 
-/// One earn or spend in the star ledger. Immutable, like ReportEvent — the
-/// row's existence is the fact; starBalance is a maintained cache of the sum.
+/// One star spend. Immutable, like ReportEvent — the row's existence is the
+/// fact; User.starBalance is a maintained cache, never the source of truth.
 model StarEvent {
   id        String        @id @default(uuid())
   userId    String        @map("user_id")
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  kind      StarEventKind
+  kind      StarEventKind @default(spent_play)
+  // Negative — how many stars this spend cost.
   delta     Int
-  // Present only when kind = spent_play, links the spend to what it unlocked.
-  factId    String?       @map("fact_id")
-  fact      MilFact?      @relation(fields: [factId], references: [id], onDelete: SetNull)
+  // What the spend unlocked.
+  factId    String        @map("fact_id")
+  fact      MilFact       @relation(fields: [factId], references: [id])
   createdAt DateTime      @default(now()) @map("created_at")
 
   @@index([userId, createdAt])
