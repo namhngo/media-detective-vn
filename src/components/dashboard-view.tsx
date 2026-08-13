@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import {
   Activity,
   CheckCircle2,
@@ -7,11 +8,13 @@ import {
   Users2,
   FileSearch,
   Flame,
+  Flashlight,
   LockKeyhole,
   Sparkles,
 } from "lucide-react";
 
 import { BadgeShelf } from "@/components/badge-shelf";
+import { Button } from "@/components/ui/button";
 import { ContributionGraph } from "@/components/contribution-graph";
 import { CountUp } from "@/components/count-up";
 import {
@@ -22,7 +25,14 @@ import {
 import { GalleryCard } from "@/components/gallery-card";
 import { categoryLabel } from "@/lib/tier";
 import { useI18n } from "@/components/i18n-provider";
-import type { ActivityResponse, DashboardResponse } from "@/lib/schema";
+import { STAR_PLAY_COST } from "@/lib/schema";
+import type {
+  ActivityResponse,
+  DashboardResponse,
+  MilFactPublic,
+  StarGamePlayResponse,
+} from "@/lib/schema";
+import type { MessageKey } from "@/lib/i18n";
 
 function StatCard({
   icon: Icon,
@@ -36,11 +46,7 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="torch-panel relative flex flex-col justify-center overflow-hidden rounded-2xl px-5 py-4">
-      <div
-        aria-hidden
-        className="absolute -right-7 -top-8 size-24 rounded-full bg-primary/10 blur-2xl"
-      />
+    <div className="torch-panel flex flex-col justify-center px-5 py-4">
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" />
         {label}
@@ -81,11 +87,7 @@ export function DashboardView({
     <div className="space-y-5">
       {/* Your activity — private to the signed-in user, never in the library */}
       {activity && (
-        <section className="torch-panel relative overflow-hidden rounded-2xl p-5 sm:p-6">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl"
-          />
+        <section className="torch-panel p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <SectionHeading icon={Sparkles}>{t("dashboardActivity")}</SectionHeading>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -153,6 +155,8 @@ export function DashboardView({
           {t("dashboardUnavailable")}
         </section>
       )}
+
+      {activity && <YourLight activity={activity} />}
 
       {/* Bento row: the trend is the hero cell — data-dense, non-sequential
           content is exactly where a real hierarchy grid earns its keep. */}
@@ -256,5 +260,116 @@ export function DashboardView({
         </div>
       </section>
     </div>
+  );
+}
+
+/**
+ * Two numbers, deliberately never merged: `totalActions` is lifetime and only
+ * ever climbs; `balance` is a currency that drains when the game is played.
+ * The beam-stage meter is driven by the lifetime number so it only moves
+ * forward, even while the balance above it goes up and down.
+ */
+const BEAM_STAGE_THRESHOLDS = [0, 5, 15, 35, 70];
+const BEAM_STAGE_KEYS = [
+  "dashboardBeamStage0",
+  "dashboardBeamStage1",
+  "dashboardBeamStage2",
+  "dashboardBeamStage3",
+  "dashboardBeamStage4",
+] as const satisfies readonly MessageKey[];
+
+function beamStageForActions(totalActions: number) {
+  let stage = 0;
+  for (let i = 0; i < BEAM_STAGE_THRESHOLDS.length; i++) {
+    if (totalActions >= BEAM_STAGE_THRESHOLDS[i]!) stage = i;
+  }
+  return stage;
+}
+
+function YourLight({ activity }: { activity: ActivityResponse }) {
+  const { t } = useI18n();
+  const [balance, setBalance] = useState(activity.stars.balance);
+  const [playing, setPlaying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fact, setFact] = useState<MilFactPublic | null>(null);
+
+  const stage = beamStageForActions(activity.stats.totalActions);
+  const canPlay = balance >= STAR_PLAY_COST && !playing;
+
+  async function play() {
+    setPlaying(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/dashboard/play", { method: "POST" });
+      if (!res.ok) throw new Error("Play failed");
+      const result: StarGamePlayResponse = await res.json();
+      setBalance(result.balance);
+      if (result.ok && result.fact) {
+        setFact(result.fact);
+      } else if (result.reason === "no_facts_available") {
+        setError(t("dashboardPlayNoFacts"));
+      }
+    } catch {
+      setError(t("dashboardPlayError"));
+    } finally {
+      setPlaying(false);
+    }
+  }
+
+  return (
+    <section className="torch-panel p-5 sm:p-6">
+      <SectionHeading icon={Flashlight}>{t("dashboardYourLight")}</SectionHeading>
+      <p className="mt-1 text-sm text-muted-foreground">{t("dashboardKeepLight")}</p>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="torch-inset rounded-xl px-3.5 py-3">
+          <p className="font-mono text-xl font-semibold">
+            <CountUp value={activity.stats.totalActions} />
+          </p>
+          <p className="text-xs text-muted-foreground">{t("dashboardChecksLifetime")}</p>
+        </div>
+        <div className="torch-inset rounded-xl px-3.5 py-3">
+          <p className="flex items-center gap-1.5 font-mono text-xl font-semibold">
+            <span aria-hidden>⭐</span>
+            <CountUp value={balance} />
+          </p>
+          <p className="text-xs text-muted-foreground">{t("dashboardStarsLabel")}</p>
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <div className="h-1 overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-500"
+            style={{ width: `${((stage + 1) / BEAM_STAGE_KEYS.length) * 100}%` }}
+          />
+        </div>
+        <div className="mt-2 flex justify-between font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
+          {BEAM_STAGE_KEYS.map((key, i) => (
+            <span key={key} className={i === stage ? "text-primary" : undefined}>
+              {t(key)}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <Button onClick={play} disabled={!canPlay} className="rounded-full">
+          {playing
+            ? t("dashboardPlaying")
+            : canPlay
+              ? t("dashboardPlay")
+              : t("dashboardPlayCost")}
+        </Button>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+      </div>
+
+      {fact && (
+        <div className="torch-inset mt-4 rounded-2xl border-l-2 border-l-primary px-4 py-3.5">
+          <p className="torch-overline">{t("dashboardFactTag")}</p>
+          <p className="mt-1.5 text-sm leading-relaxed">{fact.fact}</p>
+        </div>
+      )}
+    </section>
   );
 }

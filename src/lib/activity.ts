@@ -27,6 +27,7 @@ export async function getUserActivity(
         currentStreak: true,
         longestStreak: true,
         categoriesSeen: true,
+        starBalance: true,
         badges: {
           select: { badge: true, earnedAt: true },
           orderBy: { earnedAt: "asc" },
@@ -82,6 +83,9 @@ export async function getUserActivity(
       currentStreak: user.currentStreak,
       longestStreak: user.longestStreak,
       categoriesSeen: user.categoriesSeen,
+    },
+    stars: {
+      balance: user.starBalance,
     },
     badges,
   };

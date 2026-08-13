@@ -2,26 +2,24 @@
 
 import { useRef, useState } from "react";
 import {
-  animate,
   motion,
   useMotionValue,
   useReducedMotion,
   useSpring,
   useTransform,
-  type AnimationPlaybackControls,
 } from "motion/react";
-import { Check, Flame } from "lucide-react";
+import { Check } from "lucide-react";
 
+import { FlashlightIcon } from "@/components/flashlight-icon";
 import { TierBadge } from "@/components/tier-badge";
 import { useI18n } from "@/components/i18n-provider";
 import type { Tier } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
 /**
- * The hero centerpiece — "hold a light into the darkness." Posts sit as dim
- * silhouettes in a dark field; holding the torch floods the field with warm
- * light and every post is revealed with its tier. Patterns only, no real
- * names or events (see AGENTS.md sensitive-content rule).
+ * The hero centerpiece — click the flashlight, the field floods with light,
+ * every post reveals its tier in sequence. Patterns only, no real names or
+ * events (see AGENTS.md sensitive-content rule).
  */
 type FieldPost = {
   kind: string;
@@ -140,15 +138,11 @@ const POSTS: FieldPost[] = [
   },
 ];
 
-const SCAN_MS = 700;
-
 export function ScanField() {
   const { language, t } = useI18n();
   const reduce = useReducedMotion();
   const fieldRef = useRef<HTMLDivElement>(null);
-  const controlsRef = useRef<AnimationPlaybackControls | null>(null);
   const [scanned, setScanned] = useState(false);
-  const [holding, setHolding] = useState(false);
 
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -161,13 +155,6 @@ export function ScanField() {
     damping: 18,
   });
 
-  const progress = useMotionValue(0);
-  const ring = useTransform(
-    progress,
-    (v) =>
-      `conic-gradient(#fbbf24 ${v * 360}deg, rgba(251,191,36,0.15) ${v * 360}deg)`,
-  );
-
   function handlePointer(event: React.PointerEvent<HTMLDivElement>) {
     if (reduce || !fieldRef.current) return;
     const rect = fieldRef.current.getBoundingClientRect();
@@ -175,27 +162,13 @@ export function ScanField() {
     my.set((event.clientY - rect.top) / rect.height - 0.5);
   }
 
-  function startScan() {
+  function activate() {
     if (scanned) return;
-    setHolding(true);
-    controlsRef.current = animate(progress, 1, {
-      duration: SCAN_MS / 1000,
-      ease: "linear",
-      onComplete: () => setScanned(true),
-    });
+    setScanned(true);
   }
 
-  function stopScan() {
-    setHolding(false);
-    if (scanned) return;
-    controlsRef.current?.stop();
-    animate(progress, 0, { duration: 0.25, ease: "easeOut" });
-  }
-
-  function resetScan() {
+  function reset() {
     setScanned(false);
-    setHolding(false);
-    animate(progress, 0, { duration: 0.3, ease: "easeOut" });
   }
 
   return (
@@ -206,7 +179,7 @@ export function ScanField() {
         mx.set(0);
         my.set(0);
       }}
-      className="relative h-[480px] overflow-hidden rounded-3xl border border-white/10 bg-[#0B1120] shadow-[inset_0_2px_30px_rgba(0,0,0,0.5)] [perspective:1200px] sm:h-[560px]"
+      className="relative h-[480px] overflow-hidden border border-white/10 bg-[#0b0b0c] shadow-[inset_0_2px_30px_rgba(0,0,0,0.5)] [perspective:1200px] sm:h-[560px]"
     >
       {/* Faint warm glow that lives in the dark before the torch is lit */}
       <div
@@ -214,88 +187,28 @@ export function ScanField() {
         className="pointer-events-none absolute left-1/2 top-1/2 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-3xl"
       />
 
+      {/* The flood — a single burst when the light turns on */}
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute left-1/2 top-1/2 size-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 blur-[48px] transition-all duration-[1300ms] ease-out",
+          scanned ? "scale-[14] opacity-50" : "scale-50 opacity-0",
+        )}
+      />
+
       <motion.div
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         className="absolute inset-0"
       >
         {POSTS.map((post, i) => (
-          <motion.div
+          <FieldPostCard
             key={post.kind}
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.4, delay: 0.05 * i }}
-            className={cn("absolute", post.mobileHidden && "hidden md:block")}
-            style={{
-              left: `${post.x}%`,
-              top: `${post.y}%`,
-              z: post.z,
-              opacity: scanned ? 1 : post.z < -60 ? 0.35 : post.z < 0 ? 0.55 : 0.8,
-            }}
-          >
-            <motion.div
-              animate={
-                reduce || scanned
-                  ? undefined
-                  : { y: [0, -6, 0], rotate: post.rotate }
-              }
-              transition={{
-                duration: 4.5 + (i % 3),
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.35,
-              }}
-              style={{
-                rotate: post.rotate,
-                transitionDelay: scanned ? `${i * 55}ms` : "0ms",
-              }}
-              className={cn(
-                "rounded-xl border p-3 transition-all duration-700",
-                post.width,
-                scanned
-                  ? "border-white/40 bg-white text-[#0A0E1A] shadow-[0_10px_40px_-10px_rgba(251,191,36,0.25)]"
-                  : "border-white/10 bg-white/[0.05] text-white/60 shadow-none",
-              )}
-            >
-              <p
-                className={cn(
-                  "text-[11px] font-medium transition-colors duration-700",
-                  scanned ? "text-[#526074]" : "text-white/40",
-                )}
-              >
-                {language === "vi" ? post.kindVi : post.kind}
-              </p>
-              <p className="mt-1 text-sm leading-snug">
-                {language === "vi" ? post.textVi : post.text}
-              </p>
-              <div
-                className={cn(
-                  "mt-1.5 h-2 w-16 rounded-full transition-colors duration-700",
-                  scanned ? "bg-muted" : "bg-white/10",
-                )}
-              />
-
-              <div className="mt-2">
-                <motion.span
-                  initial={false}
-                  animate={
-                    scanned
-                      ? { opacity: 1, scale: 1 }
-                      : { opacity: 0, scale: 0.7 }
-                  }
-                  transition={{
-                    duration: 0.25,
-                    delay: scanned
-                      ? Math.hypot(post.x - 46, post.y - 46) * 0.012
-                      : 0,
-                  }}
-                  className="inline-flex"
-                >
-                  <TierBadge tier={post.tier} />
-                </motion.span>
-              </div>
-            </motion.div>
-          </motion.div>
+            post={post}
+            index={i}
+            scanned={scanned}
+            reduce={reduce}
+            language={language}
+          />
         ))}
       </motion.div>
 
@@ -326,44 +239,29 @@ export function ScanField() {
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.25 }}
-              onClick={resetScan}
-              className="rounded-full border border-white/25 bg-[#0B1120]/80 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur transition-colors hover:bg-[#0B1120] hover:text-white"
+              onClick={reset}
+              className="rounded-full border border-white/25 bg-[#0b0b0c]/80 px-3 py-1 text-xs font-medium text-white/85 backdrop-blur transition-colors hover:bg-[#0b0b0c] hover:text-white"
             >
               {t("scanBack")}
             </motion.button>
           ) : (
-            <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#0B1120]">
+            <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#0b0b0c]">
               {t("scanPrompt")}
             </span>
           )}
-          <motion.div
-            style={{ background: ring }}
-            className={cn(
-              "rounded-full p-1",
-              !scanned && "animate-torch-glow",
-            )}
+          <div
+            className={cn("rounded-full p-1", !scanned && "animate-torch-glow")}
           >
             <button
               type="button"
               aria-label={t("scanAria")}
-              onPointerDown={startScan}
-              onPointerUp={stopScan}
-              onPointerLeave={() => holding && stopScan()}
-              onKeyDown={(event) => {
-                if ((event.key === "Enter" || event.key === " ") && !holding) {
-                  event.preventDefault();
-                  startScan();
-                }
-              }}
-              onKeyUp={(event) => {
-                if (event.key === "Enter" || event.key === " ") stopScan();
-              }}
+              onClick={activate}
               className={cn(
-                "flex size-24 touch-none flex-col items-center justify-center gap-1 rounded-full text-sm font-semibold select-none sm:size-28",
+                "flex size-24 flex-col items-center justify-center gap-1 rounded-full text-sm font-semibold select-none sm:size-28",
                 "transition-all focus-visible:ring-3 focus-visible:ring-amber-300/60 focus-visible:outline-none active:scale-95",
                 scanned
-                  ? "bg-amber-300 text-[#0B1120]"
-                  : "bg-gradient-to-b from-amber-300 to-amber-500 text-[#0B1120]",
+                  ? "bg-amber-300 text-[#0b0b0c]"
+                  : "bg-gradient-to-b from-amber-300 to-amber-500 text-[#0b0b0c]",
               )}
             >
               {scanned ? (
@@ -373,19 +271,90 @@ export function ScanField() {
                 </>
               ) : (
                 <>
-                  <Flame
-                    className={cn(
-                      "size-5 transition-transform",
-                      holding && "scale-125",
-                    )}
-                  />
-                  {holding ? t("scanLighting") : t("scanHold")}
+                  <FlashlightIcon on={scanned} />
+                  {t("scanHold")}
                 </>
               )}
             </button>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+/** One post in the field. A plain class-driven reveal, staggered by index —
+ * matches the "click, then cascade" prototype behavior with no live motion
+ * values in the style chain, so there's nothing for SSR/hydration to diverge on. */
+function FieldPostCard({
+  post,
+  index,
+  scanned,
+  reduce,
+  language,
+}: {
+  post: FieldPost;
+  index: number;
+  scanned: boolean;
+  reduce: boolean | null;
+  language: "en" | "vi";
+}) {
+  const dimOpacity = post.z < -60 ? 0.35 : post.z < 0 ? 0.55 : 0.8;
+
+  return (
+    <motion.div
+      initial={reduce ? false : { opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.4, delay: 0.05 * index }}
+      className={cn("absolute", post.mobileHidden && "hidden md:block")}
+      style={{
+        left: `${post.x}%`,
+        top: `${post.y}%`,
+        z: post.z,
+        opacity: scanned ? 1 : dimOpacity,
+        transitionDelay: scanned ? `${index * 55}ms` : "0ms",
+      }}
+    >
+      <motion.div
+        animate={reduce || scanned ? undefined : { y: [0, -6, 0], rotate: post.rotate }}
+        transition={{
+          duration: 4.5 + (index % 3),
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: index * 0.35,
+        }}
+        style={{ rotate: post.rotate, transitionDelay: scanned ? `${index * 55}ms` : "0ms" }}
+        className={cn(
+          "border p-3 transition-all duration-700",
+          post.width,
+          scanned
+            ? "border-white/40 bg-white text-[#0b0b0c] shadow-[0_10px_40px_-10px_rgba(251,191,36,0.25)]"
+            : "border-white/10 bg-white/[0.05] text-white/60 shadow-none",
+        )}
+      >
+        <p
+          className={cn(
+            "text-[11px] font-medium transition-colors duration-700",
+            scanned ? "text-[#526074]" : "text-white/40",
+          )}
+        >
+          {language === "vi" ? post.kindVi : post.kind}
+        </p>
+        <p className="mt-1 text-sm leading-snug">
+          {language === "vi" ? post.textVi : post.text}
+        </p>
+        <div
+          className={cn(
+            "mt-1.5 h-2 w-16 rounded-full transition-colors duration-700",
+            scanned ? "bg-muted" : "bg-white/10",
+          )}
+        />
+
+        <div className="mt-2 inline-flex">
+          <TierBadge tier={post.tier} />
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
