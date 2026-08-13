@@ -11,7 +11,7 @@
     "category": "source-verification",
     "fact": "A trustworthy information source is one that uses verification methods, discloses potential bias fairly, and stays open to correction when it errs.",
     "source": "unesco-mil-module-1-introduction-to-mil.pdf, p.65",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-003",
@@ -53,7 +53,7 @@
     "category": "source-verification",
     "fact": "To judge whether a publication is trustworthy, check the author's expertise, the publisher's editorial process, and whether it went through peer review.",
     "source": "unesco-mil-module-3-research-information-cycle-ip.pdf, p.127",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-009",
@@ -67,21 +67,21 @@
     "category": "technical-ai-literacy",
     "fact": "Search engines like Google automatically insert 'AND' between search terms, so results may only contain your words scattered separately, not together as a phrase.",
     "source": "unesco-mil-module-3-research-information-cycle-ip.pdf, p.123",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-011",
     "category": "sharing-responsibility",
     "fact": "Original creative work is automatically protected by copyright the moment it's created, so reusing someone else's content without permission can infringe even if never registered.",
     "source": "unesco-mil-module-3-research-information-cycle-ip.pdf, p.141",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-012",
     "category": "emotional-manipulation",
     "fact": "A 2018 MIT study of Twitter found that false stories spread farther, faster, and more broadly than true ones across every category of information.",
     "source": "unesco-mil-module-4-misinformation-disinformation-hate-speech.pdf, p.148",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-013",
@@ -109,14 +109,14 @@
     "category": "source-verification",
     "fact": "Conspiracy theories are often dressed up to look like investigative journalism, which is part of what makes them convincing.",
     "source": "unesco-mil-module-4-misinformation-disinformation-hate-speech.pdf, p.156",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-017",
     "category": "sharing-responsibility",
     "fact": "Before sharing something online, it helps to ask whether you were aware it could be false, and what motivated you to spread it anyway.",
     "source": "unesco-mil-module-4-misinformation-disinformation-hate-speech.pdf, p.158",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-018",
@@ -158,14 +158,14 @@
     "category": "emotional-manipulation",
     "fact": "A 2018 global survey found 64% of women journalists had faced online abuse, including threats; most never reported it, and 38% self-censored afterward.",
     "source": "unesco-mil-module-6-representation-gender-equality.pdf, p.200",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-024",
     "category": "source-verification",
     "fact": "News images can obliterate information that wasn't captured on camera; what a photo leaves out shapes public memory as much as what it includes.",
     "source": "unesco-mil-module-6-representation-gender-equality.pdf, p.198",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-025",
@@ -193,7 +193,7 @@
     "category": "technical-ai-literacy",
     "fact": "Photos shared online can carry hidden time and location metadata, potentially revealing exactly where and when a picture was taken.",
     "source": "unesco-mil-module-8-privacy-data-protection.pdf, p.234",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-029",
@@ -207,21 +207,21 @@
     "category": "technical-ai-literacy",
     "fact": "Once information is posted online, it becomes hard to control and can exist far longer than intended, visible to people the poster never met.",
     "source": "unesco-mil-module-8-privacy-data-protection.pdf, p.233",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-031",
     "category": "sharing-responsibility",
     "fact": "Before sharing photos or comments about someone else, it's worth asking who you're sharing with and whether that person would want it shared at all.",
     "source": "unesco-mil-module-8-privacy-data-protection.pdf, p.233",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-032",
     "category": "technical-ai-literacy",
     "fact": "Different search engines can return different results about the same person; comparing results across engines reveals how differently each one profiles you.",
     "source": "unesco-mil-module-8-privacy-data-protection.pdf, p.239",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-033",
@@ -263,21 +263,21 @@
     "category": "emotional-manipulation",
     "fact": "So-called 'dog whistles' look like ordinary, legitimate content on the surface but function as a coded call to harmful action for those who recognize it.",
     "source": "unesco-mil-module-9-internet-opportunities-challenges.pdf, p.260",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-039",
     "category": "sharing-responsibility",
     "fact": "Sharing fact-checking resources and calling out misinformation when you see it helps establish you as a trusted source others can rely on.",
     "source": "unesco-mil-module-9-internet-opportunities-challenges.pdf, p.268",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-040",
     "category": "emotional-manipulation",
     "fact": "A political consultant advised clients that persuasion is '80% emotion and only 20% intellect,' a reminder that political ads are built to make you feel, not think.",
     "source": "unesco-mil-module-10-advertising-and-mil.pdf, p.283",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-041",
@@ -298,7 +298,7 @@
     "category": "technical-ai-literacy",
     "fact": "AI is never neutral; it's built by humans with particular perspectives, and its algorithms and data sets are always skewed in some way.",
     "source": "unesco-mil-module-11-ai-social-media-mil-competencies.pdf, p.294",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-044",
@@ -312,21 +312,21 @@
     "category": "source-verification",
     "fact": "Deepfakes can often be spotted by checking for physically implausible details: mismatched skin texture, shadows that don't match the lighting, or unnatural blinking.",
     "source": "unesco-mil-module-11-ai-social-media-mil-competencies.pdf, p.305-306",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-046",
     "category": "emotional-manipulation",
     "fact": "In a classic experiment, people shown slides of a car accident easily absorbed inaccurate details fed to them afterward and misremembered what happened.",
     "source": "unesco-mil-module-11-ai-social-media-mil-competencies.pdf, p.305",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-047",
     "category": "technical-ai-literacy",
     "fact": "A 'filter bubble' is algorithmic, filtering out content that doesn't match your past behavior; an 'echo chamber' is social, where contradicting information gets discounted by your community.",
     "source": "unesco-mil-module-11-ai-social-media-mil-competencies.pdf, p.309",
-    "reviewed": false
+    "reviewed": true
   },
   {
     "id": "mil-fact-048",
