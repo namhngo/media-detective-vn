@@ -23,10 +23,10 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0A0E1A]/88 text-white backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0b0b0c]/88 text-white backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap">
-          <span className="flex size-8 items-center justify-center rounded-full bg-amber-400 text-[#0A0E1A] shadow-[0_0_24px_rgba(251,191,36,0.3)]">
+          <span className="flex size-8 items-center justify-center rounded-full bg-amber-400 text-[#0b0b0c] shadow-[0_0_24px_rgba(251,191,36,0.3)]">
             <ScanSearch className="size-4" />
           </span>
           <span className="text-[15px] font-semibold tracking-tight">
@@ -76,7 +76,7 @@ export function SiteHeader() {
             <SignUpButton>
               <button
                 type="button"
-                className="hidden rounded-full bg-amber-400 px-3 py-1.5 text-sm font-medium text-[#0A0E1A] transition-colors hover:bg-amber-300 sm:inline-flex"
+                className="hidden rounded-full bg-amber-400 px-3 py-1.5 text-sm font-medium text-[#0b0b0c] transition-colors hover:bg-amber-300 sm:inline-flex"
               >
                 {t("createAccount")}
               </button>

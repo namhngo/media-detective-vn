@@ -46,11 +46,7 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="torch-panel relative flex flex-col justify-center overflow-hidden rounded-2xl px-5 py-4">
-      <div
-        aria-hidden
-        className="absolute -right-7 -top-8 size-24 rounded-full bg-primary/10 blur-2xl"
-      />
+    <div className="torch-panel flex flex-col justify-center px-5 py-4">
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
         <Icon className="size-4" />
         {label}
@@ -91,11 +87,7 @@ export function DashboardView({
     <div className="space-y-5">
       {/* Your activity — private to the signed-in user, never in the library */}
       {activity && (
-        <section className="torch-panel relative overflow-hidden rounded-2xl p-5 sm:p-6">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl"
-          />
+        <section className="torch-panel p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <SectionHeading icon={Sparkles}>{t("dashboardActivity")}</SectionHeading>
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -325,11 +317,7 @@ function YourLight({ activity }: { activity: ActivityResponse }) {
   }
 
   return (
-    <section className="torch-panel relative overflow-hidden rounded-2xl p-5 sm:p-6">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-20 -left-16 size-64 rounded-full bg-primary/10 blur-3xl"
-      />
+    <section className="torch-panel p-5 sm:p-6">
       <SectionHeading icon={Flashlight}>{t("dashboardYourLight")}</SectionHeading>
       <p className="mt-1 text-sm text-muted-foreground">{t("dashboardKeepLight")}</p>
 
