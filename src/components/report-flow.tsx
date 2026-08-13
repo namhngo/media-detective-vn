@@ -11,9 +11,17 @@ import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
 import { InvestigationGuide } from "@/components/investigation-guide";
 import { RedactedLine } from "@/components/redacted-line";
-import type { DetectRequest, ReportResponse } from "@/lib/schema";
+import {
+  categorySchema,
+  platformSchema,
+  type Category,
+  type DetectRequest,
+  type Platform,
+  type ReportResponse,
+} from "@/lib/schema";
 import { useI18n } from "@/components/i18n-provider";
-import { tierLabel } from "@/lib/tier";
+import { categoryLabel, platformLabel, tierLabel } from "@/lib/tier";
+import { cn } from "@/lib/utils";
 
 type Phase =
   | { status: "idle" }
@@ -32,6 +40,14 @@ type Phase =
 export function ReportFlow() {
   const { language, t } = useI18n();
   const [phase, setPhase] = useState<Phase>({ status: "idle" });
+  const [platformHint, setPlatformHint] = useState<Platform | null>(null);
+  const [categoryHint, setCategoryHint] = useState<Category | null>(null);
+
+  function resetFlow() {
+    setPlatformHint(null);
+    setCategoryHint(null);
+    setPhase({ status: "idle" });
+  }
 
   async function analyze(payload: DetectRequest) {
     setPhase({ status: "analyzing" });
@@ -82,12 +98,21 @@ export function ReportFlow() {
       {(phase.status === "idle" || analyzing || phase.status === "error") && (
         <>
           <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
-            <ContentInput
-              busy={analyzing}
-              submitLabel={t("reportSubmit")}
-              onSubmit={analyze}
-              mode="report"
-            />
+            <div className="space-y-4">
+              <ReportHintChips
+                language={language}
+                platformHint={platformHint}
+                categoryHint={categoryHint}
+                onPlatformHint={setPlatformHint}
+                onCategoryHint={setCategoryHint}
+              />
+              <ContentInput
+                busy={analyzing}
+                submitLabel={t("reportSubmit")}
+                onSubmit={analyze}
+                mode="report"
+              />
+            </div>
             <InvestigationGuide mode="report" />
           </div>
           {analyzing && (
@@ -116,7 +141,7 @@ export function ReportFlow() {
             <div className="flex justify-center">
               <Button
                 variant="ghost"
-                onClick={() => setPhase({ status: "idle" })}
+                onClick={resetFlow}
                 className="rounded-full"
               >
                 {t("flowTryAnother")}
@@ -132,9 +157,19 @@ export function ReportFlow() {
                 analysis={phase.result.analysis}
                 similarCases={phase.result.similarCases}
                 attestation={
-                  <div className="mx-5 mt-4 flex items-center gap-2 rounded-full bg-confirmed-user/10 px-3.5 py-2 text-sm font-medium text-confirmed-user sm:mx-6">
+                  <div className="mx-5 mt-4 flex flex-wrap items-center gap-2 rounded-full bg-confirmed-user/10 px-3.5 py-2 text-sm font-medium text-confirmed-user sm:mx-6">
                     <MessageSquareText className="size-4" />
                     {t("reportAttestation")} {tierLabel(phase.result.analysis.tier, language)}
+                    {(platformHint || categoryHint) && (
+                      <span className="text-confirmed-user/70">
+                        · {[
+                          platformHint && platformLabel(platformHint, language),
+                          categoryHint && categoryLabel(categoryHint, language),
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
+                    )}
                   </div>
                 }
               />
@@ -164,7 +199,7 @@ export function ReportFlow() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => setPhase({ status: "idle" })}
+                  onClick={resetFlow}
                   disabled={publishing}
                   className="rounded-full"
                 >
@@ -196,7 +231,7 @@ export function ReportFlow() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => setPhase({ status: "idle" })}
+              onClick={resetFlow}
               className="rounded-full"
             >
               {t("reportAnother")}
@@ -204,6 +239,91 @@ export function ReportFlow() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Where/what chips — the user's own account, collected up front. Kept
+ * separate from the AI's independent platform/category (see ReportFlow's
+ * attestation banner): this is what the user says, shown alongside, never
+ * substituted for, what the AI finds on its own.
+ */
+function ReportHintChips({
+  language,
+  platformHint,
+  categoryHint,
+  onPlatformHint,
+  onCategoryHint,
+}: {
+  language: "en" | "vi";
+  platformHint: Platform | null;
+  categoryHint: Category | null;
+  onPlatformHint: (value: Platform) => void;
+  onCategoryHint: (value: Category) => void;
+}) {
+  const vi = language === "vi";
+
+  return (
+    <div className="torch-panel rounded-3xl p-5 sm:p-6">
+      <p className="torch-label mb-4">
+        <span className="torch-label-num">00</span>
+        {vi ? "TRƯỚC KHI MÔ TẢ" : "BEFORE YOU DESCRIBE IT"}
+      </p>
+      <div className="space-y-4">
+        <ChipGroup
+          label={vi ? "Bạn thấy nó ở đâu?" : "Where did you see it?"}
+          options={platformSchema.options}
+          value={platformHint}
+          onChange={onPlatformHint}
+          labelFor={(value) => platformLabel(value, language)}
+        />
+        <ChipGroup
+          label={vi ? "Điều gì khiến bạn thấy sai?" : "What felt wrong?"}
+          options={categorySchema.options}
+          value={categoryHint}
+          onChange={onCategoryHint}
+          labelFor={(value) => categoryLabel(value, language)}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ChipGroup<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+  labelFor,
+}: {
+  label: string;
+  options: readonly T[];
+  value: T | null;
+  onChange: (value: T) => void;
+  labelFor: (value: T) => string;
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-xs font-medium text-muted-foreground">{label}</p>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => onChange(option)}
+            aria-pressed={value === option}
+            className={cn(
+              "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+              value === option
+                ? "border-primary bg-primary/15 text-primary"
+                : "border-white/10 text-muted-foreground hover:border-white/25 hover:text-foreground",
+            )}
+          >
+            {labelFor(option)}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
