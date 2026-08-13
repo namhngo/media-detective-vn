@@ -140,6 +140,10 @@ export default async function Home() {
         {/* ── The light: try it yourself ────────────────────────────────── */}
         <section id="detect" className="scroll-mt-20 border-t border-white/10 py-14 lg:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <p className="torch-label mb-4">
+              <span className="torch-label-num">01</span>
+              {vi ? "ĐƯA RA ÁNH SÁNG" : "BRING IT INTO THE LIGHT"}
+            </p>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1 text-sm font-medium text-white/65 ring-1 ring-white/10">
               <Lock className="size-3.5" />
               {t("privateDefault")}
@@ -170,6 +174,10 @@ export default async function Home() {
         {/* ── Share your story ──────────────────────────────────────────── */}
         <section id="report" className="scroll-mt-20 border-y border-white/10 bg-[#0b1221]/55 py-14 lg:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <p className="torch-label mb-4">
+              <span className="torch-label-num">02</span>
+              {vi ? "ĐỂ LẠI TRONG ÁNH SÁNG" : "LEAVE IT IN THE LIGHT"}
+            </p>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1 text-sm font-medium text-white/65 ring-1 ring-white/10">
               <MessageSquareText className="size-3.5" />
               {t("accountWarning")}

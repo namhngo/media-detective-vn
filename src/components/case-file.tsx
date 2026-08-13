@@ -101,10 +101,12 @@ export function CaseFile({
       <div className="grid gap-6 px-5 py-6 sm:grid-cols-2 sm:px-6">
         <div>
           <SectionHeading icon={Quote}>{t("caseClaims")}</SectionHeading>
-          <ul className="mt-2.5 space-y-1.5 text-sm">
+          <ul className="mt-2.5 text-sm">
             {analysis.claims.map((claim, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="shrink-0 text-muted-foreground">—</span>
+              <li key={i} className="torch-row flex gap-3 py-2">
+                <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 {claim}
               </li>
             ))}
