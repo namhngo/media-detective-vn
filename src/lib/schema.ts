@@ -247,6 +247,23 @@ export const activityResponseSchema = z.object({
   badges: z.array(activityBadgeSchema),
 });
 
+/* ------------------------------ MIL mini game ---------------------------- */
+
+export const milFactCategorySchema = z.enum([
+  "source-verification",
+  "emotional-manipulation",
+  "technical-ai-literacy",
+  "sharing-responsibility",
+]);
+
+/** The mini game receives only facts that a human has marked as reviewed. */
+export const milFactPublicSchema = z.object({
+  id: z.string(),
+  category: milFactCategorySchema,
+  fact: z.string(),
+  source: z.string(),
+});
+
 /* --------------------------------- Types --------------------------------- */
 
 export type Source = z.infer<typeof sourceSchema>;
@@ -273,3 +290,5 @@ export type ActivityDay = z.infer<typeof activityDaySchema>;
 export type ActivityBadge = z.infer<typeof activityBadgeSchema>;
 export type ActivityBadgeId = z.infer<typeof activityBadgeIdSchema>;
 export type ActivityResponse = z.infer<typeof activityResponseSchema>;
+export type MilFactCategory = z.infer<typeof milFactCategorySchema>;
+export type MilFactPublic = z.infer<typeof milFactPublicSchema>;

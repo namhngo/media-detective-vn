@@ -116,6 +116,20 @@ model UserBadge {
   @@map("user_badges")
 }
 
+/// Curated media-literacy field notes. Only rows reviewed by a human are
+/// exposed in the mini game; the source stays visible with every fact.
+model MilFact {
+  id        String   @id
+  category  String
+  fact      String
+  source    String
+  reviewed  Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([category, reviewed])
+  @@map("mil_facts")
+}
+
 model Report {
   id                     String              @id @default(uuid())
   createdAt              DateTime            @default(now()) @map("created_at")

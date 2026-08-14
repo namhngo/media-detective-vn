@@ -20,6 +20,7 @@ export function SiteHeader() {
   const nav = [
     { href: "/", label: t("navHome"), short: t("navHome") },
     { href: "/dashboard", label: t("navDashboard"), short: t("navDashboard"), mobileHidden: true },
+    { href: "/learn", label: t("navLearn"), short: t("navLearn"), mobileHidden: true },
   ];
 
   return (
