@@ -51,7 +51,12 @@ export default async function RootLayout({
   const language = await getServerLanguage();
   return (
     <html lang={language} className={`${beVietnamPro.variable} ${plexMono.variable}`}>
-      <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
+      {/* Browser extensions (Grammarly et al.) inject attributes into body
+          before React hydrates; that mismatch is theirs, not ours. */}
+      <body
+        suppressHydrationWarning
+        className="flex min-h-svh flex-col bg-background text-foreground antialiased"
+      >
         <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up">
             <I18nProvider initialLanguage={language}>
             <MotionProvider>

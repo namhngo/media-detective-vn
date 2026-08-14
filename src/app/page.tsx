@@ -1,17 +1,14 @@
 import {
-  ArrowDown,
   ArrowRight,
   Flame,
   Lock,
   MessageSquareText,
-  ScanSearch,
 } from "lucide-react";
 import { Show, SignInButton } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { AccentWord } from "@/components/accent-word";
-import { HeroIntro, HeroItem } from "@/components/hero-intro";
-import { ScanField } from "@/components/scan-field";
+import { HeroLightboard } from "@/components/hero-lightboard";
 import { TechniqueMarquee } from "@/components/technique-marquee";
 import { DetectFlow } from "@/components/detect-flow";
 import { ReportFlow } from "@/components/report-flow";
@@ -53,82 +50,51 @@ export default async function Home() {
 
   return (
     <div className="torch-workspace">
-      {/* ── The dark: every day, hundreds of voices in the dark ─────────── */}
-      <section className="relative overflow-hidden bg-[#0A0E1A] text-white">
-        {/* Ambient embers — warm light living inside the dark */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-32 right-[8%] size-[30rem] rounded-full bg-amber-500/12 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute bottom-0 left-[4%] size-[24rem] rounded-full bg-primary/15 blur-3xl"
-        />
+      <section className="border-b border-white/[0.06] bg-background text-white">
+        <div className="mx-auto grid min-h-[calc(100svh-7.5rem)] max-w-6xl items-center gap-14 px-6 py-20 sm:px-8 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] lg:gap-20 lg:py-28">
+          <div className="max-w-md">
+            <p className="font-mono text-xs tracking-[0.12em] text-white/50">
+              <span className="text-[#f7c948]">000</span> / MEDIA DETECTIVE VN
+            </p>
+            <h1 className="mt-8 text-[clamp(3.3rem,6.4vw,5.4rem)] font-bold leading-[0.98] tracking-[-0.055em] text-[#f0ede6]">
+              {vi ? (
+                <>
+                  Dừng lại.<br />Rọi ánh sáng.
+                </>
+              ) : (
+                <>
+                  Pause.<br />Shine a light.
+                </>
+              )}
+            </h1>
+            <p className="mt-7 text-xl leading-relaxed text-white/55">
+              {vi ? "Nhìn rõ điều thật sự đang ở đó." : "See what is really there."}
+            </p>
+            <p className="mt-7 max-w-sm text-[0.98rem] leading-7 text-white/50">
+              {vi
+                ? "Một tin nhắn có thể trông khẩn cấp, thuyết phục hoặc vô hại lúc đầu. Rọi ánh sáng vào nó trước khi bạn tin, chia sẻ hoặc để nó lan rộng."
+                : "A message can look urgent, convincing, or harmless at first glance. Shine a light on it before you believe it, share it, or let it spread."}
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-5">
+              <Button
+                render={<a href="#detect" />}
+                nativeButton={false}
+                size="lg"
+                className="h-14 rounded-full bg-[#f7c948] px-6 font-mono text-sm font-bold tracking-wide text-[#1c1400] hover:bg-[#ffe08a]"
+              >
+                {vi ? "Rọi ánh sáng" : "Shine a light"}
+                <ArrowRight data-icon="inline-end" />
+              </Button>
+              <a
+                href="#report"
+                className="border-b border-white/20 pb-1 font-mono text-xs tracking-[0.06em] text-white/55 transition-colors hover:border-white hover:text-white"
+              >
+                {vi ? "Báo cáo điều gì đó" : "Report something"} →
+              </a>
+            </div>
+          </div>
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:py-20">
-          <HeroIntro>
-            <HeroItem>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white/75">
-                <ScanSearch className="size-3.5" />
-                {t("homeEyebrow")}
-              </span>
-            </HeroItem>
-            <HeroItem>
-              <h1 className="mt-5 max-w-xl text-4xl font-semibold tracking-tight sm:text-6xl">
-                {vi ? (
-                  t("homeTitle")
-                ) : (
-                  <>
-                    Pause before you <AccentWord>act</AccentWord> on it.
-                  </>
-                )}
-              </h1>
-            </HeroItem>
-            <HeroItem>
-              <p className="mt-5 max-w-lg text-lg leading-relaxed text-white/70">
-                {vi
-                  ? "Bóng tối đầy những giọng nói khẩn cấp. Hãy cầm ánh sáng lên — nhìn rõ điều thật sự đang ở đó trước khi tiền được chuyển hay bài viết lan rộng."
-                  : "The dark is full of urgent voices. Hold the light up — see what is really there before money moves or a post spreads."}
-              </p>
-            </HeroItem>
-            <HeroItem>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button
-                  render={<a href="#detect" />}
-                  nativeButton={false}
-                  size="lg"
-                  className="rounded-full bg-amber-400 text-[#0A0E1A] hover:bg-amber-300"
-                >
-                  {vi ? "Thử với tin nhắn của bạn" : "Try your own"}
-                  <ArrowRight data-icon="inline-end" />
-                </Button>
-                <Button
-                  render={<a href="#report" />}
-                  nativeButton={false}
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white"
-                >
-                  {vi ? "Chia sẻ câu chuyện của bạn" : "Share your story"}
-                </Button>
-              </div>
-            </HeroItem>
-          </HeroIntro>
-
-          <HeroItem className="lg:pl-4">
-            <ScanField />
-          </HeroItem>
-        </div>
-
-        <div className="relative flex justify-center pb-6">
-          <a
-            href="#detect"
-            aria-label={vi ? "Cuộn xuống để thử" : "Scroll to try it"}
-            className="flex flex-col items-center gap-1 text-xs text-white/50 transition-colors hover:text-white"
-          >
-            {vi ? "Cuộn xuống để thử" : "Scroll to try it"}
-            <ArrowDown className="size-4 animate-bounce" />
-          </a>
+          <HeroLightboard />
         </div>
       </section>
 

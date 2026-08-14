@@ -64,18 +64,6 @@ enum ReportEventType {
   seeded
 }
 
-// Badge identifiers. Thresholds and copy live in src/lib/badges.ts so the
-// definitions stay versioned in code; only the award itself is persisted.
-enum BadgeKind {
-  first_check
-  watchful_10
-  watchful_50
-  first_report
-  guardian_5
-  streak_7
-  pattern_spotter
-}
-
 /// An application user, keyed by their Clerk identity. Clerk remains the source
 /// of truth for profile data (name, email, avatar) — this table stores only
 /// app-owned state, so there is nothing to keep in sync.
@@ -97,27 +85,13 @@ model User {
 
   reports             Report[]
   events              ReportEvent[]
-  badges              UserBadge[]
+  lightReveals        LightReveal[]
 
   @@map("users")
 }
 
-/// One awarded badge. Immutable: the row's existence is the award, and
-/// earnedAt is the audit trail a recomputed value could never provide.
-model UserBadge {
-  id        String    @id @default(uuid())
-  userId    String    @map("user_id")
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge     BadgeKind
-  earnedAt  DateTime  @default(now()) @map("earned_at")
-
-  @@unique([userId, badge])
-  @@index([userId, earnedAt])
-  @@map("user_badges")
-}
-
 /// Curated media-literacy field notes. Only rows reviewed by a human are
-/// exposed in the mini game; the source stays visible with every fact.
+/// exposed in the prize box; the source stays visible with every fact.
 model MilFact {
   id        String   @id
   category  String
@@ -125,9 +99,25 @@ model MilFact {
   source    String
   reviewed  Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
+  reveals   LightReveal[]
 
   @@index([category, reviewed])
   @@map("mil_facts")
+}
+
+/// One opened light box. The unique pair prevents a user from receiving the
+/// same reviewed MIL fact twice while preserving a lightweight reveal ledger.
+model LightReveal {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  factId    String   @map("fact_id")
+  fact      MilFact  @relation(fields: [factId], references: [id], onDelete: Restrict)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, factId])
+  @@index([userId, createdAt])
+  @@map("light_reveals")
 }
 
 model Report {

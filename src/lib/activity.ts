@@ -1,36 +1,57 @@
-import { BADGE_BY_KIND, BADGE_DEFINITIONS } from "@/lib/badges";
 import { getPrisma } from "@/lib/db";
-import type { ActivityBadge, ActivityDay, ActivityResponse } from "@/lib/schema";
+import { availableLightStars, earnedLightStars } from "@/lib/light-reveals";
+import {
+  LIGHT_REVEAL_COST,
+  LIGHT_STARS_PER_ACTIVITY,
+  type ActivityDay,
+  type ActivityResponse,
+} from "@/lib/schema";
 
 /** 53 weeks — the width of the contribution grid. */
 const WINDOW_DAYS = 371;
 
+type PrismaLike = ReturnType<typeof getPrisma>;
+
 /**
- * The signed-in caller's own activity. Counters and badge awards come from the
- * user row (O(1) read); the contribution grid comes from report_events, which
- * stays the source of truth so the grid can never drift from reality.
+ * Reveal count, degraded to 0 on any failure. Reading the prize ledger must
+ * never be able to take the whole activity panel down with it.
+ */
+async function countLightReveals(prisma: PrismaLike, clerkId: string) {
+  try {
+    if (!prisma.lightReveal) {
+      throw new Error(
+        "Prisma Client has no lightReveal delegate — run `prisma generate` and restart.",
+      );
+    }
+    return await prisma.lightReveal.count({ where: { user: { clerkId } } });
+  } catch (error) {
+    console.error("Light reveal count failed", error);
+    return 0;
+  }
+}
+
+/**
+ * The signed-in caller's own activity. Counters come from the user row (O(1)
+ * read); the contribution grid remains sourced from report_events.
  */
 export async function getUserActivity(
   clerkId: string,
 ): Promise<ActivityResponse> {
   const prisma = getPrisma();
 
-  const [user, days] = await Promise.all([
+  const [user, days, factsRevealed] = await Promise.all([
     prisma.user.upsert({
       where: { clerkId },
       create: { clerkId },
       update: {},
       select: {
+        id: true,
         totalChecks: true,
         totalReports: true,
         publicContributions: true,
         currentStreak: true,
         longestStreak: true,
         categoriesSeen: true,
-        badges: {
-          select: { badge: true, earnedAt: true },
-          orderBy: { earnedAt: "asc" },
-        },
       },
     }),
     prisma.$queryRaw<ActivityDay[]>`
@@ -43,36 +64,12 @@ export async function getUserActivity(
       GROUP BY 1
       ORDER BY 1
     `,
+    // The prize ledger is secondary: the contribution grid must never disappear
+    // because the reveal feature is unavailable. A stale bundled Prisma Client
+    // can leave the delegate itself undefined, so probe before calling it.
+    countLightReveals(prisma, clerkId),
   ]);
-
-  const earnedAtByKind = new Map(
-    user.badges.map((row) => [row.badge, row.earnedAt.toISOString()]),
-  );
-
-  const metricValue = {
-    totalChecks: user.totalChecks,
-    totalReports: user.totalReports,
-    publicContributions: user.publicContributions,
-    currentStreak: user.currentStreak,
-    categoriesSeen: user.categoriesSeen,
-  };
-
-  const badges: ActivityBadge[] = BADGE_DEFINITIONS.map((definition) => {
-    const earnedAt = earnedAtByKind.get(definition.kind) ?? null;
-    const progress = Math.min(
-      metricValue[definition.metric],
-      definition.target,
-    );
-    return {
-      id: definition.kind,
-      label: definition.label,
-      description: definition.description,
-      earned: earnedAt !== null,
-      earnedAt,
-      progress,
-      target: definition.target,
-    };
-  });
+  const earned = earnedLightStars(user.totalChecks, user.totalReports);
 
   return {
     days,
@@ -83,8 +80,12 @@ export async function getUserActivity(
       longestStreak: user.longestStreak,
       categoriesSeen: user.categoriesSeen,
     },
-    badges,
+    light: {
+      stars: availableLightStars(earned, factsRevealed),
+      earned,
+      factsRevealed,
+      starsPerActivity: LIGHT_STARS_PER_ACTIVITY,
+      revealCost: LIGHT_REVEAL_COST,
+    },
   };
 }
-
-export { BADGE_BY_KIND };
