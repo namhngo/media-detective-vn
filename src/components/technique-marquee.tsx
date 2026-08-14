@@ -28,7 +28,7 @@ export function TechniqueMarquee() {
           >
             {items.map((label) => (
               <span
-                key={label}
+                key={`${copy}-${label}`}
                 className="flex items-center gap-10 text-sm font-medium text-white/55"
               >
                 {label}

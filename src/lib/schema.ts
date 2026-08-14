@@ -203,32 +203,10 @@ export const dashboardResponseSchema = z.object({
 
 /* ------------------------------ Your activity ---------------------------- */
 
-export const activityBadgeIdSchema = z.enum([
-  "first_check",
-  "watchful_10",
-  "watchful_50",
-  "first_report",
-  "guardian_5",
-  "streak_7",
-  "pattern_spotter",
-]);
-
 /** One day in the contribution grid. date is an ISO yyyy-mm-dd string (UTC). */
 export const activityDaySchema = z.object({
   date: z.string(),
   count: z.number().int(),
-});
-
-export const activityBadgeSchema = z.object({
-  id: activityBadgeIdSchema,
-  label: z.string(),
-  description: z.string(),
-  earned: z.boolean(),
-  /** ISO timestamp of the award — the audit trail a recomputation cannot give. */
-  earnedAt: z.string().nullable(),
-  /** Progress toward the badge, capped at target — drives the locked state. */
-  progress: z.number().int(),
-  target: z.number().int(),
 });
 
 /**
@@ -244,7 +222,14 @@ export const activityResponseSchema = z.object({
     longestStreak: z.number().int(),
     categoriesSeen: z.number().int(),
   }),
-  badges: z.array(activityBadgeSchema),
+  light: z.object({
+    /** Spendable balance: five stars per completed check or report. */
+    stars: z.number().int().min(0),
+    earned: z.number().int().min(0),
+    factsRevealed: z.number().int().min(0),
+    starsPerActivity: z.literal(5),
+    revealCost: z.literal(1),
+  }),
 });
 
 /* ------------------------------ MIL mini game ---------------------------- */
@@ -262,6 +247,20 @@ export const milFactPublicSchema = z.object({
   category: milFactCategorySchema,
   fact: z.string(),
   source: z.string(),
+});
+
+/**
+ * Five stars per completed activity; one star opens one reviewed fact.
+ */
+export const LIGHT_STARS_PER_ACTIVITY = 5;
+export const LIGHT_REVEAL_COST = 1;
+
+export const lightRevealResponseSchema = z.object({
+  ok: z.boolean(),
+  stars: z.number().int().min(0),
+  factsRevealed: z.number().int().min(0),
+  fact: milFactPublicSchema.nullable(),
+  reason: z.enum(["insufficient_stars", "no_facts_available"]).nullable(),
 });
 
 /* --------------------------------- Types --------------------------------- */
@@ -287,8 +286,7 @@ export type ReportPublishResponse = z.infer<typeof reportPublishResponseSchema>;
 export type GalleryEntry = z.infer<typeof galleryEntrySchema>;
 export type DashboardResponse = z.infer<typeof dashboardResponseSchema>;
 export type ActivityDay = z.infer<typeof activityDaySchema>;
-export type ActivityBadge = z.infer<typeof activityBadgeSchema>;
-export type ActivityBadgeId = z.infer<typeof activityBadgeIdSchema>;
 export type ActivityResponse = z.infer<typeof activityResponseSchema>;
 export type MilFactCategory = z.infer<typeof milFactCategorySchema>;
 export type MilFactPublic = z.infer<typeof milFactPublicSchema>;
+export type LightRevealResponse = z.infer<typeof lightRevealResponseSchema>;

@@ -62,7 +62,7 @@ export async function createReport({
     },
   });
 
-  // Counters and badge awards follow the event that earned them.
+  // Counters and the derived light-star budget follow the event that earned them.
   await recomputeUserStats(submittedByClerkId);
 
   return report.id;

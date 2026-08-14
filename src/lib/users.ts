@@ -1,7 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
 
 import { getPrisma } from "@/lib/db";
-import { qualifyingBadges, type BadgeMetric } from "@/lib/badges";
 
 type Client = PrismaClient | Parameters<
   Parameters<PrismaClient["$transaction"]>[0]
@@ -68,9 +67,8 @@ function streaksFromDays(days: Date[]): StreakRow {
 }
 
 /**
- * Rebuilds every counter from reports/report_events and awards any newly
- * qualifying badges. Idempotent, so it doubles as the reconciliation job if a
- * write path ever fails midway.
+ * Rebuilds every user-facing activity counter from reports/report_events.
+ * Idempotent, so it doubles as the reconciliation job if a write path fails.
  */
 export async function recomputeUserStats(clerkId: string) {
   const prisma = getPrisma();
@@ -105,7 +103,7 @@ export async function recomputeUserStats(clerkId: string) {
 
   const { current, longest } = streaksFromDays(activeDays.map((r) => r.day));
 
-  const metrics: Record<BadgeMetric, number> = {
+  const metrics = {
     totalChecks: countOf("analysis_created"),
     totalReports: countOf("user_reported"),
     publicContributions,
@@ -126,15 +124,5 @@ export async function recomputeUserStats(clerkId: string) {
     },
   });
 
-  // Awards are additive: a badge once earned is never revoked by a later dip.
-  const earned = qualifyingBadges(metrics);
-  if (earned.length > 0) {
-    await prisma.userBadge.createMany({
-      data: earned.map((badge) => ({ userId, badge })),
-      skipDuplicates: true,
-    });
-  }
-
   return { userId, metrics };
 }
-
