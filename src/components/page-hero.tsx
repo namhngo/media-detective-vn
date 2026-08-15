@@ -14,6 +14,7 @@ export function PageHero({
   accent,
   lede,
   dark = false,
+  compact = false,
 }: {
   eyebrowIcon?: React.ComponentType<{ className?: string }>;
   eyebrow?: string;
@@ -22,6 +23,7 @@ export function PageHero({
   accent?: string;
   lede?: string;
   dark?: boolean;
+  compact?: boolean;
 }) {
   const parts = accent && title ? title.split(accent) : null;
 
@@ -42,7 +44,8 @@ export function PageHero({
         {title && (
           <h1
             className={cn(
-              "mt-4 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl",
+              "mt-4 max-w-2xl font-semibold tracking-tight",
+              compact ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl",
               dark && "text-white",
             )}
           >

@@ -79,10 +79,6 @@ export function DashboardView({
 
   return (
     <div className="space-y-5">
-      <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-        {t("dashboardActivity")}
-      </h2>
-
       <PageHero
         dark
         eyebrowIcon={Sparkles}
@@ -90,6 +86,7 @@ export function DashboardView({
         title={t("dashboardPersonalTitle")}
         accent={language === "vi" ? undefined : "light"}
         lede={t("dashboardPersonalLead")}
+        compact
       />
 
       {/* Your activity — private to the signed-in user, never in the library */}
@@ -154,6 +151,8 @@ export function DashboardView({
           dark
           eyebrowIcon={TrendingUp}
           eyebrow={t("dashboardCommunityEyebrow")}
+          title={t("dashboardCommunityTitle")}
+          compact
           lede={t("dashboardCommunityLead")}
         />
       </div>
