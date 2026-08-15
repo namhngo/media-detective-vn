@@ -7,6 +7,7 @@ import {
   Users2,
   FileSearch,
   Flame,
+  Sparkles,
 } from "lucide-react";
 
 import { ContributionGraph } from "@/components/contribution-graph";
@@ -78,6 +79,13 @@ export function DashboardView({
 
   return (
     <div className="space-y-5">
+      <PageHero
+        dark
+        eyebrowIcon={Sparkles}
+        eyebrow={t("dashboardPersonalEyebrow")}
+        lede={t("dashboardPersonalLead")}
+      />
+
       {/* Your activity — private to the signed-in user, never in the library */}
       {activity && (
         <section className="torch-panel relative overflow-hidden rounded-2xl p-5 sm:p-6">
@@ -135,12 +143,11 @@ export function DashboardView({
         </section>
       )}
 
-      <div className="border-t border-white/10 pt-10">
+      <div className="pt-10">
         <PageHero
           dark
           eyebrowIcon={TrendingUp}
           eyebrow={t("dashboardCommunityEyebrow")}
-          title={t("dashboardCommunityTitle")}
           lede={t("dashboardCommunityLead")}
         />
       </div>

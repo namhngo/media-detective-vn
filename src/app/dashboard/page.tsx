@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Activity } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 
 import { DarkBand } from "@/components/dark-band";
@@ -31,11 +30,8 @@ export default async function DashboardPage() {
       <DarkBand className="max-w-5xl">
         <PageHero
           dark
-          eyebrowIcon={Activity}
-          eyebrow={serverT(language, "dashboardPersonalEyebrow")}
-          title={serverT(language, "dashboardPersonalTitle")}
-          accent={vi ? undefined : "light"}
-          lede={serverT(language, "dashboardPersonalLead")}
+          title={serverT(language, "dashboardTitle")}
+          accent={vi ? undefined : "picture"}
         />
       </DarkBand>
       <section className="relative isolate min-h-[calc(100svh-16rem)] overflow-hidden bg-background/70 py-10 sm:py-14">
