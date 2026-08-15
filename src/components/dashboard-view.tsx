@@ -79,10 +79,16 @@ export function DashboardView({
 
   return (
     <div className="space-y-5">
+      <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        {t("dashboardActivity")}
+      </h2>
+
       <PageHero
         dark
         eyebrowIcon={Sparkles}
         eyebrow={t("dashboardPersonalEyebrow")}
+        title={t("dashboardPersonalTitle")}
+        accent={language === "vi" ? undefined : "light"}
         lede={t("dashboardPersonalLead")}
       />
 
