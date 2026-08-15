@@ -7,7 +7,7 @@ import type {
 } from "@/lib/schema";
 
 /**
- * Mock data shaped from the 7 researcher-sourced seed cases in the project
+ * Mock data shaped from six public-pattern reference cases in the project
  * brief. The frontend runs entirely on this until the real backend lands —
  * API stubs must stay contract-valid (routes schema-parse before returning).
  */
@@ -15,72 +15,6 @@ import type {
 /* ------------------------------ Seed gallery ----------------------------- */
 
 export const seedGallery: GalleryEntry[] = [
-  {
-    id: "seed-001",
-    createdAt: "2026-01-20T09:00:00.000Z",
-    source: "text",
-    platform: "phone_call",
-    category: "deepfake_impersonation",
-    claims: [
-      "Scammers collect photos and audio from a victim's social media",
-      "An AI face-and-voice clone is generated from the scraped material",
-      "A live video call impersonates the relative and requests urgent money",
-    ],
-    techniques: ["urgency", "authority", "secrecy"],
-    tier: "warning",
-    explanationEn:
-      "A live video call that looks and sounds like a family member can now be faked from a few scraped photos and seconds of audio. The call creates pressure to send money immediately and discourages checking with anyone else. Always hang up and call the person back on their usual number before acting.",
-    moneyRequested: true,
-    amountVnd: null,
-    location: "Vinh Long",
-    isSeed: true,
-    confirmationSource: null,
-    sourceCitation: "Vinh Long police public warning, 2026",
-  },
-  {
-    id: "seed-002",
-    createdAt: "2026-02-03T09:00:00.000Z",
-    source: "text",
-    platform: "other",
-    category: "deepfake_impersonation",
-    claims: [
-      "A convincing deepfake video call can reportedly be produced in under a minute",
-      "Consumer-grade tools are sufficient — no specialist equipment needed",
-    ],
-    techniques: [],
-    tier: "warning",
-    explanationEn:
-      "The barrier to faking a person's face and voice on a live call has collapsed: consumer tools can reportedly produce a convincing result in under a minute. Seeing a familiar face on a video call is no longer proof of identity on its own.",
-    moneyRequested: false,
-    amountVnd: null,
-    location: null,
-    isSeed: true,
-    confirmationSource: null,
-    sourceCitation:
-      "Vietnam Ministry of Information and Communications consumer-safety advisory, 2026",
-  },
-  {
-    id: "seed-003",
-    createdAt: "2026-03-11T09:00:00.000Z",
-    source: "screenshot",
-    platform: "facebook",
-    category: "deepfake_impersonation",
-    claims: [
-      "Deepfaked videos of public figures appear in ads for herbal remedies and supplements",
-      "The same technique promotes get-rich-quick courses and investment schemes",
-      "The fake only needs to be convincing for a few seconds to work",
-    ],
-    techniques: ["authority", "urgency"],
-    tier: "warning",
-    explanationEn:
-      "Ads are circulating that use deepfaked videos of well-known public figures to endorse remedies, supplements, and investment schemes. The clip does not need to be perfect — it only needs to borrow a few seconds of trust. A famous face in an ad is never evidence; check the person's official channels instead.",
-    moneyRequested: true,
-    amountVnd: null,
-    location: null,
-    isSeed: true,
-    confirmationSource: null,
-    sourceCitation: "Vietnamese news reporting, 2026",
-  },
   {
     id: "seed-004",
     createdAt: "2026-04-08T09:00:00.000Z",
