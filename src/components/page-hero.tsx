@@ -44,7 +44,8 @@ export function PageHero({
         {title && (
           <h1
             className={cn(
-              "mt-4 max-w-2xl font-semibold tracking-tight",
+              "max-w-2xl font-semibold tracking-tight",
+              eyebrow ? "mt-4" : "mt-0",
               compact ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl",
               dark && "text-white",
             )}

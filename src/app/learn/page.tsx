@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Gift } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 
 import { DarkBand } from "@/components/dark-band";
@@ -27,10 +26,7 @@ export default async function LearnPage() {
       <DarkBand className="max-w-5xl">
         <PageHero
           dark
-          eyebrowIcon={Gift}
-          eyebrow={serverT(language, "lightEyebrow")}
-          title={serverT(language, "navLearn")}
-          accent={vi ? undefined : "prize"}
+          title={serverT(language, "lightTitle")}
           lede={serverT(language, "lightLead")}
         />
       </DarkBand>

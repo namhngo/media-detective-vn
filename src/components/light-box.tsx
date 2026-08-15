@@ -1,6 +1,6 @@
 "use client";
 
-import { Flashlight, Gift, Sparkles, Star } from "lucide-react";
+import { Flashlight, Sparkles, Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { useI18n } from "@/components/i18n-provider";
@@ -54,8 +54,7 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
   }, []);
 
   const cost = light.revealCost;
-  const inCycle = Math.min(light.stars, cost);
-  const ratio = inCycle / cost;
+  const ratio = Math.min(light.stars, cost) / cost;
   // 10% -> 50% half-width, matching the flashlight reference behaviour.
   const halfWidth = 10 + ratio * 40;
   const canOpen = light.stars >= cost && !opening;
@@ -100,12 +99,8 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
         className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl"
       />
 
-      <div className="relative flex flex-wrap items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-sm font-medium">
-          <Gift className="size-4 text-primary/80" />
-          {t("lightEyebrow")}
-        </h2>
-        <p className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
+      <div className="relative flex justify-end">
+        <p className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Star className="size-3 text-primary" />
             <b className="font-medium text-foreground">{light.stars}</b>
@@ -122,11 +117,7 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
         </p>
       </div>
 
-      <p className="relative mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-        {t("lightLead")}
-      </p>
-
-      <div className="relative mt-5 grid items-center gap-5 md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
+      <div className="relative mt-3 grid items-center gap-5 md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
         <div className="relative h-56 overflow-hidden rounded-xl border border-border bg-[#0c1120] md:h-64">
           <div
             aria-hidden
@@ -158,41 +149,26 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
                 "radial-gradient(ellipse at 50% 100%, rgba(255,238,180,.9), transparent 70%)",
             }}
           />
-          <span
+          <button
+            type="button"
+            onClick={openPrize}
+            disabled={!canOpen}
             className={cn(
-              "absolute left-1/2 top-1/2 flex size-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border transition-all duration-500",
+              "absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition-all duration-500",
               canOpen
-                ? "border-primary bg-primary text-primary-foreground shadow-[0_0_28px_rgba(247,201,72,0.6)]"
-                : "border-white/20 bg-card/70 text-white/65",
+                ? "border-primary bg-primary text-primary-foreground shadow-[0_0_28px_rgba(247,201,72,0.6)] hover:opacity-90"
+                : "cursor-not-allowed border-white/20 bg-card/70 text-white/65",
             )}
           >
-            {canOpen ? <Sparkles className="size-5" /> : <Flashlight className="size-5" />}
-          </span>
+            {canOpen ? <Sparkles className="size-4" /> : <Flashlight className="size-4" />}
+            {opening ? t("lightOpening") : t("lightOpen")}
+          </button>
           <p className="absolute bottom-2.5 left-3 font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
-            {t("lightCycleWord")} {inCycle} / {cost}
+            {t("lightPrizeCost")}
           </p>
         </div>
 
         <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={openPrize}
-              disabled={!canOpen}
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <Gift className="size-4" />
-              {opening ? t("lightOpening") : t("lightOpen")}
-            </button>
-            <span className="font-mono text-xs text-muted-foreground">
-              {t("lightOpenCost")}
-            </span>
-          </div>
-
-          <p className="mt-3 max-w-sm text-xs text-muted-foreground italic">
-            {t("lightNote")}
-          </p>
-
           {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
 
           {fact && (
