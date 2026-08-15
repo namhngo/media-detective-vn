@@ -29,13 +29,8 @@ export function InvestigationGuide({ mode }: { mode: GuideMode }) {
         };
 
   return (
-    <aside className="torch-panel relative overflow-hidden rounded-3xl p-5 lg:sticky lg:top-24">
-      {/* A faint coordinate field keeps the checklist part of the same workspace. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,color-mix(in_oklch,white_9%,transparent)_1px,transparent_1.5px)] bg-[size:20px_20px]"
-      />
-      <div className="relative">
+    <aside className="relative py-2 lg:sticky lg:top-24">
+      <div>
         <p className="text-sm font-semibold">{content.title}</p>
         <p className="mt-1 text-sm text-muted-foreground">{content.lead}</p>
 
