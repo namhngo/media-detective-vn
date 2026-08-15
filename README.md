@@ -10,7 +10,7 @@ Not a scam detector. Not a social feed. A **dashboard-first literacy tool**: the
 
 Three connected patterns are hitting Vietnam right now — isolation + fabricated trust + manufactured urgency:
 
-- **AI deepfake impersonation** *(hero case)* — scammers scrape photos/audio from social media, generate a face-and-voice clone, and run live video calls impersonating relatives to request urgent money. A convincing deepfake call reportedly takes under a minute to produce. Vietnam's National Cyber Security Association names deepfake sophistication the top emerging risk for 2026.
+- **Financial impersonation and account pressure** *(hero case)* — an urgent message appears to come from a relative, a bank, or another trusted service and asks for money or account verification before the recipient has time to check through a known channel.
 - **Timeshare fraud** *(supporting case)* — Hanoi's Economic Police opened 21 criminal cases, charged 187 people: 493 confirmed victims, ~181 billion VND stolen in that investigation alone. Playbook: prize call → hotel "seminar" → manufactured urgency → sign and pay same-day.
 - **Viral misinformation targeting individuals** — fabricated "evidence" and emotional bait turn an unverified accusation into a pile-on before anyone checks the facts. In 2026, a false cheating accusation against a Vietnamese student went viral and the harm proved irreversible. The same trust-calibration skills — check the source, don't share before verifying, virality is not evidence — apply here as much as to financial scams.
 
@@ -95,7 +95,7 @@ Deliberately simple — three steps, one eve agent, no orchestration framework. 
 The internal case-library check is automatic for every assessable submission;
 it is not an Eve tool and does not depend on the model deciding to call it.
 After Eve has emitted and fixed the tier, `findSimilarCases()` searches only
-shared reports and reviewed seed cases, returns at most three matches, and
+shared reports and reviewed public-reference cases, returns at most three matches, and
 enforces a `0.78` cosine-similarity floor. Returning zero cases is valid.
 
 It intentionally runs after analysis. Running retrieval first would let prior
@@ -180,7 +180,7 @@ src/
     similar-cases.ts         deterministic pgvector similarity retrieval
     embedding.ts             OpenAI embedding creation
     structured-summary.ts    pgvector embedding text (no raw content)
-    mock.ts                  seed-shaped mock data
+  mock.ts                  public-reference mock data
     db.ts / tier.ts / format.ts / motion.ts / utils.ts
 DESIGN.md                 design tokens + visual language
 BACKEND.md                backend architecture and database guide
@@ -237,8 +237,10 @@ npm run dev          # http://localhost:3000
 If `npm run dev` says Eve is running Node 22 or older, run `nvm use` in the
 same terminal first. The project has a `.nvmrc` file with the required version.
 
-No API keys are needed for the core mock-backed flow. See `.env.example` for all
-optional and required variables.
+No API keys are needed for the core mock-backed flow. The community dashboard
+gallery currently uses calibrated public-reference mock data; the Detect and
+Report backend routes persist structured reports in Neon when configured. See
+`.env.example` for all optional and required variables.
 
 ## Testing
 
@@ -268,11 +270,11 @@ testing tools.
 - **Vector search for context, not verdict**: similarity retrieval never influences the tier.
 - **Contract-first**: `src/lib/schema.ts` is the single source of truth for UI, API routes, and the agent.
 - **Privacy**: raw content never persisted; embedding vectors computed from structured summaries only.
-- **Sensitive content**: seed data and mocks describe patterns only — never real victim names, schools, or identifying details.
+- **Sensitive content**: public-reference data and mocks describe patterns only — never real victim names, schools, or identifying details.
 
 ## Roadmap (explicitly out of MVP scope)
 
-Vietnamese-first UI toggle (designed Vietnamese-first; demoed in English for judges) · voice/audio deepfake detection · browser extension · mobile app · eve **channels** for Zalo/WhatsApp (the same agent surfaced where scams actually happen) · artifact matching across reports (phone numbers, bank accounts — relational, not semantic) · government/NGO dashboard
+Vietnamese-first UI toggle (designed Vietnamese-first; demoed in English for judges) · browser extension · mobile app · eve **channels** for Zalo/WhatsApp (the same agent surfaced where scams actually happen) · artifact matching across reports (phone numbers, bank accounts — relational, not semantic) · government/NGO dashboard
 
 ---
 
