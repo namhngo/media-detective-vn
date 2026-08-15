@@ -163,14 +163,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ── Closing trust line ────────────────────────────────────────── */}
-        <section className="border-t border-white/10 py-10">
-          <p className="mx-auto max-w-xl px-4 text-center text-sm leading-relaxed text-muted-foreground sm:px-6">
-            {vi
-              ? "Tin nhắn và ảnh chụp được phân tích ngay lúc đó và không bao giờ được lưu — chỉ bản đánh giá có cấu trúc được giữ lại. Không kết quả nào chính xác 100%."
-              : "Messages and screenshots are analyzed in the moment and never stored — only the structured assessment is kept. No result is ever 100% accurate."}
-          </p>
-        </section>
       </div>
     </div>
   );
