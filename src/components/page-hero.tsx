@@ -1,4 +1,3 @@
-import { AccentWord } from "@/components/accent-word";
 import { FadeUp } from "@/components/fade-up";
 import { cn } from "@/lib/utils";
 
@@ -53,9 +52,9 @@ export function PageHero({
             {parts ? (
               <>
                 {parts[0]}
-                <AccentWord className={dark ? "text-amber-300" : undefined}>
+                <span className={dark ? "text-amber-300" : "text-primary"}>
                   {accent}
-                </AccentWord>
+                </span>
                 {parts[1]}
               </>
             ) : (

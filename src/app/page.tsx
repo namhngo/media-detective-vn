@@ -7,7 +7,6 @@ import {
 import { Show, SignInButton } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
-import { AccentWord } from "@/components/accent-word";
 import { HeroLightboard } from "@/components/hero-lightboard";
 import { TechniqueMarquee } from "@/components/technique-marquee";
 import { DetectFlow } from "@/components/detect-flow";
@@ -115,7 +114,7 @@ export default async function Home() {
                 "Điều gì khiến bạn dừng lại?"
               ) : (
                 <>
-                  What made you <AccentWord>pause</AccentWord>?
+                  What made you <span className="text-amber-300">pause</span>?
                 </>
               )}
             </h2>
@@ -145,7 +144,7 @@ export default async function Home() {
                 "Câu chuyện của bạn là ngọn lửa cho người tiếp theo."
               ) : (
                 <>
-                  Your story is someone else&rsquo;s <AccentWord>light</AccentWord>.
+                  Your story is someone else&rsquo;s <span className="text-amber-300">light</span>.
                 </>
               )}
             </h2>
