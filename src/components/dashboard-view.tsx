@@ -7,8 +7,6 @@ import {
   Users2,
   FileSearch,
   Flame,
-  LockKeyhole,
-  Sparkles,
 } from "lucide-react";
 
 import { ContributionGraph } from "@/components/contribution-graph";
@@ -20,6 +18,7 @@ import {
 } from "@/components/dashboard-charts";
 import { GalleryCard } from "@/components/gallery-card";
 import { LearningLightBar } from "@/components/learning-light-bar";
+import { PageHero } from "@/components/page-hero";
 import { categoryLabel } from "@/lib/tier";
 import { useI18n } from "@/components/i18n-provider";
 import type { ActivityResponse, DashboardResponse } from "@/lib/schema";
@@ -86,15 +85,7 @@ export function DashboardView({
             aria-hidden
             className="pointer-events-none absolute -right-20 -top-24 size-64 rounded-full bg-primary/10 blur-3xl"
           />
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <SectionHeading icon={Sparkles}>{t("dashboardActivity")}</SectionHeading>
-            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <LockKeyhole className="size-3" />
-              {t("dashboardOnlyYou")}
-            </p>
-          </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-4">
             <div className="torch-inset rounded-xl px-3.5 py-3">
               <p className="font-mono text-xl font-semibold">
                 <CountUp value={activity.stats.totalActions} />
@@ -143,6 +134,16 @@ export function DashboardView({
           {t("dashboardUnavailable")}
         </section>
       )}
+
+      <div className="border-t border-white/10 pt-10">
+        <PageHero
+          dark
+          eyebrowIcon={TrendingUp}
+          eyebrow={t("dashboardCommunityEyebrow")}
+          title={t("dashboardCommunityTitle")}
+          lede={t("dashboardCommunityLead")}
+        />
+      </div>
 
       {/* Bento row: the trend is the hero cell — data-dense, non-sequential
           content is exactly where a real hierarchy grid earns its keep. */}
@@ -230,16 +231,19 @@ export function DashboardView({
 
       {/* Gallery — a list, deliberately not a grid: sequential content reads
           better as a stack than forced into cells. */}
-      <section className="border-t border-white/10 pt-7">
+      <section className="torch-panel overflow-hidden rounded-2xl p-5 sm:p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <SectionHeading icon={FileSearch}>
             {t("dashboardLibrary")}
           </SectionHeading>
-          <p className="text-xs text-muted-foreground">
-            {t("dashboardLibraryNote")}
-          </p>
         </div>
-        <div className="mt-4 space-y-3">
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          {t("dashboardLibraryLead")}
+        </p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {t("dashboardLibraryNote")}
+        </p>
+        <div className="mt-4">
           {data.gallery.map((entry) => (
             <GalleryCard key={entry.id} entry={entry} />
           ))}

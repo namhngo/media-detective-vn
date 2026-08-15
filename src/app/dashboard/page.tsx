@@ -8,7 +8,7 @@ import { PageHero } from "@/components/page-hero";
 import { WorkspaceBackdrop } from "@/components/workspace-backdrop";
 import { getUserActivity } from "@/lib/activity";
 import { getDashboardData } from "@/lib/dashboard";
-import { getServerLanguage } from "@/lib/server-i18n";
+import { getServerLanguage, serverT } from "@/lib/server-i18n";
 
 export const metadata: Metadata = {
   title: "Dashboard — Media Detective Vietnam",
@@ -32,14 +32,10 @@ export default async function DashboardPage() {
         <PageHero
           dark
           eyebrowIcon={Activity}
-          eyebrow={vi ? "Mọi hoạt động đều ẩn danh" : "All activity anonymous"}
-          title={vi ? "Bức tranh hiện tại" : "The picture so far"}
-          accent={vi ? undefined : "picture"}
-          lede={
-            vi
-              ? "Tổng hợp từ các lượt kiểm tra trong thư viện. Chỉ các vụ việc đã xác nhận mới được hiển thị riêng — mọi thứ khác chỉ đóng góp vào số liệu, không có tên người."
-              : "Aggregates from every check run against the library. Individual cases are only ever shown when confirmed — everything else contributes to counts, never to names."
-          }
+          eyebrow={serverT(language, "dashboardPersonalEyebrow")}
+          title={serverT(language, "dashboardPersonalTitle")}
+          accent={vi ? undefined : "light"}
+          lede={serverT(language, "dashboardPersonalLead")}
         />
       </DarkBand>
       <section className="relative isolate min-h-[calc(100svh-16rem)] overflow-hidden bg-background/70 py-10 sm:py-14">

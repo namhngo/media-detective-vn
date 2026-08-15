@@ -36,8 +36,8 @@ function confirmationMark(entry: GalleryEntry, labels: { seed: string; ai: strin
 export function GalleryCard({ entry }: { entry: GalleryEntry }) {
   const { language, t } = useI18n();
   return (
-    <details className="torch-panel group rounded-2xl">
-      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl px-5 py-4 transition-colors hover:bg-white/[0.035] [&::-webkit-details-marker]:hidden">
+    <details className="group border-b border-border/70 last:border-b-0">
+      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 px-2 py-4 transition-colors hover:bg-white/[0.035] [&::-webkit-details-marker]:hidden">
         <p className="text-xs text-muted-foreground">
            {shortCaseRef(entry.id)} · {formatCaseDate(entry.createdAt, language)} ·{" "}
            {platformLabel(entry.platform, language)}
@@ -52,7 +52,7 @@ export function GalleryCard({ entry }: { entry: GalleryEntry }) {
         </span>
       </summary>
 
-      <div className="border-t border-border/70 px-5 py-4">
+      <div className="border-t border-border/70 px-2 py-4">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
              <p className="flex items-center gap-1.5 text-sm font-medium">
