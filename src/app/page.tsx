@@ -108,7 +108,7 @@ export default async function Home() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1 text-sm font-medium text-white/65 ring-1 ring-white/10">
               <Lock className="size-3.5" />
-              {t("privateDefault")}
+              {t("detectEyebrow")}
             </span>
             <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
               {vi ? (

@@ -23,13 +23,13 @@ export default async function DetectPage() {
         <PageHero
           dark
           eyebrowIcon={Lock}
-          eyebrow={vi ? "Riêng tư mặc định" : "Private by default"}
+          eyebrow={vi ? "01 / Đưa vào ánh sáng" : "01 / Bring it into the light"}
           title={vi ? "Điều gì khiến bạn dừng lại?" : "What made you pause?"}
           accent={vi ? undefined : "pause"}
           lede={
             vi
-              ? "Dán tin nhắn hoặc tải ảnh chụp màn hình. Nội dung gốc được phân tích ngay lúc đó và không bao giờ được lưu — chỉ bản đánh giá có cấu trúc được giữ lại."
-              : "Paste a message or upload a screenshot. The raw content is analyzed in the moment and never stored — only the structured assessment counts."
+              ? "Dán tin nhắn hoặc tải hình ảnh. Chúng tôi sẽ tìm những tín hiệu đáng để xem xét kỹ hơn."
+              : "Paste a message or upload an image. We'll look for signals that deserve a second look."
           }
         />
       </DarkBand>
