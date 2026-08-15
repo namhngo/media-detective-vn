@@ -3,10 +3,12 @@
 import { Languages } from "lucide-react";
 
 import { useI18n } from "@/components/i18n-provider";
-import type { Language } from "@/lib/i18n";
+import { vietnameseEnabled, type Language } from "@/lib/i18n";
 
 export function LanguageSwitcher() {
   const { language, setLanguage, t } = useI18n();
+  if (!vietnameseEnabled) return null;
+
   const next: Language = language === "en" ? "vi" : "en";
 
   return (

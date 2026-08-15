@@ -1,6 +1,7 @@
 export type Language = "en" | "vi";
 
 export const languageCookie = "mdv_language";
+export const vietnameseEnabled = process.env.NEXT_PUBLIC_ENABLE_VIETNAMESE === "true";
 
 export const messages = {
   en: {
@@ -404,5 +405,5 @@ export function translate(language: Language, key: MessageKey) {
 }
 
 export function normalizeLanguage(value: string | undefined): Language {
-  return value === "vi" ? "vi" : "en";
+  return value === "vi" && vietnameseEnabled ? "vi" : "en";
 }

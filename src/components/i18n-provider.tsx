@@ -40,8 +40,9 @@ export function I18nProvider({
     () => ({
       language,
       setLanguage(next: Language) {
-        document.cookie = `${languageCookie}=${next}; path=/; max-age=31536000; samesite=lax`;
-        localStorage.setItem(languageCookie, next);
+        const enabledLanguage = normalizeLanguage(next);
+        document.cookie = `${languageCookie}=${enabledLanguage}; path=/; max-age=31536000; samesite=lax`;
+        localStorage.setItem(languageCookie, enabledLanguage);
         window.dispatchEvent(new Event("mdv-language-change"));
         window.location.reload();
       },
