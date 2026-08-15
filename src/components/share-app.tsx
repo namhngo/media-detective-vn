@@ -16,23 +16,17 @@ import { useI18n } from "@/components/i18n-provider";
 
 const APP_URL = "https://media-detective-vn.vercel.app";
 
-function buildCaption(url: string, language: "en" | "vi") {
+function buildCaption(language: "en" | "vi") {
   if (language === "vi") {
-    return `Hãy kiểm tra bài đăng đáng ngờ trước khi chia sẻ.
-
-Media Detective giúp bạn nhận ra thủ đoạn lừa đảo và thông tin sai lệch, xác minh tuyên bố và tự quyết định.
-
-Thử ngay: ${url}
-
-#MediaLiteracy #UNESCO #AIandMIL #Vietnam`;
+    return `MEDIA DETECTIVE — nền tảng giúp bạn nhận ra các thủ đoạn lừa đảo và thông tin sai lệch.
+Rọi ánh sáng. Dừng lại trước khi chia sẻ.
+Tự quyết định điều gì thật sự đang ở đó.
+#MediaDetectiveVN #AI&MIL #UNESCO`;
   }
-  return `Check suspicious posts before sharing.
-
-Media Detective helps you spot scam and misinformation patterns, verify claims, and decide for yourself.
-
-Try it: ${url}
-
-#MediaLiteracy #UNESCO #AIandMIL #Vietnam`;
+  return `MEDIA DETECTIVE — the platform helps you spot scam and misinformation patterns.
+Pause. Shine a light.
+See what's really there.
+#MediaDetectiveVN #AI&MIL #UNESCO`;
 }
 
 /**
@@ -70,7 +64,7 @@ export function ShareApp({
   }, [open]);
 
   const url = APP_URL;
-  const caption = buildCaption(url, language);
+  const caption = buildCaption(language);
 
   const platforms = [
     {
@@ -188,10 +182,7 @@ export function ShareApp({
             </div>
 
             <div className="mt-4 rounded-xl bg-secondary/60 p-3.5">
-              <p className="text-xs font-medium text-muted-foreground">
-                 {t("sharePrebuilt")}
-              </p>
-              <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed">
+              <p className="whitespace-pre-line text-sm leading-relaxed">
                 {caption}
               </p>
             </div>
