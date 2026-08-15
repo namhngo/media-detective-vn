@@ -124,10 +124,10 @@ export function ShareApp({
         <button
           type="button"
           onClick={() => setOpen(true)}
-           aria-label={t("shareAppAria")}
-          className="fixed right-5 bottom-5 z-40 flex size-12 items-center justify-center rounded-full bg-amber-400 text-[#0A0E1A] shadow-[0_0_28px_rgba(251,191,36,0.28)] transition-transform hover:scale-105 hover:bg-amber-300 focus-visible:ring-3 focus-visible:ring-amber-300/50 focus-visible:outline-none"
+          aria-label={t("shareAppAria")}
+          className="share-fab fixed right-5 bottom-5 z-40 flex items-center gap-2 rounded-lg bg-amber-400 px-5 py-3.5 font-mono text-xs font-bold tracking-wide text-[#1c1400] uppercase shadow-[0_16px_34px_-14px_rgba(247,201,72,0.6)] transition-colors hover:bg-amber-300 focus-visible:ring-3 focus-visible:ring-amber-300/50 focus-visible:outline-none sm:right-[22px] sm:bottom-[22px]"
         >
-          <Forward className="size-5" />
+          {t("shareFab")} <span aria-hidden>↗</span>
         </button>
       ) : (
         <Button

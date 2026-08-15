@@ -228,6 +228,27 @@
   }
 }
 
+@keyframes share-fab-pulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+}
+
+.share-fab::after {
+  position: absolute;
+  inset: -6px;
+  border: 1.5px solid #f7c948;
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+  animation: share-fab-pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .animate-marquee {
     animation: marquee-x 42s linear infinite;
@@ -237,5 +258,11 @@
   }
   .animate-torch-glow {
     animation: torch-glow 2.6s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-fab::after {
+    animation: none;
   }
 }
