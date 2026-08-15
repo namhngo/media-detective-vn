@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Lock, MessageSquareText, ScanSearch, X } from "lucide-react";
+import { ImagePlus, Lock, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,12 +19,10 @@ export function ContentInput({
   busy,
   submitLabel,
   onSubmit,
-  mode = "detect",
 }: {
   busy: boolean;
   submitLabel: string;
   onSubmit: (payload: DetectRequest) => void;
-  mode?: "detect" | "report";
 }) {
   const { t } = useI18n();
   const [source, setSource] = useState<Source>("text");
@@ -40,20 +38,6 @@ export function ContentInput({
     !busy &&
     !ocrBusy &&
     (source === "screenshot" ? image !== null : text.trim().length > 0);
-  const IntakeIcon = mode === "detect" ? ScanSearch : MessageSquareText;
-  const intakeCopy =
-    mode === "detect"
-      ? {
-          overline: t("inputSignal"),
-          title: t("inputSignalTitle"),
-          step: "01",
-        }
-      : {
-          overline: t("inputReport"),
-          title: t("inputReportTitle"),
-          step: "01",
-        };
-
   function pickImage(file: File | undefined) {
     setError(null);
     if (!file) return;
@@ -107,20 +91,6 @@ export function ContentInput({
 
   return (
     <div className="torch-panel rounded-3xl p-5 sm:p-6">
-      <div className="mb-5 flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary ring-1 ring-primary/20">
-            <IntakeIcon className="size-4" />
-          </span>
-          <div>
-            <p className="torch-overline">{intakeCopy.overline}</p>
-            <p className="mt-1 text-sm font-medium">{intakeCopy.title}</p>
-          </div>
-        </div>
-        <span className="font-mono text-xs text-muted-foreground">
-          {intakeCopy.step}
-        </span>
-      </div>
       <Tabs
         value={source}
         onValueChange={(v) => {

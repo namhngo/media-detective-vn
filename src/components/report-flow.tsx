@@ -86,7 +86,6 @@ export function ReportFlow() {
               busy={analyzing}
               submitLabel={t("reportSubmit")}
               onSubmit={analyze}
-              mode="report"
             />
             <InvestigationGuide mode="report" />
           </div>

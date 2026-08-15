@@ -49,7 +49,6 @@ export function DetectFlow() {
           busy={analyzing}
           submitLabel={t("detectSubmit")}
           onSubmit={analyze}
-          mode="detect"
         />
         <InvestigationGuide mode="detect" />
       </div>
