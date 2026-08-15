@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ScanSearch } from "lucide-react";
+import { Flashlight } from "lucide-react";
 import {
   Show,
   SignInButton,
@@ -28,7 +28,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap">
           <span className="flex size-8 items-center justify-center rounded-full bg-amber-400 text-[#0A0E1A] shadow-[0_0_24px_rgba(251,191,36,0.3)]">
-            <ScanSearch className="size-4" />
+            <Flashlight className="size-4" />
           </span>
           <span className="text-[15px] font-semibold tracking-tight">
             Media Detective
