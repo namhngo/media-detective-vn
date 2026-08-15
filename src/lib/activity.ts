@@ -1,5 +1,11 @@
+import { ReportEventType } from "@prisma/client";
+
 import { getPrisma } from "@/lib/db";
-import { availableLightStars, earnedLightStars } from "@/lib/light-reveals";
+import {
+  availableLightStars,
+  completedActivityCounts,
+  earnedLightStars,
+} from "@/lib/light-reveals";
 import {
   LIGHT_REVEAL_COST,
   LIGHT_STARS_PER_ACTIVITY,
@@ -31,23 +37,20 @@ async function countLightReveals(prisma: PrismaLike, clerkId: string) {
 }
 
 /**
- * The signed-in caller's own activity. Counters come from the user row (O(1)
- * read); the contribution grid remains sourced from report_events.
+ * The signed-in caller's own activity. Cached aggregate metrics come from the
+ * user row, while completed actions and the prize balance use immutable events.
  */
 export async function getUserActivity(
   clerkId: string,
 ): Promise<ActivityResponse> {
   const prisma = getPrisma();
 
-  const [user, days, factsRevealed] = await Promise.all([
+  const [user, days, factsRevealed, earnedEvents] = await Promise.all([
     prisma.user.upsert({
       where: { clerkId },
       create: { clerkId },
       update: {},
       select: {
-        id: true,
-        totalChecks: true,
-        totalReports: true,
         publicContributions: true,
         currentStreak: true,
         longestStreak: true,
@@ -68,13 +71,28 @@ export async function getUserActivity(
     // because the reveal feature is unavailable. A stale bundled Prisma Client
     // can leave the delegate itself undefined, so probe before calling it.
     countLightReveals(prisma, clerkId),
+    prisma.reportEvent.groupBy({
+      by: ["type"],
+      where: {
+        actorClerkId: clerkId,
+        type: {
+          in: [
+            ReportEventType.analysis_created,
+            ReportEventType.user_reported,
+          ],
+        },
+      },
+      _count: { _all: true },
+    }),
   ]);
-  const earned = earnedLightStars(user.totalChecks, user.totalReports);
+  const { checks: completedChecks, reports: completedReports } =
+    completedActivityCounts(earnedEvents);
+  const earned = earnedLightStars(completedChecks, completedReports);
 
   return {
     days,
     stats: {
-      totalActions: user.totalChecks + user.totalReports,
+      totalActions: completedChecks + completedReports,
       publicContributions: user.publicContributions,
       currentStreak: user.currentStreak,
       longestStreak: user.longestStreak,

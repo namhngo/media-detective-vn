@@ -1,3 +1,5 @@
+import { ReportEventType } from "@prisma/client";
+
 import { getPrisma } from "@/lib/db";
 import {
   LIGHT_REVEAL_COST,
@@ -10,6 +12,18 @@ import { ensureUser } from "@/lib/users";
 
 export function earnedLightStars(totalChecks: number, totalReports: number) {
   return (totalChecks + totalReports) * LIGHT_STARS_PER_ACTIVITY;
+}
+
+export function completedActivityCounts(
+  events: ReadonlyArray<{ type: ReportEventType; _count: { _all: number } }>,
+) {
+  const countOf = (type: ReportEventType) =>
+    events.find((event) => event.type === type)?._count._all ?? 0;
+
+  return {
+    checks: countOf(ReportEventType.analysis_created),
+    reports: countOf(ReportEventType.user_reported),
+  };
 }
 
 export function availableLightStars(earned: number, factsRevealed: number) {
@@ -27,14 +41,24 @@ export async function revealLightFact(
     // Serialize one user's blind-box opens so parallel clicks cannot double-spend.
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${userId}))`;
 
-    const [user, factsRevealed] = await Promise.all([
-      tx.user.findUniqueOrThrow({
-        where: { id: userId },
-        select: { totalChecks: true, totalReports: true },
+    const [earnedEvents, factsRevealed] = await Promise.all([
+      tx.reportEvent.groupBy({
+        by: ["type"],
+        where: {
+          actorClerkId: clerkId,
+          type: {
+            in: [
+              ReportEventType.analysis_created,
+              ReportEventType.user_reported,
+            ],
+          },
+        },
+        _count: { _all: true },
       }),
       tx.lightReveal.count({ where: { userId } }),
     ]);
-    const earned = earnedLightStars(user.totalChecks, user.totalReports);
+    const { checks, reports } = completedActivityCounts(earnedEvents);
+    const earned = earnedLightStars(checks, reports);
     const stars = availableLightStars(earned, factsRevealed);
 
     if (stars < LIGHT_REVEAL_COST) {

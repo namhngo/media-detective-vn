@@ -23,6 +23,7 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
   const [flash, setFlash] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prizeOpened = useRef(false);
 
   useEffect(
     () => () => {
@@ -30,6 +31,27 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
     },
     [],
   );
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function refreshLight() {
+      try {
+        const response = await fetch("/api/activity", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok || controller.signal.aborted) return;
+        const activity: ActivityResponse = await response.json();
+        if (!prizeOpened.current) setLight(activity.light);
+      } catch {
+        // The server-rendered balance remains usable if a refresh is interrupted.
+      }
+    }
+
+    void refreshLight();
+    return () => controller.abort();
+  }, []);
 
   const cost = light.revealCost;
   const inCycle = Math.min(light.stars, cost);
@@ -39,6 +61,7 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
   const canOpen = light.stars >= cost && !opening;
 
   async function openPrize() {
+    prizeOpened.current = true;
     setOpening(true);
     setError(null);
     try {
@@ -82,11 +105,15 @@ export function LightBox({ light: initialLight }: { light: ActivityResponse["lig
           <Gift className="size-4 text-primary/80" />
           {t("lightEyebrow")}
         </h2>
-        <p className="flex items-center gap-4 font-mono text-[11px] text-muted-foreground">
+        <p className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Star className="size-3 text-primary" />
             <b className="font-medium text-foreground">{light.stars}</b>
             {t("lightStarsAvailable")}
+          </span>
+          <span>
+            <b className="font-medium text-foreground">{light.earned}</b>{" "}
+            {t("lightStarsEarned")}
           </span>
           <span>
             <b className="font-medium text-foreground">{light.factsRevealed}</b>{" "}
