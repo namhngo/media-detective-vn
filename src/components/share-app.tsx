@@ -16,16 +16,24 @@ import { useI18n } from "@/components/i18n-provider";
 
 const APP_URL = "https://media-detective-vn.vercel.app";
 
-function buildCaption(language: "en" | "vi") {
+function buildCaption(url: string, language: "en" | "vi") {
   if (language === "vi") {
     return `MEDIA DETECTIVE — nền tảng giúp bạn nhận ra các thủ đoạn lừa đảo và thông tin sai lệch.
+
 Rọi ánh sáng. Dừng lại trước khi chia sẻ.
+
 Tự quyết định điều gì thật sự đang ở đó.
+${url}
+
 #MediaDetectiveVN #AI&MIL #UNESCO`;
   }
   return `MEDIA DETECTIVE — the platform helps you spot scam and misinformation patterns.
+
 Pause. Shine a light.
+
 See what's really there.
+${url}
+
 #MediaDetectiveVN #AI&MIL #UNESCO`;
 }
 
@@ -64,7 +72,7 @@ export function ShareApp({
   }, [open]);
 
   const url = APP_URL;
-  const caption = buildCaption(language);
+  const caption = buildCaption(url, language);
 
   const platforms = [
     {
