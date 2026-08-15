@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { AnalyzingCard } from "@/components/analyzing-card";
 import { AssessmentBoundary } from "@/components/assessment-boundary";
+import { Button } from "@/components/ui/button";
 import { CaseFile } from "@/components/case-file";
 import { ContentInput } from "@/components/content-input";
 import { InvestigationGuide } from "@/components/investigation-guide";
@@ -84,15 +86,35 @@ export function DetectFlow() {
               </CaseFile>
             )}
           </div>
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={() => setPhase({ status: "idle" })}
-              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-            >
-              {t("flowAnother")}
-            </button>
-          </div>
+          {phase.result.reportId !== null ? (
+            <div className="flex justify-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="rounded-full"
+                onClick={() => setPhase({ status: "idle" })}
+              >
+                {t("flowGotIt")}
+              </Button>
+              <Button
+                render={<Link href="/#report" />}
+                nativeButton={false}
+                className="rounded-full"
+              >
+                {t("flowReportIt")}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => setPhase({ status: "idle" })}
+                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              >
+                {t("flowAnother")}
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>
