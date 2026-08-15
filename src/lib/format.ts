@@ -16,9 +16,9 @@ export function formatVnd(amount: number, language: Language = "en"): string {
   return `₫${amount.toLocaleString(language === "vi" ? "vi-VN" : "en-US")}`;
 }
 
-/** "mock-1785817001246" → "#1246"; "seed-001" → "#SEED-001" */
+/** "mock-1785817001246" → "#1246"; internal public case id → "#CASE-001" */
 export function shortCaseRef(id: string): string {
-  if (id.startsWith("seed-")) return `#${id.toUpperCase()}`;
+  if (id.startsWith("seed-")) return `#CASE-${id.slice("seed-".length).toUpperCase()}`;
   const tail = id.replace(/\D/g, "").slice(-4);
   return `#${tail || id.slice(0, 8).toUpperCase()}`;
 }
